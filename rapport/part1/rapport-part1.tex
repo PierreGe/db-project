@@ -34,7 +34,7 @@
 \tableofcontents
 
 
-\chapter{Diagramme entité association}
+\chapter{Diagramme entité association}
 \section{Diagramme}
 \begin{figure}[hbt]
   \includegraphics[scale=0.4]{dia/diagramme-entite-association.png}
@@ -51,11 +51,37 @@ Les contraintes sont les suivantes :
   \item Un Vélo ne peut pas être loué deux fois en même temps
   \item Un Utilisateur ne peut pas faire deux Locations en même temps
   \item TODO \ldots
+  % capacité ? 
 \end{itemize}
 \section{Hypothèses et justifications}
 
 \chapter{Modèle relationnel}
 \section{Modèle}
+
+% ca cté du bo latek une fois
+\begin{description}
+\item[] \textbf{Utilisateur}(\underline{NuméroUtilisateur}, MotDePasse, DonnéeBanquaire, DateExpiration)
+
+\item[] \textbf{Abonné}(IdentifiantRFID, Nom, Adresse, NuméroTélephone)
+	% ICI herirtage ? Une des trois solution proposé
+
+\item[] \textbf{UtilisateurTemporaire}()
+	%ICI heritage ?
+
+\item[] \textbf{Location}(\underline{NuméroUtilisateur,DateDebut},\textit{DateFin}, NuméroStationDépart , NuméroStationFin, NuméroVélo) % par sur de la notation pour NuméroStationDépart ???
+	\begin{description}
+	\item[] NuméroUtilisateur référence Utilisateur.NuméroUtilisateur
+	\item[] NuméroVélo référence Vélo.NuméroVélo
+	\item[] NuméroStationDépart référence Station.NuméroStation
+	\item[] NuméroStationFin référence Station.NuméroStation
+	\end{description}
+	
+\item[] \textbf{Station}(\underline{NuméroStation}, Longitude, Latitude, Nom, Capacité, BornePaiement)
+
+ \item[] \textbf{Vélo}(\underline{NuméroVélo}, DateMiseEnService, Modèle, Etat)
+
+\end{description}
+
 \section{Contraintes}
 \section{Hypothèses et justifications}
 
