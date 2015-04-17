@@ -1,4 +1,4 @@
-\documentclass[a4paper,10pt]{report}
+\documentclass[a4paper,10pt]{article}
 \usepackage[french]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[left=2.5cm,top=2cm,right=2.5cm,nohead,nofoot]{geometry}
@@ -33,15 +33,17 @@
 
 \tableofcontents
 
+\pagebreak
 
-\chapter{Diagramme entité association}
-\section{Diagramme}
+
+\section{Diagramme entité association}
+\subsection{Diagramme}
 \begin{figure}[hbt]
   \includegraphics[scale=0.4]{dia/diagramme-entite-association.png}
   \caption{Diagramme entité association
 }
 \end{figure}
-\section{Contraintes}
+\subsection{Contraintes}
 Les contraintes sont les suivantes :
 \begin{itemize}
   \item La DateDebut d'une Location doit précéder la DateFin, 
@@ -53,7 +55,7 @@ Les contraintes sont les suivantes :
   \item Un Vélo ne peut pas avoir de déplacement disjoints.
   \item Un Utilisateur ayant une DateExpiration ne peut pas prendre un Vélo si Usable est faux.
 \end{itemize}
-\section{Hypothèses et justifications}
+\subsection{Hypothèses et justifications}
 
 % que ce passe-t-il si un utilisateur est temporaire puis s'abonne?
 
@@ -70,8 +72,8 @@ Dans le cas ou la société villo achète des nouveaux vélo et les mets en circ
 Le champs MotDePasse contient un hash cryptographique du mot de passe et non le mot de passe lui-m\^eme.
 
 
-\chapter{Modèle relationnel}
-\section{Modèle}
+\section{Modèle relationnel}
+\subsection{Modèle}
 
 % ca cté du bo latek une fois
 \begin{description}
@@ -83,12 +85,14 @@ Le champs MotDePasse contient un hash cryptographique du mot de passe et non le 
 \item[] \textbf{UtilisateurTemporaire}()
 	%ICI heritage ?
 
-\item[] \textbf{Location}(\underline{NuméroUtilisateur,DateDebut},\textit{DateFin}, NuméroStationDépart , NuméroStationFin, NuméroVélo) % par sur de la notation pour NuméroStationDépart ???
+\item[] \textbf{Location}(\underline{NuméroUtilisateur, NuméroVélo, DateDebut},\textit{DateFin}, NuméroStationDépart , NuméroStationFin) % par sur de la notation pour NuméroStationDépart ???
 	\begin{description}
 	\item[] NuméroUtilisateur référence Utilisateur.NuméroUtilisateur
 	\item[] NuméroVélo référence Vélo.NuméroVélo
 	\item[] NuméroStationDépart référence Station.NuméroStation
 	\item[] NuméroStationFin référence Station.NuméroStation
+	\item \underline{NuméroUtilisateur, DateDebut} est aussi une clé
+	\item \underline{NuméroVélo, DateDebut} est aussi une clé
 	\end{description}
 	
 \item[] \textbf{Station}(\underline{NuméroStation}, Longitude, Latitude, Nom, Capacité, BornePaiement)
@@ -97,8 +101,8 @@ Le champs MotDePasse contient un hash cryptographique du mot de passe et non le 
 
 \end{description}
 
-\section{Contraintes}
-\section{Hypothèses et justifications}
+\subsection{Contraintes}
+\subsection{Hypothèses et justifications}
 
 
 
