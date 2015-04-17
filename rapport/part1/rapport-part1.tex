@@ -45,14 +45,13 @@
 Les contraintes sont les suivantes :
 \begin{itemize}
   \item La DateDebut d'une Location doit précéder la DateFin, 
-  \item La DateMiseEnService d'un Vélo doit précéder la DateDebut de sa Location,
-  \item La DateExpiration d'un Utilisateur doit précéder la DateDebut de sa Location,
-  \item La DateExpiration d'un Utilisateur doit précéder la DateFin de sa Location,
-  \item Un Vélo ne peut pas être loué deux fois en même temps,
-  \item Un Utilisateur ne peut pas faire deux Locations en même temps,
-  \item Pour une Station, le nombre de vélo dont la Location finit dans cette station ne doit pas dépasser sa capacité,
+  \item La DateMiseEnService d'un Vélo doit précéder la DateDebut de chacune de ses Locations,
+  \item La DateExpiration d'un Utilisateur doit précéder la DateDebut de toutes ses Locations,
+  \item La DateExpiration d'un Utilisateur doit \^etre postérieur à la DateFin de toutes ses Locations,
+  \item Les intervalles entre DateDébut et DateFin de deux Location pour un même Vélo ou un même Utilisateur ne peuvent pas se chevaucher,
+  \item Pour une Station, le nombre de vélo dont la dernière Location finit  dans cette station ne doit pas dépasser sa capacité,
   \item Un Vélo ne peut pas avoir de déplacement disjoints.
-  \item Un Utilisateur ayant une DateExpiration ne peut pas prendre un Vélo si Usable est mis à faux.
+  \item Un Utilisateur ayant une DateExpiration ne peut pas prendre un Vélo si Usable est faux.
 \end{itemize}
 \section{Hypothèses et justifications}
 
