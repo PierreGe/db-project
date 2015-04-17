@@ -57,7 +57,7 @@ Les contraintes sont les suivantes :
 
 % que ce passe-t-il si un utilisateur est temporaire puis s'abonne?
 
-Il existe des utilisateur "spéciaux", c'est ces derniers et uniquement eux qui n'ont pas de date d'expiration.
+Il existe des utilisateur "admin", c'est ces derniers et uniquement eux qui n'ont pas de date d'expiration.
 
 Si un Abonné a son abonnement qui expire, il peut re-utiliser le NuméroUtilisateur et MotDePasse dans le futur, l'entité n'est pas supprimé. Pour UtilisateurTemporaire, l'entité peut être supprimé.
 
@@ -66,6 +66,8 @@ Dans le cas ou des employés villo déplace un vélo la nuit, alors ce déplacem
 Dans le cas ou un vélo serait cassé et devrait sortir du circuit de location, un Utilisateur admin vient le chercher et la Location ne finit jamais, c'est à dire pas de DateFin.
 
 Dans le cas ou la société villo achète des nouveaux vélo et les mets en circulation, un utilisateur admin fait une location de ce nouveau vélo qui a une date de départ égale à la date d'arrivée et une station de départ égale à la station d'arrivée.
+
+Le champs MotDePasse contient un hash cryptographique du mot de passe et non le mot de passe lui-m\^eme.
 
 
 \chapter{Modèle relationnel}
