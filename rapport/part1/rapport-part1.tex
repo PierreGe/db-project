@@ -65,11 +65,10 @@ Les contraintes sont les suivantes :
 \begin{description}
 \item[] \textbf{Utilisateur}(\underline{NuméroUtilisateur}, MotDePasse, DonnéeBanquaire, \textit{DateExpiration})
 
-\item[] \textbf{Abonné}(IdentifiantRFID, Nom, Adresse, NuméroTélephone)
-	% ICI herirtage ? Une des trois solution proposé
-
-\item[] \textbf{UtilisateurTemporaire}()
-	%ICI heritage ?
+\item[] \textbf{Abonné}(\underline{NuméroUtilisateur}, IdentifiantRFID, Nom, Adresse, NuméroTélephone)
+	\begin{description}
+	\item[] Abonné.NuméroUtilisateur référence Utilisateur.NuméroUtilisateur
+	\end{description}
 
 \item[] \textbf{Location}(\underline{NuméroUtilisateur, NuméroVélo, DateDebut},\textit{DateFin}, NuméroStationDépart , NuméroStationFin) % par sur de la notation pour NuméroStationDépart ???
 	\begin{description}
@@ -89,11 +88,16 @@ Les contraintes sont les suivantes :
 
 \subsection{Contraintes}
 
+Les contraintes sont les suivantes :
+\begin{itemize}
+  \item 
+\end{itemize}
+
 \section{Hypothèses et justifications}
 
 Il existe des utilisateur "admin", c'est ces derniers et uniquement eux qui n'ont pas de date d'expiration.
 
-Si un Abonné a son abonnement qui expire, il peut re-utiliser le NuméroUtilisateur et MotDePasse dans le futur, l'entité n'est pas supprimé. Pour UtilisateurTemporaire, l'entité peut être supprimé.
+Si un Abonné a son abonnement qui expire, il peut re-utiliser le NuméroUtilisateur et MotDePasse dans le futur, l'entité n'est pas supprimé.
 
 Dans le cas ou des employés villo déplace un vélo la nuit, alors ce déplacement doit être enregistré dans la base de donnée par un utilisateur admin.
 
