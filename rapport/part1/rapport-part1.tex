@@ -105,19 +105,35 @@ Les contraintes sont les suivantes :
   \item Un Utilisateur ayant une DateExpiration non nul ne peut pas prendre un Vélo si Usable est faux.
 \end{itemize}
 
-\section{Hypothèses et justifications}
+\section{Hypothèses}
 
-Il existe des utilisateur "admin", c'est ces derniers et uniquement eux qui n'ont pas de date d'expiration.
+Il existe des utilisateur "admin", ce sont ces derniers et uniquement eux qui n'ont pas de date d'expiration.
 
-Si un Abonné a son abonnement qui expire, il peut re-utiliser le NuméroUtilisateur et MotDePasse dans le futur, l'entité n'est pas supprimé.
+Si un Abonné a son abonnement qui expire, il peut re-utiliser le NuméroUtilisateur et MotDePasse dans le futur, l'entité n'est pas supprimée.
 
-Dans le cas ou des employés villo déplace un vélo la nuit, alors ce déplacement doit être enregistré dans la base de donnée par un utilisateur admin.
+Dans le cas ou des employés villo déplacent un vélo la nuit, alors ce déplacement doit être enregistré dans la base de donnée par un utilisateur admin.
 
 Dans le cas ou un vélo serait cassé et devrait sortir du circuit de location, un Utilisateur admin vient le chercher et la Location ne finit jamais, c'est à dire pas de DateFin.
 
 Dans le cas ou la société villo achète des nouveaux vélo et les mets en circulation, un utilisateur admin fait une location de ce nouveau vélo qui a une date de départ égale à la date d'arrivée et une station de départ égale à la station d'arrivée.
 
 Le champs MotDePasse contient un hash cryptographique du mot de passe et non le mot de passe lui-m\^eme.
+
+\section{Justification}
+
+Afin de garantir la cohérence du modèle et éviter la redondance, nous avons choisis de :
+\begin{itemize}
+  \item Ne pas mettre d'attribut PlaceUtilisé dans Station,
+  \item Ne pas mettre d'attribut Endroit dans Velo,
+  \item ect \ldots
+\end{itemize}
+En effet, ces informations peuvent être déduite de la suite de Location.
+
+Pour obtenir une clé primaire à l'entité Location, nous avons rendu obligatoire le champs DateDebute et c'est pour cela que la mise en circulation et la mise a la retraite des vélos sont différentes.
+
+Pour la généralisation nous avons choisis, une solution permettant d'avoir une relation a une seule table depuis la location et une solution permettant de mettre une contrainte d'existence sur tous les champs excepté la DateExpiration. 
+
+
 
 
 
