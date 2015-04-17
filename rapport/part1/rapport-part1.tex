@@ -72,17 +72,17 @@ Les contraintes sont les suivantes :
 
 \item[] \textbf{Location}(\underline{NuméroUtilisateur, NuméroVélo, DateDebut},\textit{DateFin}, NuméroStationDépart , NuméroStationFin) % par sur de la notation pour NuméroStationDépart ???
 	\begin{description}
-	\item[] NuméroUtilisateur référence Utilisateur.NuméroUtilisateur
-	\item[] NuméroVélo référence Vélo.NuméroVélo
-	\item[] NuméroStationDépart référence Station.NuméroStation
-	\item[] NuméroStationFin référence Station.NuméroStation
-	\item \underline{NuméroUtilisateur, DateDebut} est aussi une clé
-	\item \underline{NuméroVélo, DateDebut} est aussi une clé
+	\item[] Location.NuméroUtilisateur référence Utilisateur.NuméroUtilisateur
+	\item[] Location.NuméroVélo référence Vélo.NuméroVélo
+	\item[] Location.NuméroStationDépart référence Station.NuméroStation
+	\item[] Location.NuméroStationFin référence Station.NuméroStation
+	\item (\underline{NuméroUtilisateur, DateDebut}) est unique
+	\item (\underline{NuméroVélo, DateDebut}) est unique
 	\end{description}
 	
 \item[] \textbf{Station}(\underline{NuméroStation}, Longitude, Latitude, Nom, Capacité, BornePaiement)
 
- \item[] \textbf{Vélo}(\underline{NuméroVélo}, DateMiseEnService, Modèle, Etat)
+\item[] \textbf{Vélo}(\underline{NuméroVélo}, DateMiseEnService, Modèle, Utilisable)
 
 \end{description}
 
