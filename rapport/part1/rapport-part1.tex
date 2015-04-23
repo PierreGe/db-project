@@ -49,11 +49,12 @@ Les contraintes sont les suivantes :
 \begin{itemize}
   \item La DateDebut d'une Location doit précéder la DateFin, 
   \item La DateMiseEnService d'un Vélo doit précéder la DateDebut de chacune de ses Locations,
-  \item La DateExpiration d'un Utilisateur doit précéder la DateDebut de toutes ses Locations,
-  \item La DateExpiration d'un Utilisateur doit \^etre postérieur à la DateFin de toutes ses Locations,
+  \item La DateExpiration d'un Utilisateur doit \^etre postérieure à la DateDebut de toutes ses Locations,
+  \item Le couple (Longitude, Latitude) est unique,
+  \item La DateExpiration d'un Utilisateur doit \^etre postérieure à la DateFin de toutes ses Locations,
   \item Un utilisateur qui a une date d'expiration non nul ne peut pas avoir plus d'une Location ayant une DateFin nul,
   \item Pour une Station, le nombre de vélo dont la dernière Location finit  dans cette station ne doit pas dépasser sa capacité,
-  \item Un Vélo ne peut pas avoir de déplacement disjoints.
+  \item Un Vélo ne peut pas avoir de déplacement disjoints. C'est a dire que la Station de départ du trajet n doit \^etre similaire a la Station d'arrivé du trajet (n-1) pour n>1,
   \item Un Utilisateur ayant une DateExpiration non nul ne peut pas prendre un Vélo si Usable est faux.
 \end{itemize}
 
@@ -62,7 +63,7 @@ Les contraintes sont les suivantes :
 \section{Modèle relationnel}
 \subsection{Modèle}
 
-% ca cté du bo latek une fois
+
 \begin{description}
 \item[] \textbf{Utilisateur}(\underline{NuméroUtilisateur}, MotDePasse, DonnéeBanquaire, \textit{DateExpiration})
 
@@ -97,11 +98,12 @@ Les contraintes sont les suivantes :
   \item Une Location a un et un seul Vélo,
   \item La DateDebut d'une Location doit précéder la DateFin, 
   \item La DateMiseEnService d'un Vélo doit précéder la DateDebut de chacune de ses Locations,
-  \item La DateExpiration d'un Utilisateur doit précéder la DateDebut de toutes ses Locations,
-  \item La DateExpiration d'un Utilisateur doit \^etre postérieur à la DateFin de toutes ses Locations,
+  \item Le couple (Longitude, Latitude) est unique,
+  \item La DateExpiration d'un Utilisateur doit \^etre postérieure à la DateDebut de toutes ses Locations,
+  \item La DateExpiration d'un Utilisateur doit \^etre postérieure à la DateFin de toutes ses Locations,
   \item Un utilisateur qui a une date d'expiration non nul ne peut pas avoir plus d'une Location ayant une DateFin nul,
   \item Pour une Station, le nombre de vélo dont la dernière Location finit  dans cette station ne doit pas dépasser sa capacité,
-  \item Un Vélo ne peut pas avoir de déplacement disjoints.
+  \item Un Vélo ne peut pas avoir de déplacement disjoints. C'est a dire que la Station de départ du trajet n doit \^etre similaire a la Station d'arrivé du trajet (n-1) pour n>1,
   \item Un Utilisateur ayant une DateExpiration non nul ne peut pas prendre un Vélo si Usable est faux.
 \end{itemize}
 
@@ -115,16 +117,16 @@ Dans le cas ou des employés villo déplacent un vélo la nuit, alors ce déplac
 
 Dans le cas ou un vélo serait cassé et devrait sortir du circuit de location, un Utilisateur admin vient le chercher et la Location ne finit jamais, c'est à dire pas de DateFin.
 
-Dans le cas ou la société villo achète des nouveaux vélo et les mets en circulation, un utilisateur admin fait une location de ce nouveau vélo qui a une date de départ égale à la date d'arrivée et une station de départ égale à la station d'arrivée.
+Dans le cas ou la société villo achète des nouveaux vélo et les met en circulation, un utilisateur admin fait une location de ce nouveau vélo qui a une date de départ égale à la date d'arrivée et une station de départ égale à la station d'arrivée.
 
 Le champs MotDePasse contient un hash cryptographique du mot de passe et non le mot de passe lui-m\^eme.
 
 \section{Justification}
 
-Afin de garantir la cohérence du modèle et éviter la redondance, nous avons choisis de :
+Afin d'éviter la redondance et de garantir la cohérence du modèle, nous avons choisis de :
 \begin{itemize}
   \item Ne pas mettre d'attribut PlaceUtilisé dans Station,
-  \item Ne pas mettre d'attribut Endroit dans Velo,
+  \item Ne pas mettre d'attribut Endroit dans Vélo,
   \item ect \ldots
 \end{itemize}
 En effet, ces informations peuvent être déduite de la suite de Location.
