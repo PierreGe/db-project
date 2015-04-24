@@ -3,6 +3,9 @@ rapport/part1/.texpadtmp/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+# ve 
+ve/
+
 
 # C extensions
 *.so
