@@ -42,7 +42,7 @@ def hello():
 
 @app.route("/boot")
 def boot():
-    return render_template("base.html")
+    return render_template("home.html")
 
 if __name__ == "__main__":
     app.run(debug=True) # debug : server will reload itself on code changes
