@@ -67,6 +67,20 @@ def login():
     else:
         return render_template("login.html")
 
+@app.route('/inscription', methods=['GET', 'POST'])
+def inscription():
+    if request.method == 'POST':
+        # Check user ID and password here (champs : inputPassword)
+        if request.form['inputUsername'] == "admin" and request.form['inputPassword'] =="admin":
+            #success
+            session['username'] = request.form['inputUsername']
+            return redirect(url_for('index'))
+        else:
+            return render_template("login.html",loginFailure=True)
+            #failure
+    else:
+        return render_template("inscription.html")
+
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there
