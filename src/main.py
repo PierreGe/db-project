@@ -1,7 +1,7 @@
 __author__ = 'pierre'
 
 
-from flask import Flask, g
+from flask import Flask,render_template, g
 import sqlite3
 
 DATABASE = 'test.sqlite'
@@ -39,6 +39,10 @@ def hello():
         res += "\n"
     return "RAW BIKE LIST : " + res
 
+
+@app.route("/boot")
+def boot():
+    return render_template("base.html")
 
 if __name__ == "__main__":
     app.run(debug=True) # debug : server will reload itself on code changes
