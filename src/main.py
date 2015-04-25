@@ -56,9 +56,16 @@ def session_status():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        session['username'] = request.form['inputUsername']
-        return redirect(url_for('index'))
-    return render_template("login.html")
+        # Check user ID and password here (champs : inputPassword)
+        if request.form['inputUsername'] == "admin" and request.form['inputPassword'] =="admin":
+            #success
+            session['username'] = request.form['inputUsername']
+            return redirect(url_for('index'))
+        else:
+            return render_template("login.html",loginFailure=True)
+            #failure
+    else:
+        return render_template("login.html")
 
 @app.route('/logout')
 def logout():
