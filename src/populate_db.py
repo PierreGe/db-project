@@ -55,9 +55,6 @@ def insert_stations(db, input_file="data/stations.csv"):
 def insert_users(db, input_file="data/users.xml"):
     pass
 
-# table (str) -> query for count of all elements in this table (str)
-
-
 def initDB(db_file=":memory:"):
     TABLES = [
         ('bike', 'data/villos.csv', insert_bikes, 2000), 
@@ -68,7 +65,8 @@ def initDB(db_file=":memory:"):
     dbconnect.isolation_level = None
     db = dbconnect.cursor()
 
-    count_all = lambda table: db.execute("SELECT COUNT(*) FROM %s;" % (table)).next()[0]
+    def count_all(table):
+        return db.execute("SELECT COUNT(*) FROM %s;" % (table)).next()[0]
 
     create_tables(db)
     for table, input_file, insert, expected_rows in TABLES:
