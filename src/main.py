@@ -4,7 +4,7 @@ __author__ = 'pierre'
 from flask import Flask, g
 import sqlite3
 
-DATABASE = 'test.sqlite'
+from config import DATABASE
 
 app = Flask(__name__)
 

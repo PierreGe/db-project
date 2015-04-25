@@ -2,7 +2,7 @@
 
 from csv import DictReader
 from sqlite3 import Connection
-from sys import stdout
+from sys import stdout, argv
 from datetime import datetime
 
 def create_tables(db, create_file="createDB.sql"):
@@ -76,4 +76,5 @@ def initDB(db_file=":memory:"):
     dbconnect.close()
 
 if __name__ == "__main__":
-    initDB()
+    from config import DATABASE
+    initDB(argv[1] if len(argv) > 1 else DATABASE)
