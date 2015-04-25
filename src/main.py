@@ -1,12 +1,15 @@
 __author__ = 'pierre'
 
 
-from flask import Flask,render_template, g
+from flask import Flask,render_template, g, session, redirect, url_for, escape, request
 import sqlite3
+import os
 
 DATABASE = 'test.sqlite'
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
+
 
 def connect_to_database():
     return sqlite3.connect(DATABASE)
@@ -29,8 +32,8 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-@app.route("/")
-def hello():
+@app.route("/sqltest")
+def sqltest():
     q = query_db("SELECT * FROM bike")
     res = ""
     for i in q:
@@ -40,9 +43,28 @@ def hello():
     return "RAW BIKE LIST : " + res
 
 
-@app.route("/boot")
-def boot():
+@app.route("/")
+def index():
     return render_template("home.html")
+
+@app.route('/session_status')
+def session_status():
+    if 'username' in session:
+        return 'Logged in as %s' % escape(session['username'])
+    return 'You are not logged in'
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        session['username'] = request.form['inputUsername']
+        return redirect(url_for('index'))
+    return render_template("login.html")
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True) # debug : server will reload itself on code changes

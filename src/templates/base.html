@@ -16,7 +16,7 @@
     <link href="static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="static/css/starter-template.css" rel="stylesheet">
+    <link href="static/css/villo.css" rel="stylesheet">
 
 
   </head>
@@ -36,13 +36,28 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="active"><a href="/">Home</a></li>
+            <!-- <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li> -->
           </ul>
           <ul class="navbar-form navbar-right">
-            <button type="submit" class="btn btn-default">Connexion</button>
-              <button type="submit" class="btn btn-default">Inscription</button>
+              {% if 'username' in session %}
+              <!-- <li class="active"><a href="#">{{ session['username'] }}</a></li> -->
+              <form action="logout">
+                  <button type="submit" class="btn btn-default">Déconnexion</button>
+
+            </form>
+            {% else %}
+              <form action="login">
+                  <button type="submit" class="btn btn-default">Connexion</button>
+
+             </form>
+              <!--
+              <form action="logout">
+                   <button type="submit" class="btn btn-default">Inscription</button>
+            </form> -->
+
+            {% endif %}
           </ul>
         </div><!--/.navbar-collapse -->
       </div>
