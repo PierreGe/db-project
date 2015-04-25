@@ -3,8 +3,12 @@ rapport/part1/.texpadtmp/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-# ve 
+
+# virtualenv 
 ve/
+
+# pycharm data
+.idea/
 
 
 # C extensions
