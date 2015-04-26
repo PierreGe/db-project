@@ -81,6 +81,22 @@ def inscription():
     else:
         return render_template("inscription.html")
 
+@app.route("/trip")
+def trip():
+    return render_template("trip.html")
+
+@app.route("/station")
+def station():
+    return render_template("station.html")
+
+@app.route("/history")
+def history():
+    return render_template("history.html")
+
+@app.route("/problem")
+def problem():
+    return render_template("problem.html")
+
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there
