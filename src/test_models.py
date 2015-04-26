@@ -1,23 +1,23 @@
-from models import sqlite3, get_Bike, get_User
+from models import sqlite3, get_Bike, get_User, get_Trip, get_Station
 from populate_db import create_tables
+from datetime import datetime, timedelta
 
-
-Bike = None
-User = None
+Bike, User, Trip, Station = None, None, None, None
 
 
 def setup_function(*args):
-    global Bike, User
+    global Bike, User, Trip, Station
     db = sqlite3.Connection(':memory:')
     create_tables(db)
     Bike = get_Bike(db)
     User = get_User(db)
+    Trip = get_Trip(db)
+    Station = get_Station(db)
 
 
 def teardown_function(*args):
-    global Bike, User
-    Bike = None
-    User = None
+    global Bike, User, Trip, Station
+    Bike, User, Trip, Station = None, None, None, None
 
 
 def test_create_bike():
@@ -67,3 +67,10 @@ def test_isadmin_user():
     n00b = User(password="n00b", expire_date="2014-08-25T12:14:23")
     assert admin.is_admin()
     assert not n00b.is_admin()
+
+
+def test_trip_duration():
+    t = datetime(2012, 12, 21, 11, 11, 11)
+    trip = Trip(0, 0, 0, departure_date=t)
+    assert not trip.finished
+    assert trip.duration(t + timedelta(seconds=20)).total_seconds() == 20
