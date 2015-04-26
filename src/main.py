@@ -91,11 +91,16 @@ def history():
         return redirect(url_for('login'))
     return render_template("history.html")
 
-@app.route("/problem")
+@app.route("/problem", methods=['GET', 'POST'])
 def problem():
     if not 'username' in session:
         return redirect(url_for('login'))
-    return render_template("problem.html")
+    if request.method == 'POST':
+        pass# TODO
+        return render_template("problem.html",signaled=True)
+    else:
+        return render_template("problem.html")
+
 
 @app.route('/logout')
 def logout():
