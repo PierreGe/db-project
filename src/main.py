@@ -70,31 +70,31 @@ def login():
 @app.route('/inscription', methods=['GET', 'POST'])
 def inscription():
     if request.method == 'POST':
-        # Check user ID and password here (champs : inputPassword)
-        if request.form['inputUsername'] == "admin" and request.form['inputPassword'] =="admin":
-            #success
-            session['username'] = request.form['inputUsername']
-            return redirect(url_for('index'))
-        else:
-            return render_template("login.html",loginFailure=True)
-            #failure
+        pass# TODO
     else:
         return render_template("inscription.html")
-
-@app.route("/trip")
-def trip():
-    return render_template("trip.html")
 
 @app.route("/station")
 def station():
     return render_template("station.html")
 
+@app.route("/trip")
+def trip():
+    if not 'username' in session:
+        return redirect(url_for('login'))
+    return render_template("trip.html")
+
+
 @app.route("/history")
 def history():
+    if not 'username' in session:
+        return redirect(url_for('login'))
     return render_template("history.html")
 
 @app.route("/problem")
 def problem():
+    if not 'username' in session:
+        return redirect(url_for('login'))
     return render_template("problem.html")
 
 @app.route('/logout')
