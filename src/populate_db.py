@@ -21,10 +21,6 @@ safe = lambda *args: tuple(map(sanitize, args))
 # Parse date in std format
 parse_date = lambda datestr: datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%S")
 
-def info(msg):
-    stdout.write("\r%-80s" % msg)
-    stdout.flush()
-
 def insert_bikes(db, input_file="data/villos.csv"):
     q = 'INSERT INTO bike (id,entry_date,model,usable) VALUES (?,?,?,?)'
     bikelist = (
