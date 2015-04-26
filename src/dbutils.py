@@ -10,10 +10,14 @@ def hash_password(passwd):
 
 # Sanitize an argument for insertion
 def sanitize(arg):
-    if isinstance(arg, str) or isinstance(arg, unicode):
-        return arg.replace('"', '\\"')
+    if arg is None:
+        return "NULL"
+    elif arg is True or arg is False:
+        return '"%s"' % str(arg)
+    elif isinstance(arg, str) or isinstance(arg, unicode):
+        return '"%s"' % arg.replace('"', '\\"')
     elif isinstance(arg, datetime):
-        return arg.strftime("%Y-%m-%dT%H:%M:%S")
+        return arg.strftime('"%Y-%m-%dT%H:%M:%S"')
     else:
         return str(arg)
 
