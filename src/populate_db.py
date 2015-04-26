@@ -2,7 +2,7 @@
 
 from csv import DictReader
 from sqlite3 import Connection
-from sys import stdout
+from sys import stdout, argv
 from datetime import datetime
 
 def create_tables(db, create_file="createDB.sql"):
@@ -52,23 +52,29 @@ def insert_stations(db, input_file="data/stations.csv"):
         info("Inserted station " + station['nom'])
     print
 
-# table (str) -> query for count of all elements in this table (str)
-count_all = lambda table: "SELECT COUNT(*) FROM %s;" % (table)
+def insert_users(db, input_file="data/users.xml"):
+    pass
 
 def initDB(db_file=":memory:"):
+    TABLES = [
+        ('bike', 'data/villos.csv', insert_bikes, 2000), 
+        ('station', 'data/stations.csv', insert_stations, 179),
+    ]
+
     dbconnect = Connection(db_file)
     dbconnect.isolation_level = None
     db = dbconnect.cursor()
 
+    def count_all(table):
+        return db.execute("SELECT COUNT(*) FROM %s;" % (table)).next()[0]
+
     create_tables(db)
-
-    insert_bikes(db)
-    assert db.execute(count_all('bike')).next()[0] == 2000
-
-    insert_stations(db)
-    assert db.execute(count_all('station')).next()[0] == 179
+    for table, input_file, insert, expected_rows in TABLES:
+        insert(db, input_file)
+        assert count_all(table) == expected_rows
 
     dbconnect.close()
 
 if __name__ == "__main__":
-    initDB()
+    from config import DATABASE
+    initDB(argv[1] if len(argv) > 1 else DATABASE)

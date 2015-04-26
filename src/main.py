@@ -5,7 +5,7 @@ from flask import Flask,render_template, g, session, redirect, url_for, escape, 
 import sqlite3
 import os
 
-DATABASE = 'test.sqlite'
+from config import DATABASE
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
