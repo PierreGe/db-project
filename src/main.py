@@ -1,9 +1,9 @@
-__author__ = 'pierre'
-
+# -*- coding: utf-8 -*-
 
 from flask import Flask,render_template, g, session, redirect, url_for, escape, request
-import sqlite3
 import os
+import user
+import database
 
 from config import DATABASE
 
@@ -11,20 +11,6 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 
-def connect_to_database():
-    return sqlite3.connect(DATABASE)
-
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
-
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = connect_to_database()
-    return db
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -34,7 +20,7 @@ def close_connection(exception):
 
 @app.route("/sqltest")
 def sqltest():
-    q = query_db("SELECT * FROM bike")
+    q = database.query("SELECT * FROM bike")
     res = ""
     for i in q:
         for j in i:
@@ -49,28 +35,36 @@ def index():
 
 @app.route('/session_status')
 def session_status():
-    if 'username' in session:
-        return 'Logged in as %s' % escape(session['username'])
+    if user.isConnected():
+        return 'Logged in as %s' % escape(user.getUserName())
     return 'You are not logged in'
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Check user ID and password here (champs : inputPassword)
-        if request.form['inputUsername'] == "admin" and request.form['inputPassword'] =="admin":
-            #success
-            session['username'] = request.form['inputUsername']
+        if user.checkLoginPassword(request.form['inputUsername'],request.form['inputPassword']):
+            user.connectUser(request.form['inputUsername'])
             return redirect(url_for('index'))
         else:
             return render_template("login.html",loginFailure=True)
-            #failure
     else:
         return render_template("login.html")
 
 @app.route('/inscription', methods=['GET', 'POST'])
 def inscription():
     if request.method == 'POST':
-        pass# TODO
+        pass # TODO
+    # userPassword
+    # userBankData
+    # userLastName
+    # userFirstName
+    # userStreet
+    # userNumber
+    # userBox
+    # userPostalCode
+    # userCity
+    # userCountry
+    # userPhone
     else:
         return render_template("inscription.html")
 
@@ -80,20 +74,20 @@ def station():
 
 @app.route("/trip")
 def trip():
-    if not 'username' in session:
+    if not user.isConnected():
         return redirect(url_for('login'))
     return render_template("trip.html")
 
 
 @app.route("/history")
 def history():
-    if not 'username' in session:
+    if not user.isConnected():
         return redirect(url_for('login'))
     return render_template("history.html")
 
 @app.route("/problem", methods=['GET', 'POST'])
 def problem():
-    if not 'username' in session:
+    if not user.isConnected():
         return redirect(url_for('login'))
     if request.method == 'POST':
         pass# TODO
@@ -104,8 +98,7 @@ def problem():
 
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
-    session.pop('username', None)
+    user.disconnectUser()
     return redirect(url_for('index'))
 
 if __name__ == "__main__":
