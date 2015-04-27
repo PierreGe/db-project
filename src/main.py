@@ -106,7 +106,7 @@ def problem():
 
 @app.route('/logout')
 def logout():
-    user.disconnectUser()
+    disconnectUser()
     return redirect(url_for('index'))
 
 
