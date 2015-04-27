@@ -280,10 +280,22 @@ def get_Station(db=None, superclass=None):
 
         @property
         def available_bikes(self):
-            query = "SELECT COUNT(*) FROM trip WHERE arrival_station_id=?"
-            res = db.execute(query, (self.id,))
-            return res.next()[0]
+            """
+            Return the number of available bikes at this station
+            """
+            query = "SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) WHERE arrival_station_id=?"
+            cursor = db.execute(query, (self.id,))
+            return cursor.next()[0]
         
+        @property
+        def bikes(self):
+            """
+            Return the list of bikes stopped at this station
+            """
+            Bike = get_Bike(db, superclass)
+            query = "SELECT %s FROM (SELECT bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?"
+            cursor = db.execute(query%Bike.cols(), (self.id,))
+            return [Bike(*row) for row in cursor]
 
         @classmethod
         def get(klass, id):

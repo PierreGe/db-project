@@ -128,7 +128,9 @@ def test_station_available_bikes():
     )
 
     assert s2.available_bikes == 1
+    assert [bike.id for bike in s2.bikes] == [b.id]
     assert s1.available_bikes == 0
+    assert s1.bikes == []
 
     from_date, to_date = "2015-07-12T20:10:10", "2015-07-12T21:10:10"
     t = Trip.create(
@@ -138,4 +140,6 @@ def test_station_available_bikes():
     )
 
     assert s2.available_bikes == 0
+    assert s2.bikes == []
     assert s1.available_bikes == 1
+    assert [bike.id for bike in s1.bikes] == [b.id]
