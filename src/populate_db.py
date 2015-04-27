@@ -27,8 +27,8 @@ def insert_bikes(db, input_file="data/villos.csv"):
         (
             int(bike['nume\xcc\x81ro']),
             bike['mise en service'],
+            bike['mode\xcc\x80le'],
             bike['fonctionne'] == 'True',
-            bike['mode\xcc\x80le']
         ) for bike in DictReader(open(input_file), delimiter=';')
     )
     with db:
