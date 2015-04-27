@@ -116,4 +116,7 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=config.DEBUG) # debug : server will reload itself on code changes
+    app.run(
+        debug=config.DEBUG, 
+        host=config.WEB_ADDRESS, 
+        port=config.WEB_PORT) # debug : server will reload itself on code changes
