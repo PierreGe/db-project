@@ -105,3 +105,37 @@ def test_insert_trip():
     assert t.user.auth("Hello")
     assert t.bike.model == "mytest"
     assert b.location.name == "Station 2"
+
+
+def test_station_available_bikes():
+    u = User.create(password="Hello")
+    b = Bike.create(model="mytest")
+    s1 = Station.create(
+        latitude=50.3245, longitude=4.0325, 
+        name="Station 1", capacity=42, payment=True)
+    s2 = Station.create(
+        latitude=50.3245, longitude=4.0325,
+        name="Station 2", capacity=42, payment=True)
+    from_date, to_date = "2015-07-12T10:10:10", "2015-07-12T11:10:10"
+
+    assert s2.available_bikes == 0
+    assert s1.available_bikes == 0
+
+    t = Trip.create(
+        departure_station_id=s1.id, arrival_station_id=s2.id,
+        departure_date=from_date, arrival_date=to_date,
+        user_id=u.id, bike_id=b.id
+    )
+
+    assert s2.available_bikes == 1
+    assert s1.available_bikes == 0
+
+    from_date, to_date = "2015-07-12T20:10:10", "2015-07-12T21:10:10"
+    t = Trip.create(
+        departure_station_id=s2.id, arrival_station_id=s1.id,
+        departure_date=from_date, arrival_date=to_date,
+        user_id=u.id, bike_id=b.id
+    )
+
+    assert s2.available_bikes == 0
+    assert s1.available_bikes == 1

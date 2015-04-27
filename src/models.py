@@ -264,7 +264,7 @@ def get_Station(db=None, superclass=None):
     if superclass is None:
         superclass = _get_Model(db)
 
-    class Station(_get_Model(db)):
+    class Station(superclass):
         columns = ['payment', 'capacity', 'latitude', 'longitude', 'name', 'id']
 
         def __init__(self, payment, capacity, latitude, longitude, name, id=None):
@@ -277,6 +277,13 @@ def get_Station(db=None, superclass=None):
         def __repr__(self):
             id = str(self.id) if self.id is not None else "?"
             return "<Station [%s] %s>" % (id, self.name)
+
+        @property
+        def available_bikes(self):
+            query = "SELECT COUNT(*) FROM trip WHERE arrival_station_id=?"
+            res = db.execute(query, (self.id,))
+            return res.next()[0]
+        
 
         @classmethod
         def get(klass, id):

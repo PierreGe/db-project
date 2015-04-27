@@ -4,7 +4,25 @@
 
 {% block content %}
 <div class="jumbotron">
-    <h1>Villo!</h1>
+    <div class="row">
+        <div class="col-md-7">
+            <h1>Villo!</h1>
+            {% if not user %}
+            <h2>Vous n'êtes actuellement pas connecté</h2>
+            <a href="inscription" class="btn btn-primary">
+                Inscription
+                <span class="glyphicon glyphicon-list-alt"></span>&nbsp;
+            </a>
+            <a href="login" class="btn btn-primary">
+                Connexion
+                <span class="glyphicon glyphicon-log-in"></span>&nbsp;
+            </a>
+        </div>
+        <div class="col-md-5 thumbnail">
+            <img src="http://31.media.tumblr.com/2914b52a29a5fb2ea73db89de766fb5c/tumblr_ml33owg65Q1s7fwvqo1_500.gif">
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% if user %}
 <div class="row">
