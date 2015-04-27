@@ -111,7 +111,7 @@ def problem():
 @app.route("/billing")
 @require_login
 def billing():
-    return render_template("billing.html")
+    return render_template("billing.html", trip_list=current_user().trips)
 
 
 @app.route('/logout')

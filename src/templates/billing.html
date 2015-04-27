@@ -8,6 +8,12 @@
 <div class="villo">
     <h1>Factures</h1>
     <ul>
+        {% for trip in trip_list %}
+        <li>
+            De {{trip.departure_station.name}} ({{trip.departure_date}})
+            à  {{trip.arrival_station.name}} ({{ trip.arrival_date }}) Prix ({{ trip.price() }})
+        </li>
+        {% endfor %}
 
     </ul>
 </div>
