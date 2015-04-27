@@ -95,13 +95,20 @@
                     <span class="badge alert-success">{{user.expire_date}}</span>
                     {% endif %}
                 </li>
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-euro"></span>&nbsp;
+                    <b>Total</b>
+                    <span class="badge alert-warning">{{totalBilled}}</span>
+                </li>
                 {% endif %}
             </ul>
         </div>
-            <button type="button" class="btn btn-default" aria-label="Left Align">
+            <form class="downloaddetails" action="billing" method="POST">
+            <button type="submit" class="btn btn-default" aria-label="Left Align" >
             <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                 Télécharger une facture détaillée
             </button>
+            </form>
     </div>
 
     <!--<ul>
