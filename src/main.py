@@ -69,17 +69,17 @@ def login():
         return render_template("login.html", next=next_page)
 
 
-@app.route('/inscription', methods=['POST'])
-def inscription():
+@app.route('/subscription', methods=['POST'])
+def subscription():
     new_user = get_db().User.create(
         password=request.form['userPassword'],
         card=request.form['userBankData'])
     connect_user(new_user)
     return render_template("welcome.html", user=new_user)
 
-@app.route('/inscription', methods=['GET'])
-def inscription_form():
-    return render_template("inscription.html")
+@app.route('/subscription', methods=['GET'])
+def subscription_form():
+    return render_template("subscription.html")
 
 
 @app.route("/station")

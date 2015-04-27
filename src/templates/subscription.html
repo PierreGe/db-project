@@ -21,6 +21,7 @@
     </p>
   </div>
 
+{% if user %}
   <form class="form-signin" action="inscription" method="POST">
     <h2 class="form-signin-heading">Inscription</h2>
     
@@ -59,5 +60,17 @@
 
     <button class="btn btn-lg btn-primary btn-block" type="submit">Villo!</button>
   </form>
+{% else %}
+  <form class="form-signin" action="inscription" method="POST">
+    <h2 class="form-signin-heading">Renouveller</h2>
+      <div class="alert alert-warning" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Erreur:</span>
+    Votre carte sera débité
+  </div>
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Carte 1 an</button>
+  </form>
+{% endif %}
 </div>
 {% endblock %}
