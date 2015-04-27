@@ -5,9 +5,106 @@
 {% block content %}
 
 
-<div class="villo">
+<div class="jumbotron">
     <h1>Factures</h1>
-    <ul>
+    <h3> Période de facturation {{user.expire_date}}</h3>
+</div>
+
+<div class="villo">
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    <span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
+                    &nbsp; Abonnement
+                </h2>
+            </div>
+            <ul class="list-group panel-body">
+                <li class="list-group-item ">
+                    <h4>
+                        Carte 1 an
+                    </h4>
+                    {{user.expire_date}}
+                    ({{user.expire_date}})
+                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        {{user.expire_date}}
+                        ({{user.expire_date}}).
+                        <span class="badge alert-info">
+                            32.60 euros
+                        </span>
+                </li>
+            </ul>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    <span class="glyphicon glyphicon-barcode" aria-hidden="true"></span>
+                    &nbsp; Dépenses récentes
+                </h2>
+                15 derniers voyages ayant dépassé 30 minutes
+            </div>
+            <ul class="list-group panel-body">
+                {% for trip in user.trips[:15] %}
+                    <li class="list-group-item {% if not trip.finished %}active{% endif %}">
+                        <h4>
+                            {{trip.departure_date.date().strftime("%d/%m/%Y")}}
+                            {% if not trip.finished %} (en cours) {% endif %}
+                        </h4>
+                        {{trip.departure_station.name}}
+                        ({{trip.departure_date.time().strftime("%Hh%M")}})
+                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                            {{trip.arrival_station.name}}
+                            ({{trip.arrival_date.time().strftime("%Hh%M")}}).
+                        <span class="badge alert-info">
+                                {{ (trip.price()) }} euros
+                        </span>
+
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+        <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
+                    &nbsp; Vue d'ensemble
+                </h2>
+            </div>
+            <ul class="list-group panel-body">
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-tags"></span>&nbsp;
+                    <b>Numéro utilisateur</b>
+                    <span class="badge alert-info">{{user.id}}</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-credit-card"></span>&nbsp;
+                    <b>Carte de banque</b>
+                    <span class="badge alert-info">{{user.card}}</span>
+                </li>
+                {% if user.expire_date %}
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-calendar"></span>&nbsp;
+                    <b>Expiration</b>
+                    {% if user.expired %}
+                    <span class="badge alert-danger">{{user.expire_date}}</span>
+                    {% else %}
+                    <span class="badge alert-success">{{user.expire_date}}</span>
+                    {% endif %}
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                Télécharger une facture détaillée
+            </button>
+    </div>
+
+    <!--<ul>
         {% for trip in trip_list %}
         <li>
             De {{trip.departure_station.name}} ({{trip.departure_date}})
@@ -15,7 +112,7 @@
         </li>
         {% endfor %}
 
-    </ul>
+    </ul>--
 </div>
 
 {% endblock %}

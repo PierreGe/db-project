@@ -21,6 +21,7 @@ import config
 import sqlite3
 from datetime import datetime
 from dbutils import hash_password
+from math import ceil
 
 def datestr(date):
     return date.strftime("%Y-%m-%dT%H:%M:%S")
@@ -254,9 +255,10 @@ def get_Trip(db=None, superclass=None):
             if durationTrip > 0: # 30-60 minute
                 durationTrip -= 60*30
                 price+= 1
-            while durationTrip > 0: # par 30 minutes en plus
-                durationTrip -= 60*30
-                price+= 2
+            #while durationTrip > 0: # par 30 minutes en plus
+            #    durationTrip -= 60*30
+            #    price+= 2
+            price += 2 * (ceil(durationTrip/(60*30.)))
             return price
 
         @property
