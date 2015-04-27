@@ -95,11 +95,12 @@ def history():
 def problem():
     if not user.isConnected():
         return redirect(url_for('login'))
+    ctx = {'bike_list': get_db().Bike.all()}
     if request.method == 'POST':
         pass# TODO
-        return render_template("problem.html",signaled=True)
+        return render_template("problem.html",signaled=True, **ctx)
     else:
-        return render_template("problem.html")
+        return render_template("problem.html", **ctx)
 
 
 @app.route('/logout')

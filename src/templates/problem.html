@@ -17,10 +17,9 @@
         <p>Vous avez remarqué que un villo n'était plus en état de fonctionnement ? Veuillez le signaler via le formulaire ci dessous. </p>
 <br>
 <select name="villo" form="villo" class="form-control">
-  <option value="villo1">villo1</option>
-  <option value="villo2">villo2</option>
-  <option value="villo3">villo3</option>
-  <option value="villo4">villo4</option>
+    {% for bike in bike_list %}
+    <option value="{{ bike.id }}">Villo {{ bike.id }}</option>
+    {% endfor %}
 </select>
     <br />
 <form action="problem" id="villo" method="POST">
