@@ -31,7 +31,12 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="station">Stations</a></li>
+            <li>
+              <a href="station">
+                <span class="glyphicon glyphicon-map-marker"></span>&nbsp;
+                Stations
+              </a>
+            </li>
             {% if user %}
               <li><a href="trip">Trajet</a></li>
             {% endif %}
@@ -41,17 +46,44 @@
             <!--<li><a href="#">Settings</a></li>
             <li><a href="#">Help</a></li> -->
               <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ session['user_id'] }}
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              <span class="glyphicon glyphicon-user"></span>&nbsp;
+                {{ session['user_id'] }}
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="history">Historique</a></li>
-                <li><a href="problem">Signaler un problème</a></li>
+                <li>
+                  <a href="history">
+                    <span class="glyphicon glyphicon-time"></span>&nbsp;
+                    Historique
+                  </a>
+                </li>
+                <li>
+                  <a href="problem">
+                    <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;
+                    Signaler un problème
+                  </a>
+                </li>
                 <li class="divider"></li>
-                <li><a href="logout">Déconnexion</a></li>
+                <li>
+                  <a href="logout">
+                    <span class="glyphicon glyphicon-log-out"></span>&nbsp;
+                    Déconnexion
+                  </a>
+                </li>
             {% else %}
-                <li><a href="login">Connexion</a></li>
-                <li><a href="inscription">Inscription</a></li>
+                <li>
+                  <a href="login">
+                    <span class="glyphicon glyphicon-log-in"></span>&nbsp;
+                    Connexion
+                  </a>
+                </li>
+                <li>
+                  <a href="inscription">
+                    <span class="glyphicon glyphicon-list-alt"></span>&nbsp;
+                    Inscription
+                  </a>
+                </li>
             {% endif %}
           </ul>
         </div>

@@ -36,16 +36,19 @@
             </div>
             <ul class="list-group panel-body">
                 <li class="list-group-item">
+                    <span class="glyphicon glyphicon-tags"></span>&nbsp;
                     <b>Numéro utilisateur</b>
                     <span class="badge alert-info">{{user.id}}</span>
                 </li>
                 <li class="list-group-item">
+                    <span class="glyphicon glyphicon-credit-card"></span>&nbsp;
                     <b>Carte de banque</b>
                     <span class="badge alert-info">{{user.card}}</span>
                 </li>
                 {% if user.expire_date %}
                 <li class="list-group-item">
-                    <b>Expiration:</b>
+                    <span class="glyphicon glyphicon-calendar"></span>&nbsp;
+                    <b>Expiration</b>
                     {% if user.expired %}
                     <span class="badge alert-danger">{{user.expire_date}}</span>
                     {% else %}
@@ -79,12 +82,12 @@
                             {{trip.arrival_station.name}}
                             ({{trip.arrival_date.time().strftime("%Hh%M")}}).
                             <span class="badge alert-info">
-                                {{ trip.duration().total_seconds() / 60 }} minutes
+                                {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
                             </span>
                         {% else %}
                             <span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span>
                             <span class="badge alert-warning">
-                                {{ trip.duration().total_seconds() / 60 }} minutes
+                                {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
                             </span>
                         {% endif %}
                     </li>
