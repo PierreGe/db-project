@@ -87,6 +87,12 @@ def station():
     return render_template("station.html", station_list=get_db().Station.all())
 
 
+@app.route("/map_station_popup/<int:station_id>")
+def station_popup(station_id):
+    ctx = {'station': get_db().Station.get(station_id)}
+    return render_template("map_station_popup.html", **ctx)
+
+
 @app.route("/trip")
 @require_login
 def trip():
@@ -102,11 +108,13 @@ def history():
 @app.route("/problem", methods=['GET', 'POST'])
 @require_login
 def problem():
-    ctx = {'bike_list': get_db().Bike.all()}
+    ctx = {'bike_list': get_db().Bike.allUsable()}
     if request.method == 'POST':
-        return render_template("problem.html", signaled=True, **ctx)
-    else:
-        return render_template("problem.html", **ctx)
+        villoId = int(request.form['villo'])
+        bike = get_db().Bike.get(villoId)
+        bike.updateUsable(False)
+        ctx['signaled'] = True
+    return render_template("problem.html", **ctx)
 
 @app.route("/billing", methods=['POST'])
 @require_login
