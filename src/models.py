@@ -181,7 +181,7 @@ def get_User(db=None, superclass=None):
         def trips(self):
             Trip = get_Trip(db, superclass)
             cursor = db.execute(
-                "SELECT %s FROM %s WHERE user_id=? ORDER BY departure_date ASC" % (Trip.cols(), Trip.tablename()), 
+                "SELECT %s FROM %s WHERE user_id=? ORDER BY departure_date DESC" % (Trip.cols(), Trip.tablename()), 
                 (self.id,))
             return [Trip(*row) for row in cursor]
 
@@ -235,10 +235,10 @@ def get_Trip(db=None, superclass=None):
 
         def duration(self, current_time=None):
             if self.finished:
-                return self.arrival_date - self.departure_date
-            if current_time is None:
+                current_time = self.arrival_date
+            elif current_time is None:
                 current_time = datetime.now()
-            return current_time - self.departure_date
+            return parse_date(current_time) - self.departure_date
 
         @property
         def departure_station(self):
