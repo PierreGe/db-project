@@ -74,3 +74,10 @@ def test_trip_duration():
     trip = Trip(0, 0, 0, departure_date=t)
     assert not trip.finished
     assert trip.duration(t + timedelta(seconds=20)).total_seconds() == 20
+
+
+def test_autoassign_id():
+    u = User(password="123")
+    assert u.id is None
+    u.create()
+    assert u.id == 1

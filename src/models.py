@@ -40,6 +40,26 @@ def _get_Model(db):
     class Model(object):
         columns = []
 
+        def __iter__(self):
+            return (getattr(self, col) for col in self.columns)
+
+        def encode(self, obj):
+            if isinstance(obj, datetime):
+                return obj.strftime("%Y-%m-%dT%H:%M:%S")
+            return obj
+
+        def create(self):
+            query = 'INSERT INTO %s (%s) VALUES (%s)' % (
+                    self.tablename(), 
+                    ','.join(self.columns), 
+                    ','.join(['?']*len(self.columns)))
+            with db:
+                db.execute(query, map(self.encode, self))
+                if 'id' in self.columns:
+                    cursor = db.execute("SELECT last_insert_rowid() FROM %s" % self.tablename())
+                    self.id = int(cursor.next()[0])
+            return self
+
         @classmethod
         def tablename(klass):
             return klass.__name__.lower()
@@ -83,12 +103,6 @@ def get_Bike(db=None):
                     "UPDATE bike SET entry_date=?, model=?, usable=? WHERE id=?",
                     (datestr(self.entry_date), self.model, self.usable, self.id))
 
-        def create(self):
-            with db:
-                db.execute(
-                    "INSERT INTO bike (id,entry_date,model,usable) VALUES (?,?,?,?)",
-                    (self.id, datestr(self.entry_date), self.model, self.usable))
-
         @property
         def location(self):
             cursor = db.execute(
@@ -131,27 +145,29 @@ def get_User(db=None):
 
         def __init__(self, id=None, password_hash="", card="", expire_date=None, password=None):
             self.id = int(id) if id is not None else None
-            self.password_hash = password_hash if password_hash else hash_password(password)
+            self.password = password_hash if password_hash else hash_password(password)
             self.card = card
             self.expire_date = parse_date(expire_date) if expire_date else None
-
-        def create(self):
-            with db:
-                db.execute(
-                    "INSERT INTO user (id,password,card,expire_date) VALUES (?,?,?,?)",
-                    (self.id, self.password_hash, self.card, self.expire_date))
 
         def update(self):
             with db:
                 db.execute(
                     "UPDATE user SET password=?, card=?, expire_date=? WHERE id=?",
-                    (self.password_hash, self.card, self.expire_date, self.id))
+                    (self.password, self.card, self.expire_date, self.id))
 
         def is_admin(self):
             return self.expire_date is None
 
         def auth(self, password):
-            return hash_password(password) == self.password_hash
+            return hash_password(password) == self.password
+
+        @property
+        def trips(self):
+            Trip = get_Trip(db)
+            cursor = db.execute(
+                "SELECT %s FROM %s WHERE user_id=?" % (Trip.cols(), Trip.tablename()), 
+                (self.id,))
+            return [Trip(*row) for row in cursor]
 
         @classmethod
         def get(klass, id):
