@@ -11,7 +11,10 @@
     <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2>Infos utilisateur</h2>
+                <h2>
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                    &nbsp; Infos utilisateur
+                </h2>
             </div>
             <ul class="list-group panel-body">
                 <li class="list-group-item">
@@ -38,13 +41,34 @@
     <div class="col-md-8">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2>Trajets récents</h2>
+                <h2>
+                    <span class="glyphicon glyphicon-road" aria-hidden="true"></span>
+                    &nbsp; Trajets récents
+                </h2>
+                15 derniers voyages
             </div>
             <ul class="list-group panel-body">
-                {% for trip in user.trips %}
-                    <li class="list-group-item">
-                        Le {{trip.departure_date}}, de {{trip.departure_station.name}}
-                        à {{trip.arrival_station.name}}.
+                {% for trip in user.trips[:15] %}
+                    <li class="list-group-item {% if not trip.finished %}active{% endif %}">
+                        <h4>
+                            {{trip.departure_date.date().strftime("%d/%m/%Y")}}
+                            {% if not trip.finished %} (en cours) {% endif %}
+                        </h4>
+                        {{trip.departure_station.name}}
+                        ({{trip.departure_date.time().strftime("%Hh%M")}})
+                        {% if trip.finished %}
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                            {{trip.arrival_station.name}}
+                            ({{trip.arrival_date.time().strftime("%Hh%M")}}).
+                            <span class="badge alert-info">
+                                {{ trip.duration().total_seconds() / 60 }} minutes
+                            </span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span>
+                            <span class="badge alert-warning">
+                                {{ trip.duration().total_seconds() / 60 }} minutes
+                            </span>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
