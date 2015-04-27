@@ -86,6 +86,8 @@ def test_autoassign_id():
 def test_insert_trip():
     u = User.create(password="Hello")
     b = Bike.create(model="mytest")
+    assert b.location is None
+
     s1 = Station.create(
         latitude=50.3245, longitude=4.0325, 
         name="Station 1", capacity=42, payment=True)
@@ -102,3 +104,4 @@ def test_insert_trip():
 
     assert t.user.auth("Hello")
     assert t.bike.model == "mytest"
+    assert b.location.name == "Station 2"
