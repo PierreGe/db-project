@@ -107,7 +107,7 @@ def history():
 def problem():
     ctx = {'bike_list': get_db().Bike.all()}
     if request.method == 'POST':
-        pass# TODO
+        villoId = request.form['villo']
         return render_template("problem.html",signaled=True, **ctx)
     else:
         return render_template("problem.html", **ctx)
