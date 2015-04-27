@@ -22,6 +22,11 @@ def require_login(func):
     return wrapper
 
 
+@app.context_processor
+def user_processor():
+    return {'user': current_user()}
+
+
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
@@ -106,7 +111,7 @@ def problem():
 
 @app.route('/logout')
 def logout():
-    user.disconnectUser()
+    disconnect_user()
     return redirect(url_for('index'))
 
 

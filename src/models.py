@@ -172,6 +172,12 @@ def get_User(db=None, superclass=None):
             return hash_password(password) == self.password
 
         @property
+        def expired(self, when=None):
+            if when is None:
+                when = datetime.now()
+            return self.expire_date and self.expire_date < parse_date(when)
+
+        @property
         def trips(self):
             Trip = get_Trip(db, superclass)
             cursor = db.execute(

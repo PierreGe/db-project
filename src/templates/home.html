@@ -3,11 +3,55 @@
 {% block title %}Accueil{% endblock %}
 
 {% block content %}
-
-
-<div class="starter-template">
-        <h1>TODO</h1>
-        <p> Ici mettre un mot de bienvenue pour les users </p>
+<div class="jumbotron">
+    <h1>Villo!</h1>
 </div>
+{% if user %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>Infos utilisateur</h2>
+            </div>
+            <ul class="list-group panel-body">
+                <li class="list-group-item">
+                    <b>Numéro utilisateur</b>
+                    <span class="badge alert-info">{{user.id}}</span>
+                </li>
+                <li class="list-group-item">
+                    <b>Carte de banque</b>
+                    <span class="badge alert-info">{{user.card}}</span>
+                </li>
+                {% if user.expire_date %}
+                <li class="list-group-item">
+                    <b>Expiration:</b>
+                    {% if user.expired %}
+                    <span class="badge alert-danger">{{user.expire_date}}</span>
+                    {% else %}
+                    <span class="badge alert-success">{{user.expire_date}}</span>
+                    {% endif %}
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>Trajets récents</h2>
+            </div>
+            <ul class="list-group panel-body">
+                {% for trip in user.trips %}
+                    <li class="list-group-item">
+                        Le {{trip.departure_date}}, de {{trip.departure_station.name}}
+                        à {{trip.arrival_station.name}}.
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% else %}
 
+{% endif %}
 {% endblock %}
