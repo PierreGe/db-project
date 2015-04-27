@@ -103,9 +103,8 @@ def history():
 
 
 @app.route("/problem", methods=['GET', 'POST'])
+@require_login
 def problem():
-    if not user.isConnected():
-        return redirect(url_for('login'))
     ctx = {'bike_list': get_db().Bike.all()}
     if request.method == 'POST':
         pass# TODO
