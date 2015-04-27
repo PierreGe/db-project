@@ -5,6 +5,17 @@
 {% block content %}
 <div class="jumbotron">
     <h1>Villo!</h1>
+    {% if not user %}
+    <h2>Vous n'êtes actuellement pas connecté</h2>
+    <a href="inscription" class="btn btn-primary">
+        Inscription
+        <span class="glyphicon glyphicon-list-alt"></span>&nbsp;
+    </a>
+    <a href="login" class="btn btn-primary">
+        Connexion
+        <span class="glyphicon glyphicon-log-in"></span>&nbsp;
+    </a>
+    {% endif %}
 </div>
 {% if user %}
 <div class="row">
@@ -18,16 +29,19 @@
             </div>
             <ul class="list-group panel-body">
                 <li class="list-group-item">
+                    <span class="glyphicon glyphicon-tags"></span>&nbsp;
                     <b>Numéro utilisateur</b>
                     <span class="badge alert-info">{{user.id}}</span>
                 </li>
                 <li class="list-group-item">
+                    <span class="glyphicon glyphicon-credit-card"></span>&nbsp;
                     <b>Carte de banque</b>
                     <span class="badge alert-info">{{user.card}}</span>
                 </li>
                 {% if user.expire_date %}
                 <li class="list-group-item">
-                    <b>Expiration:</b>
+                    <span class="glyphicon glyphicon-calendar"></span>&nbsp;
+                    <b>Expiration</b>
                     {% if user.expired %}
                     <span class="badge alert-danger">{{user.expire_date}}</span>
                     {% else %}
