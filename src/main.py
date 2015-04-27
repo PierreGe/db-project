@@ -15,6 +15,18 @@ def get_db():
     return g._db
 
 
+def require_login(func):
+    """
+    Simple decorator that requires the user to be logged in to display the view
+    """
+    def wrapper(*args, **kwargs):
+        if not user.isConnected():
+            return redirect(url_for('login') + '?next=' + request.path)
+        return func(*args, **kwargs)
+    wrapper.__name__ = "login_required_" + func.__name__
+    return wrapper
+
+
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
@@ -43,14 +55,15 @@ def session_status():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    next_page = request.args['next'] if 'next' in request.args else url_for('index')
     if request.method == 'POST':
         if user.checkLoginPassword(request.form['inputUsername'],request.form['inputPassword']):
             user.connectUser(request.form['inputUsername'])
-            return redirect(url_for('index'))
+            return redirect(next_page)
         else:
-            return render_template("login.html",loginFailure=True)
+            return render_template("login.html", loginFailure=True)
     else:
-        return render_template("login.html")
+        return render_template("login.html", next=next_page)
 
 
 @app.route('/inscription', methods=['GET', 'POST'])
@@ -78,16 +91,14 @@ def station():
 
 
 @app.route("/trip")
+@require_login
 def trip():
-    if not user.isConnected():
-        return redirect(url_for('login'))
     return render_template("trip.html")
 
 
 @app.route("/history")
+@require_login
 def history():
-    if not user.isConnected():
-        return redirect(url_for('login'))
     return render_template("history.html", trip_list=get_db().User.get(0).trips)
 
 
