@@ -1,22 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from flask import session
+from apputils import get_db
 
+def connect_user(user):
+    session['user_id'] = user.id
 
-def checkLoginPassword(login, password):
-    if login == "admin" and password =="admin":
-        return True
-    return False
+def current_user():
+    if 'user_id' in session:
+        return get_db().User.get(session['user_id'])
+    return None
 
-def connectUser(usern):
-    session['username'] = usern
-
-def disconnectUser():
+def disconnect_user():
     """ remove the username from the session if it's there """
-    session.pop('username', None)
-
-def isConnected():
-    return 'username' in session
-
-def getUserName():
-    return session['username']
+    session.pop('user_id', None)

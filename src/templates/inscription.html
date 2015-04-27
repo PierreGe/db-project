@@ -1,67 +1,63 @@
 {% extends "base.html" %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block content %}
-
-
 <div class="container">
-
-    {% if inscriptionFailure %}
-     <div class="alert alert-danger" role="alert">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      <span class="sr-only">Erreur:</span>
+  {% if inscriptionFailure %}
+   <div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Erreur:</span>
     L'inscription ne s'est pas terminé!
-    </div>
+  </div>
+  {% endif %}
 
-    {% endif %}
+  <div class="jumbotron">
+    <h2>La carte 1 an</h2>
+    <p>
+      Vous utiliserez Villo! régulièrement pour vous rendre sur votre lieu de travail ou pour faire une course ?
+      Pour seulement 32,60€ (31,60€ avec la carte MOBIB), vous pouvez louer un vélo autant de fois que vous le souhaitez pendant une période de un an.
+      La première demi-heure de chaque trajet est gratuite. Au-delà des 30 premières minutes vous payez un coût de location.
+    </p>
+  </div>
 
-    <div class="jumbotron">
-        <h2>La carte 1 an</h2>
-       <p>
-Vous utiliserez Villo! régulièrement pour vous rendre sur votre lieu de travail ou pour faire une course ?
-Pour seulement 32,60€ (31,60€ avec la carte MOBIB), vous pouvez louer un vélo autant de fois que vous le souhaitez pendant une période de un an.
-La première demi-heure de chaque trajet est gratuite. Au-delà des 30 premières minutes vous payez un coût de location.</p>
-    </div>
+  <form class="form-signin" action="inscription" method="POST">
+    <h2 class="form-signin-heading">Inscription</h2>
+    
+    <label for="userPassword" class="sr-only">Password</label>
+    <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Mot de passe" required>
 
-      <form class="form-signin" action="login" method="POST">
-          <h2 class="form-signin-heading">Inscription</h2>
-          <label for="userPassword" class="sr-only">Password</label>
-        <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Mot de passe" required>
+    <label for="userBankData" class="sr-only">Email address</label>
+    <input type="text" id="userBankData" name="userBankData" class="form-control" placeholder="Numéro de carte banquaire" required autofocus>
 
-          <label for="userBankData" class="sr-only">Email address</label>
-        <input type="text" id="userBankData" name="userBankData" class="form-control" placeholder="Numéro de carte banquaire" required autofocus>
+    <label for="userLastName" class="sr-only">Email address</label>
+    <input type="text" id="userLastName" name="userLastName" class="form-control" placeholder="Nom" required autofocus>
 
-           <label for="userLastName" class="sr-only">Email address</label>
-        <input type="text" id="userLastName" name="userLastName" class="form-control" placeholder="Nom" required autofocus>
+    <label for="userFirstName" class="sr-only">Email address</label>
+    <input type="text" id="userFirstName" name="userFirstName" class="form-control" placeholder="Prénom" required autofocus>
 
-          <label for="userFirstName" class="sr-only">Email address</label>
-        <input type="text" id="userFirstName" name="userFirstName" class="form-control" placeholder="Prénom" required autofocus>
+    <label for="userStreet" class="sr-only">Email address</label>
+    <input type="text" id="userStreet" name="userStreet" class="form-control" placeholder="Rue" required autofocus>
 
-           <label for="userStreet" class="sr-only">Email address</label>
-        <input type="text" id="userStreet" name="userStreet" class="form-control" placeholder="Rue" required autofocus>
+    <label for="userNumber" class="sr-only">Email address</label>
+    <input type="text" id="userNumber" name="userNumber" class="form-control" placeholder="Numéro" required autofocus>
 
-          <label for="userNumber" class="sr-only">Email address</label>
-        <input type="text" id="userNumber" name="userNumber" class="form-control" placeholder="Numéro" required autofocus>
+    <label for="userBox" class="sr-only">Email address</label>
+    <input type="text" id="userBox" name="userBox" class="form-control" placeholder="Boite"  autofocus>
 
-                     <label for="userBox" class="sr-only">Email address</label>
-        <input type="text" id="userBox" name="userBox" class="form-control" placeholder="Boite"  autofocus>
+    <label for="userPostalCode" class="sr-only">Email address</label>
+    <input type="text" id="userPostalCode" name="userPostalCode" class="form-control" placeholder="Code Postal" required autofocus>
 
-                     <label for="userPostalCode" class="sr-only">Email address</label>
-        <input type="text" id="userPostalCode" name="userPostalCode" class="form-control" placeholder="Code Postal" required autofocus>
+    <label for="userCity" class="sr-only">Email address</label>
+    <input type="text" id="userCity" name="userCity" class="form-control" placeholder="Ville" required autofocus>
 
-                     <label for="userCity" class="sr-only">Email address</label>
-        <input type="text" id="userCity" name="userCity" class="form-control" placeholder="Ville" required autofocus>
+    <label for="userCountry" class="sr-only">Email address</label>
+    <input type="text" id="userCountry" name="userCountry" class="form-control" placeholder="Pays" required autofocus>
 
-                     <label for="userCountry" class="sr-only">Email address</label>
-        <input type="text" id="userCountry" name="userCountry" class="form-control" placeholder="Pays" required autofocus>
+    <label for="userPhone" class="sr-only">Email address</label>
+    <input type="text" id="userPhone" name="userPhone" class="form-control" placeholder="Numéro de téléphone" required autofocus>
 
-           <label for="userPhone" class="sr-only">Email address</label>
-        <input type="text" id="userPhone" name="userPhone" class="form-control" placeholder="Numéro de téléphone" required autofocus>
-
-
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Villo!</button>
-      </form>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Villo!</button>
+  </form>
 </div>
-
 {% endblock %}
