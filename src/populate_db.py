@@ -61,7 +61,7 @@ def insert_users(db, input_file="data/users.xml"):
             ('street', 'number', 'cp', 'city')))
         users.append((
             int(userdata['userID']),
-            userdata['password'],
+            hash_password(userdata['password']),
             userdata['card'],
             userdata['expiryDate']
         ))
