@@ -108,6 +108,11 @@ def problem():
     else:
         return render_template("problem.html", **ctx)
 
+@app.route("/billing")
+@require_login
+def billing():
+    return render_template("billing.html")
+
 
 @app.route('/logout')
 def logout():
