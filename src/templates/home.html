@@ -75,12 +75,12 @@
                             {{trip.arrival_station.name}}
                             ({{trip.arrival_date.time().strftime("%Hh%M")}}).
                             <span class="badge alert-info">
-                                {{ trip.duration().total_seconds() / 60 }} minutes
+                                {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
                             </span>
                         {% else %}
                             <span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span>
                             <span class="badge alert-warning">
-                                {{ trip.duration().total_seconds() / 60 }} minutes
+                                {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
                             </span>
                         {% endif %}
                     </li>
