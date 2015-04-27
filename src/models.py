@@ -48,7 +48,7 @@ def _get_Model(db):
                 return obj.strftime("%Y-%m-%dT%H:%M:%S")
             return obj
 
-        def create(self):
+        def insert(self):
             query = 'INSERT INTO %s (%s) VALUES (%s)' % (
                     self.tablename(), 
                     ','.join(self.columns), 
@@ -59,6 +59,12 @@ def _get_Model(db):
                     cursor = db.execute("SELECT last_insert_rowid() FROM %s" % self.tablename())
                     self.id = int(cursor.next()[0])
             return self
+
+        @classmethod
+        def create(klass, *args, **kwargs):
+            res = klass(*args, **kwargs)
+            res.insert()
+            return res
 
         @classmethod
         def tablename(klass):

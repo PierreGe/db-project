@@ -22,37 +22,37 @@ def teardown_function(*args):
 
 def test_create_bike():
     assert len(Bike.all()) == 0
-    Bike().create()
+    Bike.create()
     assert len(Bike.all()) == 1
 
 
 def test_repr_bike():
     assert repr(Bike()) == "<Bike id=?>"
-    Bike().create()
+    Bike.create()
     assert repr(Bike.get(1)) == "<Bike id=1>"
 
 
 def test_bike_count():
     assert Bike.count() == 0
-    Bike().create()
+    Bike.create()
     assert Bike.count() == 1
 
 
 def test_create_user():
     assert len(User.all()) == 0
-    User(password="hello").create()
+    User(password="hello").insert()
     assert len(User.all()) == 1
 
 
 def test_create_user_with_id():
     user = User(password="42", id=42)
-    user.create()
+    user.insert()
     assert User.get(42)
 
 
 def test_repr_user():
     assert repr(User(password="hello")) == "<User id=?>"
-    User(password="hello").create()
+    User(password="hello").insert()
     assert repr(User.get(1)) == "<User id=1>"
 
 
@@ -79,5 +79,26 @@ def test_trip_duration():
 def test_autoassign_id():
     u = User(password="123")
     assert u.id is None
-    u.create()
+    u.insert()
     assert u.id == 1
+
+
+def test_insert_trip():
+    u = User.create(password="Hello")
+    b = Bike.create(model="mytest")
+    s1 = Station.create(
+        latitude=50.3245, longitude=4.0325, 
+        name="Station 1", capacity=42, payment=True)
+    s2 = Station.create(
+        latitude=50.3245, longitude=4.0325,
+        name="Station 2", capacity=42, payment=True)
+    from_date, to_date = "2015-07-12T10:10:10", "2015-07-12T11:10:10"
+
+    t = Trip.create(
+        departure_station_id=s1.id, arrival_station_id=s2.id,
+        departure_date=from_date, arrival_date=to_date,
+        user_id=u.id, bike_id=b.id
+    )
+
+    assert t.user.auth("Hello")
+    assert t.bike.model == "mytest"

@@ -6,16 +6,16 @@
 
 
 <div class="starter-template">
-        <h1>TODO</h1>
-        <p> Ici possibilité de voir l'historique des trajets </p>
-        <ul>
-            {% for trip in trip_list %}
-            <li>
-                De {{trip.departure_station.name}} ({{trip.departure_date}})
-                à  {{trip.arrival_station.name}} ({{ trip.arrival_date }})
-            </li>
-            {% endfor %}
-        </ul>
+    <h1>TODO</h1>
+    <p> Ici possibilité de voir l'historique des trajets </p>
+    <ul>
+        {% for trip in trip_list %}
+        <li>
+            De {{trip.departure_station.name}} ({{trip.departure_date}})
+            à  {{trip.arrival_station.name}} ({{ trip.arrival_date }})
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 
 {% endblock %}
