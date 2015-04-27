@@ -165,7 +165,7 @@ def get_User(db=None):
         def trips(self):
             Trip = get_Trip(db)
             cursor = db.execute(
-                "SELECT %s FROM %s WHERE user_id=?" % (Trip.cols(), Trip.tablename()), 
+                "SELECT %s FROM %s WHERE user_id=? ORDER BY departure_date ASC" % (Trip.cols(), Trip.tablename()), 
                 (self.id,))
             return [Trip(*row) for row in cursor]
 
@@ -270,3 +270,11 @@ def get_Station(db=None):
             return klass(*row)
 
     return Station
+
+class Database(object):
+    def __init__(self, connection=None):
+        connection = default_or_db(connection)
+        self.Trip = get_Trip(connection)
+        self.Bike = get_Bike(connection)
+        self.User = get_User(connection)
+        self.Station = get_Station(connection)
