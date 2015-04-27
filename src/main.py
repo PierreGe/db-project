@@ -6,6 +6,7 @@ from user import current_user, connect_user, disconnect_user
 from models import Database
 import config
 from apputils import get_db
+import datetime
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -119,10 +120,12 @@ def problem():
 @app.route("/billing", methods=['POST'])
 @require_login
 def billing_post():
+    starting = current_user().expire_date - datetime.timedelta(days=(days_per_year))
     detail = ""
     detail += "# Abonnement \nCarte 1 an : 32.6 euros \n# Voyages \n"
     for trip in current_user().trips:
-        detail += "De "+trip.departure_station.name+" ("+str(trip.departure_date)+") à "+trip.arrival_station.name+" ("+str(trip.arrival_date)+ ") : " + str(trip.price()) + "\n"
+        if trip.departure_date > starting:
+            detail += "De "+trip.departure_station.name+" ("+str(trip.departure_date)+") à "+trip.arrival_station.name+" ("+str(trip.arrival_date)+ ") : " + str(trip.price()) + "\n"
     response = make_response(detail)
     response.headers["Content-Disposition"] = "attachment; filename=facture-details.md"
     return response
@@ -130,16 +133,21 @@ def billing_post():
 @app.route("/billing", methods=['GET'])
 @require_login
 def billing():
+    days_per_year = 365.24
+    starting = current_user().expire_date - datetime.timedelta(days=(days_per_year))
+    periodeFact = starting.strftime("%d-%m-%Y")
+    periodeFact += "->"
+    periodeFact += str(current_user().expire_date.strftime("%d-%m-%Y"))
     AllTrip = current_user().trips
     billedTrip = []
     total = 32.60
     for trip in AllTrip:
         if trip.arrival_station:
-            # Periode de facturation
-            if trip.price():
-                billedTrip.append(trip)
-                total += trip.price()
-    return render_template("billing.html",totalBilled=total, trip_list=billedTrip)
+            if trip.departure_date > starting:
+                if trip.price():
+                    billedTrip.append(trip)
+                    total += trip.price()
+    return render_template("billing.html",periodeBilling = periodeFact, totalBilled=total, trip_list=billedTrip)
 
 
 @app.route('/logout')
