@@ -32,6 +32,14 @@ def parse_date(datestr):
         return datestr
     raise TypeError()
 
+def memoize(method):
+    name = '_retval_' + method.__name__
+    def wrapper(self, *args, **kwargs):
+        if not hasattr(self, name):
+            setattr(self, name, method(self, *args, **kwargs))
+        return getattr(self, name)
+    return wrapper
+
 default_or_db = lambda db: sqlite3.Connection(config.DATABASE) if db is None else db
 
 def _get_Model(db):
@@ -292,15 +300,27 @@ def get_Station(db=None, superclass=None):
             return "<Station [%s] %s>" % (id, self.name)
 
         @property
+        @memoize
         def available_bikes(self):
             """
-            Return the number of available bikes at this station
+            Return the number of all bikes at this station
             """
-            query = "SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) WHERE arrival_station_id=?"
-            cursor = db.execute(query, (self.id,))
+            query = 'SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=? AND bike.usable=?'
+            cursor = db.execute(query, (self.id, True))
+            return cursor.next()[0]
+
+        @property
+        @memoize
+        def broken_bikes(self):
+            """
+            Return the number of unusable bikes at this station
+            """
+            query = 'SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=? AND bike.usable=?'
+            cursor = db.execute(query, (self.id, False))
             return cursor.next()[0]
         
         @property
+        @memoize
         def bikes(self):
             """
             Return the list of bikes stopped at this station

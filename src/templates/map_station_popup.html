@@ -1,15 +1,16 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3>
-            <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+            <span class="label label-info">{{station.id}}</span>
             &nbsp; {{station.name}}
         </h3>
     </div>
     <div class="list-group panel-body">
         <div class='progress'>
-            <div class='progress-bar' role='progressbar' 
-                 aria-valuenow='{{station.available_bikes}}' aria-valuemin='0' 
-                 aria-valuemax='{{station.capacity}}' 
+            <div class='progress-bar progress-bar-danger' role='progressbar' 
+                 style="width: {{100.0*station.broken_bikes/station.capacity}}%;">
+            </div>
+            <div class='progress-bar progress-bar-success' role='progressbar' 
                  style="width: {{100.0*station.available_bikes/station.capacity}}%;">
             </div>
         </div>
@@ -19,7 +20,8 @@
                 <span class="glyphicon glyphicon-credit-card" style="color: green;"></span>
             </abbr>
             {% endif %}
-            {{station.available_bikes}} vélos / {{station.capacity}} places
+            {{station.available_bikes}} vélos utilisables&nbsp;/&nbsp;
+            {{station.capacity - (station.available_bikes + station.broken_bikes)}} places libres
         </strong>
     </div>
 </div>
