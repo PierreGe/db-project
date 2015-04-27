@@ -105,8 +105,7 @@ def problem():
     if request.method == 'POST':
         villoId = int(request.form['villo'])
         bike = get_db().Bike.get(villoId)
-        bike.usable = False
-        bike.update()
+        bike.updateUsable(False)
         ctx = {'bike_list': get_db().Bike.allUsable()}
         return render_template("problem.html", signaled=True, **ctx)
     else:

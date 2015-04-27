@@ -111,6 +111,13 @@ def get_Bike(db=None, superclass=None):
                     "UPDATE bike SET entry_date=?, model=?, usable=? WHERE id=?",
                     (datestr(self.entry_date), self.model, self.usable, self.id))
 
+        def updateUsable(self,newValue):
+            with db:
+                db.execute(
+                    "UPDATE bike SET usable=? WHERE id=?",
+                    (newValue, self.id))
+            self.usable = newValue
+
         @property
         def location(self):
             cursor = db.execute(
