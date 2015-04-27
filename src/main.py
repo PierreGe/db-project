@@ -102,10 +102,14 @@ def history():
 @app.route("/problem", methods=['GET', 'POST'])
 @require_login
 def problem():
-    ctx = {'bike_list': get_db().Bike.all()}
     if request.method == 'POST':
+        villoId = int(request.form['villo'])
+        bike = get_db().Bike.get(villoId)
+        bike.updateUsable(False)
+        ctx = {'bike_list': get_db().Bike.allUsable()}
         return render_template("problem.html", signaled=True, **ctx)
     else:
+        ctx = {'bike_list': get_db().Bike.allUsable()}
         return render_template("problem.html", **ctx)
 
 

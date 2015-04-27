@@ -111,6 +111,13 @@ def get_Bike(db=None, superclass=None):
                     "UPDATE bike SET entry_date=?, model=?, usable=? WHERE id=?",
                     (datestr(self.entry_date), self.model, self.usable, self.id))
 
+        def updateUsable(self,newValue):
+            with db:
+                db.execute(
+                    "UPDATE bike SET usable=? WHERE id=?",
+                    (newValue, self.id))
+            self.usable = newValue
+
         @property
         def location(self):
             cursor = db.execute(
@@ -132,9 +139,15 @@ def get_Bike(db=None, superclass=None):
                 (self.id,))
 
         @classmethod
+        def allUsable(klass):
+            cursor = db.execute("SELECT %s FROM %s WHERE usable=1" % (klass.cols(), klass.tablename()))
+            return [klass(*row) for row in cursor]
+
+
+        @classmethod
         def get(klass, id):
             cursor = db.execute(
-                "SELECT id,entry_date,model,usable FROM bike WHERE id=? LIMIT 1", 
+                "SELECT id,entry_date,model,usable FROM bike WHERE id=? LIMIT 1",
                 (id,))
             try:
                 row = cursor.next()
