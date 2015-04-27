@@ -41,8 +41,8 @@ def insert_stations(db, input_file="data/stations.csv"):
             int(station['nume\xcc\x81ro']),
             station['borne de paiement'] == 'True',
             int(station['capacite\xcc\x81']),
-            float(station['coordonne\xcc\x81e X']),
             float(station['coordonne\xcc\x81e Y']),
+            float(station['coordonne\xcc\x81e X']),
             station['nom']
         ) for station in DictReader(open(input_file), delimiter=';')
     )
