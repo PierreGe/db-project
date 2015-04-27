@@ -27,8 +27,8 @@ def insert_bikes(db, input_file="data/villos.csv"):
         (
             int(bike['nume\xcc\x81ro']),
             bike['mise en service'],
-            bike['fonctionne'] == 'True',
-            bike['mode\xcc\x80le']
+            bike['mode\xcc\x80le'],
+            bike['fonctionne'] == 'True'
         ) for bike in DictReader(open(input_file), delimiter=';')
     )
     with db:
@@ -41,8 +41,8 @@ def insert_stations(db, input_file="data/stations.csv"):
             int(station['nume\xcc\x81ro']),
             station['borne de paiement'] == 'True',
             int(station['capacite\xcc\x81']),
-            float(station['coordonne\xcc\x81e X']),
             float(station['coordonne\xcc\x81e Y']),
+            float(station['coordonne\xcc\x81e X']),
             station['nom']
         ) for station in DictReader(open(input_file), delimiter=';')
     )
@@ -61,7 +61,7 @@ def insert_users(db, input_file="data/users.xml"):
             ('street', 'number', 'cp', 'city')))
         users.append((
             int(userdata['userID']),
-            userdata['password'],
+            hash_password(userdata['password']),
             userdata['card'],
             userdata['expiryDate']
         ))

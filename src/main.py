@@ -2,29 +2,29 @@
 
 from flask import Flask,render_template, g, session, redirect, url_for, escape, request
 import os
-import user
+from user import current_user, connect_user, disconnect_user
 from models import Database
 import config
+from apputils import get_db
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-
-def get_db():
-    if not hasattr(g, '_db'):
-        g._db = Database()
-    return g._db
-
 
 def require_login(func):
     """
     Simple decorator that requires the user to be logged in to display the view
     """
     def wrapper(*args, **kwargs):
-        if not user.isConnected():
+        if not current_user():
             return redirect(url_for('login') + '?next=' + request.path)
         return func(*args, **kwargs)
     wrapper.__name__ = "login_required_" + func.__name__
     return wrapper
+
+
+@app.context_processor
+def user_processor():
+    return {'user': current_user()}
 
 
 @app.teardown_appcontext
@@ -48,8 +48,8 @@ def index():
 
 @app.route('/session_status')
 def session_status():
-    if user.isConnected():
-        return 'Logged in as %s' % escape(user.getUserName())
+    if current_user():
+        return 'Logged in as %s' % escape(current_user().id)
     return 'You are not logged in'
 
 
@@ -57,32 +57,29 @@ def session_status():
 def login():
     next_page = request.args['next'] if 'next' in request.args else url_for('index')
     if request.method == 'POST':
-        if user.checkLoginPassword(request.form['inputUsername'],request.form['inputPassword']):
-            user.connectUser(request.form['inputUsername'])
-            return redirect(next_page)
-        else:
-            return render_template("login.html", loginFailure=True)
+        try:
+            user = get_db().User.get(int(request.form['userId']))
+            if user.auth(request.form['userPassword']):
+                connect_user(user)
+                return redirect(next_page)
+        except KeyError:
+            pass
+        return render_template("login.html", loginFailure=True)
     else:
         return render_template("login.html", next=next_page)
 
 
-@app.route('/inscription', methods=['GET', 'POST'])
+@app.route('/inscription', methods=['POST'])
 def inscription():
-    if request.method == 'POST':
-        pass # TODO
-    # userPassword
-    # userBankData
-    # userLastName
-    # userFirstName
-    # userStreet
-    # userNumber
-    # userBox
-    # userPostalCode
-    # userCity
-    # userCountry
-    # userPhone
-    else:
-        return render_template("inscription.html")
+    new_user = get_db().User.create(
+        password=request.form['userPassword'],
+        card=request.form['userBankData'])
+    connect_user(new_user)
+    return render_template("welcome.html", user=new_user)
+
+@app.route('/inscription', methods=['GET'])
+def inscription_form():
+    return render_template("inscription.html")
 
 
 @app.route("/station")
@@ -99,23 +96,24 @@ def trip():
 @app.route("/history")
 @require_login
 def history():
-    return render_template("history.html", trip_list=get_db().User.get(0).trips)
+    return render_template("history.html", trip_list=current_user().trips)
 
 
 @app.route("/problem", methods=['GET', 'POST'])
 @require_login
 def problem():
-    ctx = {'bike_list': get_db().Bike.all()}
+    ctx = {'bike_list': get_db().Bike.allUsable()}
     if request.method == 'POST':
         villoId = request.form['villo']
         return render_template("problem.html",signaled=True, **ctx)
+        return render_template("problem.html", signaled=True, **ctx)
     else:
         return render_template("problem.html", **ctx)
 
 
 @app.route('/logout')
 def logout():
-    user.disconnectUser()
+    disconnect_user()
     return redirect(url_for('index'))
 
 

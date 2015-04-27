@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Bienvenue{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="jumbotron">
+    <h2>Bienvenue sur Villo!</h2>
+    <p>
+      Votre numéro d'utilisateur est <strong>{{user.id}}</strong>.
+      Notez-le précieusement pour vous reconnecter ultérieurement au système.
+    </p>
+  </div>
+</div>
+{% endblock %}

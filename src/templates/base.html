@@ -2,27 +2,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>Villo!-{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-      <link rel="icon" href="static/images/favicon.ico">
-
-    <title>Villo!-{% block title %}{% endblock %}</title>
-
+    <link rel="icon" href="static/images/favicon.ico">
     <!-- Bootstrap core CSS -->
     <link href="static/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="static/css/villo.css" rel="stylesheet">
-
-
+    <script src="static/js/jquery.min.js"></script>
+    {% block head %}{% endblock %}
   </head>
-
   <body>
-
        <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -35,28 +30,29 @@
           <a class="navbar-brand" href="/">Villo</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav">
             <li><a href="station">Stations</a></li>
-                {% if 'username' in session %}
-            <li><a href="trip">Trajet</a></li>
-                {% endif %}
+            {% if user %}
+              <li><a href="trip">Trajet</a></li>
+            {% endif %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
-              {% if 'username' in session %}
+            {% if user %}
             <!--<li><a href="#">Settings</a></li>
             <li><a href="#">Help</a></li> -->
-             <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ session['username'] }}<span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="history">Historique</a></li>
-                    <li><a href="problem">Signaler un problème</a></li>
-                    <li class="divider"></li>
-                    <li><a href="logout">Déconnexion</a></li>
-                      {% else %}
-
-                      <li><a href="login">Connexion</a></li>
-            <li><a href="inscription">Inscription</a></li>
-                      {% endif %}
+              <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ session['user_id'] }}
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="history">Historique</a></li>
+                <li><a href="problem">Signaler un problème</a></li>
+                <li class="divider"></li>
+                <li><a href="logout">Déconnexion</a></li>
+            {% else %}
+                <li><a href="login">Connexion</a></li>
+                <li><a href="inscription">Inscription</a></li>
+            {% endif %}
           </ul>
         </div>
       </div>
@@ -64,18 +60,12 @@
 
 
     <div class="container">
-
-        {% block content %} {% endblock %}
-
-
-    <hr>
-    <footer>
+      {% block content %} {% endblock %}
+      <hr>
+      <footer>
         <p>&copy; Villo! 2015</p>
       </footer>
-
     </div><!-- /.container -->
-   <script src="static/js/jquery.min.js"></script>
-  <script src="static/js/bootstrap.min.js"></script>
-
+    <script src="static/js/bootstrap.min.js"></script>
   </body>
 </html>
