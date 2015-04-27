@@ -18,10 +18,21 @@ $(document).ready(function(){
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    var load_popup = function(popupevent){
+        var popup = popupevent.popup;
+        var url = popup.getContent();
+        if (url.match('^/map_station_popup/[0-9]+')){
+            popup.setContent("Loading...");
+            $.get(url, function(html){popup.setContent(html);});
+        }
+    }
+
+    var marker;
     {% for station in station_list %}
-    L.marker([{{station.latitude}}, {{station.longitude}}]).addTo(map)
-        .bindPopup('#{{station.id}} {{station.name}} ({{station.capacity}} places)');
-    console.log("Added {{station.id}}");
+    marker = L.marker([{{station.latitude}}, {{station.longitude}}]);
+    marker.bindPopup('/map_station_popup/{{station.id}}');
+    marker.addTo(map);
+    marker.on('popupopen', load_popup);
     {% endfor %}
 });
 </script>

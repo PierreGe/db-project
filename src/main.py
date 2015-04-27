@@ -87,6 +87,12 @@ def station():
     return render_template("station.html", station_list=get_db().Station.all())
 
 
+@app.route("/map_station_popup/<int:station_id>")
+def station_popup(station_id):
+    ctx = {'station': get_db().Station.get(station_id)}
+    return render_template("map_station_popup.html", **ctx)
+
+
 @app.route("/trip")
 @require_login
 def trip():
