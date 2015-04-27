@@ -277,7 +277,7 @@ def get_Station(db=None, superclass=None):
     if superclass is None:
         superclass = _get_Model(db)
 
-    class Station(_get_Model(db)):
+    class Station(superclass):
         columns = ['payment', 'capacity', 'latitude', 'longitude', 'name', 'id']
 
         def __init__(self, payment, capacity, latitude, longitude, name, id=None):
@@ -290,6 +290,25 @@ def get_Station(db=None, superclass=None):
         def __repr__(self):
             id = str(self.id) if self.id is not None else "?"
             return "<Station [%s] %s>" % (id, self.name)
+
+        @property
+        def available_bikes(self):
+            """
+            Return the number of available bikes at this station
+            """
+            query = "SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) WHERE arrival_station_id=?"
+            cursor = db.execute(query, (self.id,))
+            return cursor.next()[0]
+        
+        @property
+        def bikes(self):
+            """
+            Return the list of bikes stopped at this station
+            """
+            Bike = get_Bike(db, superclass)
+            query = "SELECT %s FROM (SELECT bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?"
+            cursor = db.execute(query%Bike.cols(), (self.id,))
+            return [Bike(*row) for row in cursor]
 
         @classmethod
         def get(klass, id):
