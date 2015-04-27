@@ -21,8 +21,8 @@
     </p>
   </div>
 
-{% if user %}
-  <form class="form-signin" action="inscription" method="POST">
+{% if not user %}
+  <form class="form-signin" action="subscription" method="POST">
     <h2 class="form-signin-heading">Inscription</h2>
     
     <label for="userPassword" class="sr-only">Password</label>
@@ -61,7 +61,7 @@
     <button class="btn btn-lg btn-primary btn-block" type="submit">Villo!</button>
   </form>
 {% else %}
-  <form class="form-signin" action="inscription" method="POST">
+  <form class="form-signin" action="subscription" method="POST">
     <h2 class="form-signin-heading">Renouveller</h2>
       <div class="alert alert-warning" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
