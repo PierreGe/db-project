@@ -90,11 +90,13 @@ def _get_Model(db):
 
     return Model
 
-def get_Bike(db=None):
+def get_Bike(db=None, superclass=None):
     """Get a Bike DAO with provided db"""
     db = default_or_db(db)
+    if superclass is None:
+        superclass = _get_Model(db)
 
-    class Bike(_get_Model(db)):
+    class Bike(superclass):
         columns = ['id', 'entry_date', 'model', 'usable']
 
         def __init__(self, id=None, entry_date=None, model="JCDECAUX2010", usable=True):
@@ -119,12 +121,12 @@ def get_Bike(db=None):
             except StopIteration:
                 return None
             if res is not None:
-                Station = get_Station(db)
+                Station = get_Station(db, superclass)
                 return Station.get(res)
 
         @property
         def trips(self):
-            Trip = get_Trip(db)
+            Trip = get_Trip(db, superclass)
             cursor = db.execute(
                 "SELECT %s FROM trip WHERE bike_id=?" % Trip.cols(),
                 (self.id,))
@@ -142,11 +144,13 @@ def get_Bike(db=None):
 
     return Bike
 
-def get_User(db=None):
+def get_User(db=None, superclass=None):
     """Get a User DAO with provided db"""
     db = default_or_db(db)
+    if superclass is None:
+        superclass = _get_Model(db)
 
-    class User(_get_Model(db)):
+    class User(superclass):
         columns = ['id', 'password', 'card', 'expire_date']
 
         def __init__(self, id=None, password_hash="", card="", expire_date=None, password=None):
@@ -169,7 +173,7 @@ def get_User(db=None):
 
         @property
         def trips(self):
-            Trip = get_Trip(db)
+            Trip = get_Trip(db, superclass)
             cursor = db.execute(
                 "SELECT %s FROM %s WHERE user_id=? ORDER BY departure_date ASC" % (Trip.cols(), Trip.tablename()), 
                 (self.id,))
@@ -188,11 +192,13 @@ def get_User(db=None):
 
     return User
 
-def get_Trip(db=None):
+def get_Trip(db=None, superclass=None):
     """Get a Trip DAO with provided db"""
     db = default_or_db(db)
+    if superclass is None:
+        superclass = _get_Model(db)
 
-    class Trip(_get_Model(db)):
+    class Trip(superclass):
         columns = [
             'user_id', 'bike_id',
             'departure_station_id', 'departure_date',
@@ -209,12 +215,12 @@ def get_Trip(db=None):
 
         @property
         def user(self):
-            User = get_User(db)
+            User = get_User(db, superclass)
             return User.get(self.user_id)
 
         @property
         def bike(self):
-            Bike = get_Bike(db)
+            Bike = get_Bike(db, superclass)
             return Bike.get(self.bike_id)
 
         @property
@@ -230,13 +236,13 @@ def get_Trip(db=None):
 
         @property
         def departure_station(self):
-            Station = get_Station(db)
+            Station = get_Station(db, superclass)
             return Station.get(self.departure_station_id)
 
         @property
         def arrival_station(self):
             if self.finished:
-                Station = get_Station(db)
+                Station = get_Station(db, superclass)
                 return Station.get(self.arrival_station_id)
             return None
 
@@ -246,9 +252,11 @@ def get_Trip(db=None):
 
     return Trip
 
-def get_Station(db=None):
+def get_Station(db=None, superclass=None):
     """Get a Station DAO with provided db"""
     db = default_or_db(db)
+    if superclass is None:
+        superclass = _get_Model(db)
 
     class Station(_get_Model(db)):
         columns = ['payment', 'capacity', 'latitude', 'longitude', 'name', 'id']
@@ -280,7 +288,8 @@ def get_Station(db=None):
 class Database(object):
     def __init__(self, connection=None):
         connection = default_or_db(connection)
-        self.Trip = get_Trip(connection)
-        self.Bike = get_Bike(connection)
-        self.User = get_User(connection)
-        self.Station = get_Station(connection)
+        base_model = _get_Model(connection)
+        self.Trip = get_Trip(connection, base_model)
+        self.Bike = get_Bike(connection, base_model)
+        self.User = get_User(connection, base_model)
+        self.Station = get_Station(connection, base_model)
