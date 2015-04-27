@@ -15,7 +15,6 @@ def disconnectUser():
     """ remove the username from the session if it's there """
     session.pop('username', None)
 
-
 def isConnected():
     return 'username' in session
 
