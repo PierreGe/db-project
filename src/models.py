@@ -40,6 +40,19 @@ def memoize(method):
         return getattr(self, name)
     return wrapper
 
+def fetch_first(cursor):
+    """Return the very first value of the cursor (ex COUNTs)"""
+    return cursor.next()[0]
+
+def fetch_one(as_class, cursor):
+    """Return the first row of cursor cast to as_class"""
+    values = cursor.next()
+    return as_class(*values)
+
+def fetch_all(as_class, cursor):
+    """Like fetch_one, but on all rows of the cursor"""
+    return [as_class(*row) for row in cursor]
+
 default_or_db = lambda db: sqlite3.Connection(config.DATABASE) if db is None else db
 
 def _get_Model(db):
@@ -64,8 +77,10 @@ def _get_Model(db):
             with db:
                 db.execute(query, map(self.encode, self))
                 if 'id' in self.columns:
-                    cursor = db.execute("SELECT last_insert_rowid() FROM %s" % self.tablename())
-                    self.id = int(cursor.next()[0])
+                    self.id = fetch_first(
+                        db.execute(
+                            "SELECT last_insert_rowid() FROM %s" % 
+                            self.tablename()))
             return self
 
         @classmethod
@@ -84,13 +99,15 @@ def _get_Model(db):
 
         @classmethod
         def all(klass):
-            cursor = db.execute("SELECT %s FROM %s" % (klass.cols(), klass.tablename()))
-            return [klass(*row) for row in cursor]
+            return fetch_all(
+                klass,
+                db.execute(
+                    "SELECT %s FROM %s" % (klass.cols(), klass.tablename())))
 
         @classmethod
         def count(klass):
-            cursor = db.execute("SELECT COUNT(*) FROM %s" % klass.tablename())
-            return cursor.next()[0]
+            return fetch_first(
+                db.execute("SELECT COUNT(*) FROM %s" % klass.tablename()))
 
         def __repr__(self):
             id = self.id if self.id is not None else "?"
@@ -142,26 +159,24 @@ def get_Bike(db=None, superclass=None):
         @property
         def trips(self):
             Trip = get_Trip(db, superclass)
-            cursor = db.execute(
+            return fetch_all(Trip, db.execute(
                 "SELECT %s FROM trip WHERE bike_id=?" % Trip.cols(),
-                (self.id,))
+                (self.id,)))
 
         @classmethod
         def allUsable(klass):
-            cursor = db.execute("SELECT %s FROM %s WHERE usable=1" % (klass.cols(), klass.tablename()))
-            return [klass(*row) for row in cursor]
+            return fetch_all(klass, db.execute(
+                "SELECT %s FROM %s WHERE usable=1" % (klass.cols(), klass.tablename())))
 
 
         @classmethod
         def get(klass, id):
-            cursor = db.execute(
-                "SELECT id,entry_date,model,usable FROM bike WHERE id=? LIMIT 1",
-                (id,))
             try:
-                row = cursor.next()
+                return fetch_one(klass, db.execute(
+                    "SELECT id,entry_date,model,usable FROM bike WHERE id=? LIMIT 1",
+                    (id,)))
             except StopIteration:
                 raise KeyError(id)
-            return klass(*row)
 
     return Bike
 
@@ -201,21 +216,18 @@ def get_User(db=None, superclass=None):
         @property
         def trips(self):
             Trip = get_Trip(db, superclass)
-            cursor = db.execute(
+            return fetch_all(Trip, db.execute(
                 "SELECT %s FROM %s WHERE user_id=? ORDER BY departure_date DESC" % (Trip.cols(), Trip.tablename()), 
-                (self.id,))
-            return [Trip(*row) for row in cursor]
+                (self.id,)))
 
         @classmethod
         def get(klass, id):
-            cursor = db.execute(
-                "SELECT id,password,card,expire_date FROM user WHERE id=? LIMIT 1", 
-                (id,))
             try:
-                row = cursor.next()
+                return fetch_one(klass, db.execute(
+                    "SELECT id,password,card,expire_date FROM user WHERE id=? LIMIT 1", 
+                    (id,)))
             except StopIteration:
                 raise KeyError(id)
-            return klass(*row)
 
     return User
 
@@ -288,6 +300,9 @@ def get_Station(db=None, superclass=None):
     class Station(superclass):
         columns = ['payment', 'capacity', 'latitude', 'longitude', 'name', 'id']
 
+        CountBikesQuery = 'SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?'
+        BikesQuery = 'SELECT %s FROM (SELECT bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?' % get_Bike(db, superclass).cols()
+
         def __init__(self, payment, capacity, latitude, longitude, name, id=None):
             self.latitude, self.longitude = float(latitude), float(longitude)
             self.name = str(name)
@@ -305,9 +320,8 @@ def get_Station(db=None, superclass=None):
             """
             Return the number of all bikes at this station
             """
-            query = 'SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=? AND bike.usable=?'
-            cursor = db.execute(query, (self.id, True))
-            return cursor.next()[0]
+            return fetch_first(db.execute(
+                self.CountBikesQuery + ' AND bike.usable=?', (self.id, True)))
 
         @property
         @memoize
@@ -315,9 +329,16 @@ def get_Station(db=None, superclass=None):
             """
             Return the number of unusable bikes at this station
             """
-            query = 'SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=? AND bike.usable=?'
-            cursor = db.execute(query, (self.id, False))
-            return cursor.next()[0]
+            return fetch_first(db.execute(
+                self.CountBikesQuery + ' AND bike.usable=?', (self.id, False)))
+
+        @property
+        @memoize
+        def all_bikes(self):
+            """
+            Return the total number of bikes at this station
+            """
+            return fetch_first(db.execute(self.CountBikesQuery, (self.id,)))
         
         @property
         @memoize
@@ -326,20 +347,20 @@ def get_Station(db=None, superclass=None):
             Return the list of bikes stopped at this station
             """
             Bike = get_Bike(db, superclass)
-            query = "SELECT %s FROM (SELECT bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?"
-            cursor = db.execute(query%Bike.cols(), (self.id,))
-            return [Bike(*row) for row in cursor]
+            return fetch_all(Bike, db.execute(self.BikesQuery, (self.id,)))
+
+        @property
+        def free_slots(self):
+            return self.capacity - self.all_bikes
 
         @classmethod
         def get(klass, id):
-            cursor = db.execute(
-                "SELECT %s FROM %s WHERE id=? LIMIT 1" % (klass.cols(), klass.tablename()), 
-                (id,))
             try:
-                row = cursor.next()
+                return fetch_one(klass, db.execute(
+                "SELECT %s FROM %s WHERE id=? LIMIT 1" % (klass.cols(), klass.tablename()), 
+                (id,)))
             except StopIteration:
                 raise KeyError(id)
-            return klass(*row)
 
     return Station
 
