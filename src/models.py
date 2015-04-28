@@ -22,6 +22,7 @@ import sqlite3
 from datetime import datetime, timedelta
 from dbutils import hash_password
 from math import ceil
+from populate_db import create_tables
 
 def datestr(date):
     return date.strftime("%Y-%m-%dT%H:%M:%S")
@@ -396,6 +397,7 @@ def get_Station(db=None, superclass=None):
 class Database(object):
     def __init__(self, connection=None):
         connection = default_or_db(connection)
+        create_tables(connection)
         base_model = _get_Model(connection)
         self.Trip = get_Trip(connection, base_model)
         self.Bike = get_Bike(connection, base_model)
