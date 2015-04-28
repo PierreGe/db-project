@@ -17,12 +17,17 @@
             <div class="panel-heading">
                 <h2>
                     <span class="glyphicon glyphicon-road" aria-hidden="true"></span>
-                    &nbsp; Derniers voyages
+                    &nbsp; Tous vos trajets
                 </h2>
 
             </div>
             <ul class="list-group panel-body">
-               {% for trip in trip_list[:20] %}
+               {% for month,trip_list in trips_by_month %}
+                    <li class="list-group-item">
+                        <h2>{{month}}</h2>
+                        <em>{{ trip_list|count }} trajets</em>
+                    </li>
+                    {% for trip in trip_list %}
                     <li class="list-group-item {% if not trip.finished %}active{% endif %}">
                         <h4>
                             {{trip.departure_date.date().strftime("%d/%m/%Y")}}
@@ -38,9 +43,12 @@
                         </span>
 
                     </li>
+                    {% endfor %}
                 {% endfor %}
-                {% if trip_list==[]%}
-                <h4>Aucune dépense</h4>
+                {% if trips_by_month == [] %}
+                <li class="list-group-item">
+                    <h4>Vous n'avez encore effectué aucun trajet</h4>
+                </li>
                 {% endif %}
             </ul>
         </div>
@@ -56,8 +64,8 @@
             <ul class="list-group panel-body">
                 <li class="list-group-item">
                     <span class="glyphicon glyphicon-road"></span>&nbsp;
-                    <b>Nombre de trajet</b>
-                    <span class="badge alert-info">{{trip_list|length}}</span>
+                    <b>Nombre de trajets</b>
+                    <span class="badge alert-info">{{user.trips|length}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="glyphicon glyphicon-road"></span>&nbsp;
