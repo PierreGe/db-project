@@ -1,8 +1,8 @@
-<div class="panel panel-default">
+<div class="panel panel-default" style="min-width: 300px;">
     <div class="panel-heading">
         <div class="row">
             <div class="col-md-3">
-                <h3><span class="label label-info">{{station.id}}</span></h3>
+                <h3><span class="label label-primary">{{station.id}}</span></h3>
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-8">
@@ -10,23 +10,47 @@
             </div>
         </div>
     </div>
-    <div class="list-group panel-body">
-        <div class='progress'>
-            <div class='progress-bar progress-bar-danger' role='progressbar' 
-                 style="width: {{100.0*station.broken_bikes/station.capacity}}%;">
-            </div>
-            <div class='progress-bar progress-bar-success' role='progressbar' 
-                 style="width: {{100.0*station.available_bikes/station.capacity}}%;">
+
+    <div class="panel-body">
+        <div class="row">
+            <div class='progress'>
+                <div class='progress-bar progress-bar-warning' role='progressbar' 
+                     style="width: {{100.0 * station.broken_bikes / station.capacity}}%;">
+                </div>
+                <div class='progress-bar progress-bar-success' role='progressbar' 
+                     style="width: {{100.0 * station.available_bikes / station.capacity}}%;">
+                </div>
+                <div class="progress-bar progress-bar-info" role="progressbar"
+                     style="width: {{100.0 * station.free_slots / station.capacity}}%;">
+                </div>
             </div>
         </div>
-        <strong style="display: block;">
-            {% if station.payment %}
-            <abbr title="Terminal de payement disponible">
-                <span class="glyphicon glyphicon-credit-card" style="color: green;"></span>
-            </abbr>
-            {% endif %}
-            {{station.available_bikes}} vélos utilisables&nbsp;/&nbsp;
-            {{station.capacity - (station.available_bikes + station.broken_bikes)}} places libres
-        </strong>
+
+        <div class="row">
+            <div class="col-md-1">
+                {% if station.payment %}
+                <abbr title="Terminal de payement disponible">
+                    <span class="glyphicon glyphicon-credit-card" style="color: green;"></span>
+                </abbr>
+                {% endif %}
+            </div>
+            <div class="col-md-10">
+                {% if station.available_bikes > 0 %}
+                <span class="label label-success">
+                    {{station.available_bikes}} vélo{{station.available_bikes|plur}} utilisable{{station.available_bikes|plur}}
+                </span><br>
+                {% endif %}
+                {% if station.free_slots > 0 %}
+                <span class="label label-info">
+                    {{station.free_slots}} place{{station.free_slots|plur}} libre{{station.free_slots|plur}}
+                </span><br>
+                {% endif %}
+                {% if station.broken_bikes > 0 %}
+                <span class="label label-warning">
+                    {{station.broken_bikes}} vélo{{station.broken_bikes|plur}} cassé{{station.broken_bikes|plur}}
+                </span>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>

@@ -22,6 +22,15 @@ def require_login(func):
     return wrapper
 
 
+@app.template_filter('plur')
+def pluralize(number, singular='', plural='s'):
+    """Template filter to pluralize a suffix according to a number"""
+    if number == 1:
+        return singular
+    else:
+        return plural
+
+
 @app.context_processor
 def user_processor():
     return {'user': current_user()}
