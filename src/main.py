@@ -132,13 +132,14 @@ def problem():
 @require_login
 def billing_post():
     starting = current_user().expire_date - datetime.timedelta(days=(365))
-    detail = ""
-    detail += "# Abonnement \nCarte 1 an : 32.6 euros \n# Voyages \n"
-    for trip in current_user().trips:
+    detail = "Type;Prix;Date de debut;Date de fin;Station de depart;Station de fin\n"
+    detail += "Abonnement;32.6;"+starting.strftime("%d-%m-%Y")+";" +str(current_user().expire_date.strftime("%d-%m-%Y"))+ ";None;None\n"
+    for trip in current_user().trips :
         if trip.departure_date > starting:
-            detail += "De "+trip.departure_station.name+" ("+str(trip.departure_date)+") à "+trip.arrival_station.name+" ("+str(trip.arrival_date)+ ") : " + str(trip.price()) + "\n"
+            detail+= "Trajet;" +str(trip.price()) + ";" +str(trip.departure_date) + ";" + str(trip.arrival_date) + ";" + trip.arrival_station.name + ";" + trip.departure_station.name + "\n"
+            #detail += "De "+trip.departure_station.name+" ("+str(trip.departure_date)+") à "+trip.arrival_station.name+" ("+str(trip.arrival_date)+ ") : " + str(trip.price()) + "\n"
     response = make_response(detail)
-    response.headers["Content-Disposition"] = "attachment; filename=facture-details.md"
+    response.headers["Content-Disposition"] = "attachment; filename=facture-details.csv"
     return response
 
 @app.route("/billing", methods=['GET'])
