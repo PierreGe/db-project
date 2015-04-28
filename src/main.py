@@ -92,6 +92,7 @@ def subscription():
         current_user().renew() # nouvel abonnement
         return render_template("welcome.html", user=new_user)
 
+
 @app.route('/subscription', methods=['GET'])
 def subscription_form():
     return render_template("subscription.html")
