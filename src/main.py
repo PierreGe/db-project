@@ -79,9 +79,15 @@ def subscription():
         current_user().renew()
         return redirect(url_for('index'))
     else:
+        F = request.form
         new_user = get_db().User.create(
-            password=request.form['userPassword'],
-            card=request.form['userBankData'])
+            password=F['userPassword'],
+            card=F['userBankData'],
+            firstname=F['userFirstName'],
+            lastname=F['userLastName'],
+            phone_number=F['userPhone'],
+            address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
+            rfid='GENERATED !')
         connect_user(new_user)
         return render_template("welcome.html", user=new_user)
 
