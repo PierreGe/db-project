@@ -21,9 +21,9 @@ import config
 import sqlite3
 from datetime import datetime, timedelta
 from dbutils import hash_password
-from math import ceil
 from populate_db import create_tables
 from random import randint
+import math
 
 def datestr(date):
     return date.strftime("%Y-%m-%dT%H:%M:%S")
@@ -352,8 +352,29 @@ def get_Trip(db=None, superclass=None):
             #while durationTrip > 0: # par 30 minutes en plus
             #    durationTrip -= 60*30
             #    price+= 2
-            price += 2 * (ceil(durationTrip/(60*30.)))
+            price += 2 * (math.ceil(durationTrip/(60*30.)))
             return price
+
+        def distance(self):
+            """
+            :return: des kilometres
+            """
+            Station = get_Station(db, superclass)
+            st1 = Station.get(self.departure_station_id)
+            lat1 = st1.latitude
+            long1 = st1.longitude
+            st2 = Station.get(self.arrival_station_id)
+            lat2 = st2.latitude
+            long2 = st2.longitude
+            degreesToRadians = math.pi/180.0
+            phi1 = (90.0 - lat1)*degreesToRadians
+            phi2 = (90.0 - lat2)*degreesToRadians
+            theta1 = long1*degreesToRadians
+            theta2 = long2*degreesToRadians
+            cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + math.cos(phi1)*math.cos(phi2))
+            arc = math.acos( cos )
+            radius = 6371
+            return "{0:.2f}".format(round(arc * radius,2))
 
         @property
         def departure_station(self):

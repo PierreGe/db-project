@@ -5,6 +5,10 @@
 {% block content %}
 
 
+<div class="jumbotron">
+    <h1>Historique</h1>
+</div>
+
 <div class="villo">
 
 <div class="row">
@@ -30,7 +34,7 @@
                             {{trip.arrival_station.name}}
                             ({{trip.arrival_date.time().strftime("%Hh%M")}}).
                         <span class="badge alert-info">
-                                {{ (trip.price()) }} euros
+                                {{ (trip.distance()) }} km
                         </span>
 
                     </li>
