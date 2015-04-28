@@ -1,4 +1,4 @@
-from models import sqlite3, get_Bike, get_User, get_Trip, get_Station
+from models import sqlite3, get_Bike, get_User, get_Trip, get_Station, parse_date
 from populate_db import create_tables
 from datetime import datetime, timedelta
 
@@ -153,3 +153,32 @@ def test_station_available_bikes():
     bike.usable = False
     bike.update()
     assert s1.broken_bikes == 1
+
+
+def test_trip_price():
+    """
+    Location:
+     *  0-30 min: gratuit
+     * 30-60 min: 0.5
+     * 60-90 min: 1.5
+     * 90+ min: 1.5 + 2*(min-90)/30
+    """
+    from_date, to_date = "2015-07-12T10:10:10", "2015-07-12T10:20:10"
+
+    t = Trip(
+        user_id=42, bike_id=42, departure_station_id=42,
+        departure_date=from_date, arrival_date=to_date)
+    assert t.duration().total_seconds() == 600
+    assert t.price() == 0
+
+    t.arrival_date = parse_date("2015-07-12T10:50:10")
+    assert t.duration().total_seconds() == 2400
+    assert t.price() == 0.5
+
+    t.arrival_date = parse_date("2015-07-12T11:20:10")
+    assert t.duration().total_seconds() == 4200
+    assert t.price() == 1.5
+
+    t.arrival_date = parse_date("2015-07-12T11:50:10")
+    assert t.duration().total_seconds() == 6000
+    assert t.price() == 3.5
