@@ -37,12 +37,15 @@ $(document).ready(function(){
         }
     }
 
-    var marker;
+    var add_marker = function(lat, lng, station_id){
+        var marker = L.marker([lat, lng]);
+        marker.bindPopup('/map_station_popup/' + station_id);
+        marker.addTo(map);
+        marker.on('popupopen', load_popup);
+    }
+
     {% for station in station_list %}
-    marker = L.marker([{{station.latitude}}, {{station.longitude}}]);
-    marker.bindPopup('/map_station_popup/{{station.id}}');
-    marker.addTo(map);
-    marker.on('popupopen', load_popup);
+    add_marker({{station.latitude}}, {{station.longitude}}, {{station.id}});    
     {% endfor %}
 });
 </script>
