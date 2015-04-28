@@ -127,6 +127,9 @@ def test_station_available_bikes():
         user_id=u.id, bike_id=b.id
     )
 
+    # Refresh memoized values
+    s1, s2 = Station.get(1), Station.get(2)
+
     assert s2.available_bikes == 1
     assert [bike.id for bike in s2.bikes] == [b.id]
     assert s1.available_bikes == 0
@@ -139,7 +142,14 @@ def test_station_available_bikes():
         user_id=u.id, bike_id=b.id
     )
 
+    # Refresh memoized values
+    s1, s2 = Station.get(1), Station.get(2)
+
     assert s2.available_bikes == 0
     assert s2.bikes == []
     assert s1.available_bikes == 1
     assert [bike.id for bike in s1.bikes] == [b.id]
+
+    bike.usable = False
+    bike.update()
+    assert s1.broken_bikes == 1
