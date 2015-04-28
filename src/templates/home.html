@@ -4,98 +4,111 @@
 
 {% block content %}
 <div class="jumbotron">
-    <div class="row">
-        <div class="col-md-7">
-            <h1>Villo!</h1>
-            {% if not user %}
-            <h2>Vous n'êtes actuellement pas connecté</h2>
-            <a href="inscription" class="btn btn-primary">
-                <span class="glyphicon glyphicon-list-alt"></span>&nbsp;
-                Inscription
-            </a>
-            <a href="login" class="btn btn-success">
-                <span class="glyphicon glyphicon-log-in"></span>&nbsp;
-                Connexion
-            </a>
-        </div>
-        <div class="col-md-5 thumbnail">
-            <img src="http://31.media.tumblr.com/2914b52a29a5fb2ea73db89de766fb5c/tumblr_ml33owg65Q1s7fwvqo1_500.gif">
-            {% endif %}
-        </div>
+  <div class="row">
+    <div class="col-md-7">
+      <h1>Villo!</h1>
+      {% if not user %}
+      <h2>Vous n'êtes actuellement pas connecté</h2>
+      <a href="inscription" class="btn btn-primary">
+        <span class="glyphicon glyphicon-list-alt"></span>&nbsp;
+        Inscription
+      </a>
+      <a href="login" class="btn btn-success">
+        <span class="glyphicon glyphicon-log-in"></span>&nbsp;
+        Connexion
+      </a>
     </div>
+    <div class="col-md-5 thumbnail">
+      <img src="http://31.media.tumblr.com/2914b52a29a5fb2ea73db89de766fb5c/tumblr_ml33owg65Q1s7fwvqo1_500.gif">
+      {% endif %}
+    </div>
+  </div>
 </div>
 
 {% if user %}
 <div class="row">
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h2>
-                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                    &nbsp; Infos utilisateur
-                </h2>
-            </div>
-            <ul class="list-group panel-body">
-                <li class="list-group-item">
-                    <span class="glyphicon glyphicon-tags"></span>&nbsp;
-                    <b>Numéro utilisateur</b>
-                    <span class="badge alert-info">{{user.id}}</span>
-                </li>
-                <li class="list-group-item">
-                    <span class="glyphicon glyphicon-credit-card"></span>&nbsp;
-                    <b>Carte de banque</b>
-                    <span class="badge alert-info">{{user.card}}</span>
-                </li>
-                {% if user.expire_date %}
-                <li class="list-group-item">
-                    <span class="glyphicon glyphicon-calendar"></span>&nbsp;
-                    <b>Expiration</b>
-                    {% if user.expired %}
-                    <span class="badge alert-danger">{{user.expire_date}}</span>
-                    {% else %}
-                    <span class="badge alert-success">{{user.expire_date}}</span>
-                    {% endif %}
-                </li>
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+          &nbsp; Infos utilisateur
+        </h2>
+      </div>
+      <ul class="list-group panel-body">
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-tags"></span>&nbsp;
+          <b>Numéro utilisateur</b>
+          <span class="badge alert-info">{{user.id}}</span>
+        </li>
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-credit-card"></span>&nbsp;
+          <b>Carte de banque</b>
+          <span class="badge alert-info">{{user.card}}</span>
+        </li>
+        {% if user.expire_date %}
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-calendar"></span>&nbsp;
+          <b>Expiration</b>
+          {% if user.expired %}
+          <span class="badge alert-danger">{{user.expire_date}}</span>
+          {% else %}
+          <span class="badge alert-success">{{user.expire_date}}</span>
+          {% endif %}
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-road" aria-hidden="true"></span>
+          &nbsp; Trajets récents
+        </h2>
+        15 derniers voyages
+      </div>
+      <ul class="list-group panel-body">
+        {% for trip in user.trips[:15] %}
+          <li class="list-group-item {% if not trip.finished %}active{% endif %}">
+            <div class="row">
+              <div class="col-md-10">
+                <h4>
+                  {{trip.departure_date.date().strftime("%d/%m/%Y")}}
+                  {% if not trip.finished %} (en cours) {% endif %}
+                </h4>
+                {{trip.departure_station.name}}
+                ({{trip.departure_date.time().strftime("%Hh%M")}})
+                {% if trip.finished %}
+                  <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                  {{trip.arrival_station.name}}
+                  ({{trip.arrival_date.time().strftime("%Hh%M")}}).
+                  <span class="badge alert-info">
+                    {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
+                  </span>
+                {% else %}
+                  <span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span>
+                  <span class="badge alert-warning">
+                    {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
+                  </span>
                 {% endif %}
-            </ul>
-        </div>
-    </div>
-    <div class="col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h2>
-                    <span class="glyphicon glyphicon-road" aria-hidden="true"></span>
-                    &nbsp; Trajets récents
-                </h2>
-                15 derniers voyages
+              </div>
+              <div class="col-md-2">
+                <h4>Villo {{trip.bike.id}}</h4>
+                <form action="problem" method="POST">
+                  <input type="hidden" name="villo" value="{{trip.bike.id}}">
+                  <button class="btn btn-warning" type="submit" data-toggle="tooltip" data-placement="bottom" title="Signaler un problème avec ce villo">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  </button>
+                </form>
+              </div>
             </div>
-            <ul class="list-group panel-body">
-                {% for trip in user.trips[:15] %}
-                    <li class="list-group-item {% if not trip.finished %}active{% endif %}">
-                        <h4>
-                            {{trip.departure_date.date().strftime("%d/%m/%Y")}}
-                            {% if not trip.finished %} (en cours) {% endif %}
-                        </h4>
-                        {{trip.departure_station.name}}
-                        ({{trip.departure_date.time().strftime("%Hh%M")}})
-                        {% if trip.finished %}
-                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                            {{trip.arrival_station.name}}
-                            ({{trip.arrival_date.time().strftime("%Hh%M")}}).
-                            <span class="badge alert-info">
-                                {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
-                            </span>
-                        {% else %}
-                            <span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span>
-                            <span class="badge alert-warning">
-                                {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
-                            </span>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
+  </div>
 </div>
 {% else %}
 
