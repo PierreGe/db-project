@@ -88,7 +88,9 @@
                 <h4>Villo {{trip.bike.id}}</h4>
                 <form action="problem" method="POST">
                   <input type="hidden" name="villo" value="{{trip.bike.id}}">
-                  <button class="btn btn-warning" type="submit" data-toggle="tooltip" data-placement="bottom" title="Signaler un problème avec ce villo">
+                  <button class="btn {% if trip.bike.usable %}btn-warning{% else %}btn-danger disabled{% endif %}" 
+                          type="submit" data-toggle="tooltip" data-placement="bottom" 
+                          title="Signaler un problème avec ce villo">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                   </button>
                 </form>
