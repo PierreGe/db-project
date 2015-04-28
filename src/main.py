@@ -83,6 +83,7 @@ def subscription():
             password=request.form['userPassword'],
             card=request.form['userBankData'])
         connect_user(new_user)
+        current_user().renew() # nouvel abonnement
         return render_template("welcome.html", user=new_user)
 
 @app.route('/subscription', methods=['GET'])
