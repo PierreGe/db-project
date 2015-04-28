@@ -47,7 +47,7 @@ def close_connection(exception):
 
 @app.route("/")
 def index():
-    return render_template("dashboard.html" if current_user else "home.html")
+    return render_template("dashboard.html" if current_user() else "home.html")
 
 
 @app.route('/session_status')
