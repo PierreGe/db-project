@@ -23,6 +23,7 @@ from datetime import datetime, timedelta
 from dbutils import hash_password
 from math import ceil
 from populate_db import create_tables
+from random import randint
 
 def datestr(date):
     return date.strftime("%Y-%m-%dT%H:%M:%S")
@@ -45,6 +46,11 @@ def memoize(method):
 def fetch_first(cursor):
     """Return the very first value of the cursor (ex COUNTs)"""
     return cursor.next()[0]
+
+def fetch_is_empty(cursor):
+    if cursor.fetchone():
+        return True
+    return False
 
 def fetch_one(as_class, cursor):
     """Return the first row of cursor cast to as_class"""
@@ -215,6 +221,11 @@ def get_User(db=None, superclass=None):
                 self.firstname is not None and
                 self.lastname is not None)
 
+        def niceName(self):
+            if self.firstname and self.lastname:
+                return str(self.firstname).capitalize() + " " + str(self.lastname).capitalize()
+            return str(self.id)
+
         def update(self):
             with db:
                 db.execute(
@@ -234,6 +245,15 @@ def get_User(db=None, superclass=None):
                 db.execute(
                     "UPDATE user SET expire_date=? WHERE id=?",
                     (datestr(newEndDate), self.id))
+
+        @staticmethod
+        def newUniqueRFID():
+            digitNumber = 20
+            rfid = str(randint(10**(digitNumber-1), (10**digitNumber)-1))
+            while fetch_is_empty(db.execute("SELECT rfid FROM subscriber WHERE rfid=?",(rfid,))) :
+                rfid = str(randint(10**(digitNumber-1), (10**digitNumber)-1))
+            return rfid
+
 
         @property
         def expired(self, when=None):
