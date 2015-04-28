@@ -129,7 +129,22 @@ def history_post():
 @app.route("/history", methods=['GET'])
 @require_login
 def history():
-    return render_template("history.html", trip_list=current_user().trips)
+    def month_displayname(date):
+        months = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Spetembre", "Octobre", "Novembre", "Decembre"]
+        return "%s %d" % (months[date.month-1], date.year)
+
+    trip_list = current_user().trips
+    if len(trip_list) > 0:
+        trips_by_month = [
+            (month_displayname(trip_list[0].departure_date), [trip_list[0]])
+        ]
+        for trip in trip_list[1:]:
+            name = month_displayname(trip.departure_date)
+            if name == trips_by_month[-1][0]:
+                trips_by_month[-1][1].append(trip)
+            else:
+                trips_by_month.append((name, [trip]))
+    return render_template("history.html", trips_by_month=trips_by_month)
 
 
 @app.route("/problem", methods=['GET', 'POST'])
