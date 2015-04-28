@@ -21,6 +21,7 @@ import config
 import sqlite3
 from datetime import datetime
 from dbutils import hash_password
+from math import ceil
 
 def datestr(date):
     return date.strftime("%Y-%m-%dT%H:%M:%S")
@@ -267,11 +268,31 @@ def get_Trip(db=None, superclass=None):
             return self.arrival_date != None
 
         def duration(self, current_time=None):
+            """
+            :param current_time:
+            :return: des secondes
+            """
             if self.finished:
                 current_time = self.arrival_date
             elif current_time is None:
                 current_time = datetime.now()
             return parse_date(current_time) - self.departure_date
+
+        def price(self):
+            durationTrip = int(self.duration().total_seconds())
+            price = 0
+            durationTrip -= 60*30 # 30 minute gratuite
+            if durationTrip > 0: # 30-60 minute
+                durationTrip -= 60*30
+                price+= 0.5
+            if durationTrip > 0: # 30-60 minute
+                durationTrip -= 60*30
+                price+= 1
+            #while durationTrip > 0: # par 30 minutes en plus
+            #    durationTrip -= 60*30
+            #    price+= 2
+            price += 2 * (ceil(durationTrip/(60*30.)))
+            return price
 
         @property
         def departure_station(self):
