@@ -120,7 +120,7 @@ def problem():
 @app.route("/billing", methods=['POST'])
 @require_login
 def billing_post():
-    starting = current_user().expire_date - datetime.timedelta(days=(days_per_year))
+    starting = current_user().expire_date - datetime.timedelta(days=(365))
     detail = ""
     detail += "# Abonnement \nCarte 1 an : 32.6 euros \n# Voyages \n"
     for trip in current_user().trips:
@@ -133,8 +133,7 @@ def billing_post():
 @app.route("/billing", methods=['GET'])
 @require_login
 def billing():
-    days_per_year = 365.24
-    starting = current_user().expire_date - datetime.timedelta(days=(days_per_year))
+    starting = current_user().expire_date - datetime.timedelta(days=(365))
     periodeFact = starting.strftime("%d-%m-%Y")
     periodeFact += "->"
     periodeFact += str(current_user().expire_date.strftime("%d-%m-%Y"))
@@ -147,7 +146,7 @@ def billing():
                 if trip.price():
                     billedTrip.append(trip)
                     total += trip.price()
-    return render_template("billing.html",periodeBilling = periodeFact, totalBilled=total, trip_list=billedTrip)
+    return render_template("billing.html",periodeBilling = periodeFact, totalBilled=str(total)+" euros", trip_list=billedTrip)
 
 
 @app.route('/logout')

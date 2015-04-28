@@ -46,7 +46,7 @@
                 15 derniers voyages ayant dépassé 30 minutes
             </div>
             <ul class="list-group panel-body">
-                {% for trip in user.trips[:15] %}
+                {% for trip in trip_list[:15] %}
                     <li class="list-group-item {% if not trip.finished %}active{% endif %}">
                         <h4>
                             {{trip.departure_date.date().strftime("%d/%m/%Y")}}
@@ -63,6 +63,9 @@
 
                     </li>
                 {% endfor %}
+                {% if trip_list==[]%}
+                <h4>Aucune dépense</h4>
+                {% endif %}
             </ul>
         </div>
     </div>
