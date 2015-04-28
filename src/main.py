@@ -4,6 +4,7 @@ from flask import Flask,render_template, g, session, redirect, url_for, escape, 
 import os
 from user import current_user, connect_user, disconnect_user
 from models import Database
+from datetime import timedelta
 import config
 from apputils import get_db
 
@@ -72,7 +73,7 @@ def login():
 @app.route('/subscription', methods=['POST'])
 def subscription():
     if current_user():
-        pass # TODO updateUser
+        current_user().renew()
         return redirect(url_for('index'))
     else:
         new_user = get_db().User.create(
