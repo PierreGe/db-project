@@ -133,7 +133,8 @@ def history_post():
 @app.route("/history", methods=['GET'])
 @require_login
 def history():
-    return render_template("history.html", trip_list=current_user().trips)
+    minkm = sum([float(x.distance()) for x in current_user().trips])
+    return render_template("history.html",minimum_km=minkm, trip_list=current_user().trips)
 
 
 @app.route("/problem", methods=['GET', 'POST'])
