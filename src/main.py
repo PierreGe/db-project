@@ -108,7 +108,18 @@ def trip():
     return render_template("trip.html")
 
 
-@app.route("/history")
+@app.route("/history", methods=['POST'])
+@require_login
+def history_post():
+    detail = "Date de debut;Date de fin;Station de depart;Station de fin\n"
+    for trip in current_user().trips :
+        detail+= str(trip.departure_date) + ";" + str(trip.arrival_date) + ";" + trip.arrival_station.name + ";" + trip.departure_station.name + "\n"
+    response = make_response(detail)
+    response.headers["Content-Disposition"] = "attachment; filename=trajet-details.csv"
+    return response
+
+
+@app.route("/history", methods=['GET'])
 @require_login
 def history():
     return render_template("history.html", trip_list=current_user().trips)

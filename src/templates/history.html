@@ -5,7 +5,80 @@
 {% block content %}
 
 
-<div class="starter-template">
+<div class="villo">
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    <span class="glyphicon glyphicon-road" aria-hidden="true"></span>
+                    &nbsp; Derniers voyages
+                </h2>
+
+            </div>
+            <ul class="list-group panel-body">
+               {% for trip in trip_list[:20] %}
+                    <li class="list-group-item {% if not trip.finished %}active{% endif %}">
+                        <h4>
+                            {{trip.departure_date.date().strftime("%d/%m/%Y")}}
+                            {% if not trip.finished %} (en cours) {% endif %}
+                        </h4>
+                        {{trip.departure_station.name}}
+                        ({{trip.departure_date.time().strftime("%Hh%M")}})
+                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                            {{trip.arrival_station.name}}
+                            ({{trip.arrival_date.time().strftime("%Hh%M")}}).
+                        <span class="badge alert-info">
+                                {{ (trip.price()) }} euros
+                        </span>
+
+                    </li>
+                {% endfor %}
+                {% if trip_list==[]%}
+                <h4>Aucune dépense</h4>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+        <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                    &nbsp; Statistiques
+                </h2>
+            </div>
+            <ul class="list-group panel-body">
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-road"></span>&nbsp;
+                    <b>Nombre de trajet</b>
+                    <span class="badge alert-info">{{trip_list|length}}</span>
+                </li>
+            </ul>
+        </div>
+            <form class="downloaddetails" action="history" method="POST">
+            <button type="submit" class="btn btn-default" aria-label="Left Align" >
+            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                Télécharger l'ensemble des trajets (*.csv)
+            </button>
+            </form>
+    </div>
+
+    <!--<ul>
+        {% for trip in trip_list %}
+        <li>
+            De {{trip.departure_station.name}} ({{trip.departure_date}})
+            à  {{trip.arrival_station.name}} ({{ trip.arrival_date }}) Prix ({{ trip.price() }})
+        </li>
+        {% endfor %}
+
+    </ul>-->
+</div>
+
+
+
+<!-- <div class="villo">
     <h1>Vos dernières locations</h1>
     <ul>
         {% for trip in trip_list %}
@@ -15,6 +88,6 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</div> -->
 
 {% endblock %}
