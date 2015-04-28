@@ -40,8 +40,30 @@ def test_bike_count():
 
 def test_create_user():
     assert len(User.all()) == 0
-    User(password="hello").insert()
+    u = User.create(password="hello")
     assert len(User.all()) == 1
+    assert not u.is_subscriber()
+
+
+def test_subscriber():
+    u = User.create(address="123 rue des Heliotropes",
+        password="hello", rfid="123", 
+        firstname="Alain", lastname="Terieur", 
+        phone_number="0491234567")
+    assert u.is_subscriber()
+    assert u.rfid == "123"
+    assert u.firstname == "Alain"
+    assert u.lastname == "Terieur"
+    assert u.address == "123 rue des Heliotropes"
+    assert u.phone_number == "0491234567"
+    
+    u = User.get(u.id)
+    assert u.is_subscriber()
+    assert u.rfid == "123"
+    assert u.firstname == "Alain"
+    assert u.lastname == "Terieur"
+    assert u.address == "123 rue des Heliotropes"
+    assert u.phone_number == "0491234567"
 
 
 def test_create_user_with_id():

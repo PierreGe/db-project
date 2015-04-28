@@ -190,12 +190,30 @@ def get_User(db=None, superclass=None):
 
     class User(superclass):
         columns = ['id', 'password', 'card', 'expire_date']
-
-        def __init__(self, id=None, password_hash="", card="", expire_date=None, password=None):
+        def __init__(self, id=None, password_hash="", card="", expire_date=None, rfid=None, firstname=None, lastname=None, address=None, phone_number=None, password=None):
             self.id = int(id) if id is not None else None
             self.password = password_hash if password_hash else hash_password(password)
             self.card = card
             self.expire_date = parse_date(expire_date) if expire_date else None
+            self.rfid = rfid
+            self.address = address
+            self.firstname, self.lastname = firstname, lastname
+            self.phone_number = phone_number
+
+        def insert(self, *args, **kwargs):
+            super(User, self).insert()
+            if self.is_subscriber():
+                with db:
+                    db.execute(
+                        "INSERT INTO subscriber (user_id,rfid,firstname,lastname,address,phone_number) VALUES (?,?,?,?,?,?)",
+                        (self.id, self.rfid, self.firstname, self.lastname, self.address, self.phone_number))
+
+        def is_subscriber(self):
+            return (
+                self.address is not None and
+                self.rfid is not None and
+                self.firstname is not None and
+                self.lastname is not None)
 
         def update(self):
             with db:
@@ -233,8 +251,22 @@ def get_User(db=None, superclass=None):
         @classmethod
         def get(klass, id):
             try:
+                return klass.get_with_subscriber(id)
+            except KeyError:
+                pass
+            try:
                 return fetch_one(klass, db.execute(
-                    "SELECT id,password,card,expire_date FROM user WHERE id=? LIMIT 1", 
+                    "SELECT id,password,card,expire_date FROM user WHERE id=? LIMIT 1",
+                    (id,)))
+            except StopIteration:
+                raise KeyError(id)
+
+
+        @classmethod
+        def get_with_subscriber(klass, id):
+            try:
+                return fetch_one(klass, db.execute(
+                    "SELECT id,password,card,expire_date,rfid,firstname,lastname,address,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1", 
                     (id,)))
             except StopIteration:
                 raise KeyError(id)

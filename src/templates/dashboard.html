@@ -21,6 +21,28 @@
         </h2>
       </div>
       <ul class="list-group panel-body">
+        {% if user.is_subscriber() %}
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-user"></span>&nbsp;
+          <b>Nom</b>
+          <span class="badge alert-info">{{user.firstname}} {{user.lastname}}</span>
+        </li>
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-home"></span>&nbsp;
+          <b>Adresse</b>
+          <span class="badge alert-info">{{user.address}}</span>
+        </li>
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-earphone"></span>&nbsp;
+          <b>Numéro de téléphone</b>
+          <span class="badge alert-info">{{user.phone_number}}</span>
+        </li>
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-qrcode"></span>&nbsp;
+          <b>Carte à puce</b>
+          <span class="badge alert-info">{{user.rfid}}</span>
+        </li>
+        {% endif %}
         <li class="list-group-item">
           <span class="glyphicon glyphicon-tags"></span>&nbsp;
           <b>Numéro utilisateur</b>
