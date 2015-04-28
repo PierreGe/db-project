@@ -9,6 +9,14 @@
 
 {% block content %}
 <div id="map"></div>
+<div style="display: none;" id="loading-popup-template">
+    <div class="progress" style="width: 200px;">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" 
+             aria-valuenow="1" aria-valuemin="0" aria-valuemax="1" style="width:100%;">
+             <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -18,11 +26,13 @@ $(document).ready(function(){
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    var loading_template = $('#loading-popup-template').html();
+
     var load_popup = function(popupevent){
         var popup = popupevent.popup;
         var url = popup.getContent();
         if (url.match('^/map_station_popup/[0-9]+')){
-            popup.setContent("Loading...");
+            popup.setContent(loading_template);
             $.get(url, function(html){popup.setContent(html);});
         }
     }
