@@ -139,6 +139,7 @@ def history():
         return "%s %d" % (months[date.month-1], date.year)
 
     trip_list = current_user().trips
+    trips_by_month = []
     if len(trip_list) > 0:
         trips_by_month = [
             (month_displayname(trip_list[0].departure_date), [trip_list[0]])
