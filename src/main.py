@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask,render_template, g, session, redirect, url_for, escape, request
+from flask import Flask,render_template, g, session, redirect, url_for, escape, request, make_response
 import os
 from user import current_user, connect_user, disconnect_user
 from models import Database
 import config
 from apputils import get_db
+import datetime
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -118,6 +119,35 @@ def problem():
     else:
         ctx = {'bike_list': get_db().Bike.allUsable()}
     return render_template("problem.html", **ctx)
+
+@app.route("/billing", methods=['POST'])
+@require_login
+def billing_post():
+    starting = current_user().expire_date - datetime.timedelta(days=(365))
+    detail = ""
+    detail += "# Abonnement \nCarte 1 an : 32.6 euros \n# Voyages \n"
+    for trip in current_user().trips:
+        if trip.departure_date > starting:
+            detail += "De "+trip.departure_station.name+" ("+str(trip.departure_date)+") à "+trip.arrival_station.name+" ("+str(trip.arrival_date)+ ") : " + str(trip.price()) + "\n"
+    response = make_response(detail)
+    response.headers["Content-Disposition"] = "attachment; filename=facture-details.md"
+    return response
+
+@app.route("/billing", methods=['GET'])
+@require_login
+def billing():
+    starting = current_user().expire_date - datetime.timedelta(days=(365))
+    periodeFact = (starting.strftime("%d-%m-%Y"), str(current_user().expire_date.strftime("%d-%m-%Y")))
+    AllTrip = current_user().trips
+    billedTrip = []
+    total = 32.60
+    for trip in AllTrip:
+        if trip.arrival_station:
+            if trip.departure_date > starting:
+                if trip.price():
+                    billedTrip.append(trip)
+                    total += trip.price()
+    return render_template("billing.html",periodeBilling = periodeFact, totalBilled=str(total)+" euros", trip_list=billedTrip)
 
 
 @app.route('/logout')
