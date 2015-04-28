@@ -134,9 +134,7 @@ def billing_post():
 @require_login
 def billing():
     starting = current_user().expire_date - datetime.timedelta(days=(365))
-    periodeFact = starting.strftime("%d-%m-%Y")
-    periodeFact += "->"
-    periodeFact += str(current_user().expire_date.strftime("%d-%m-%Y"))
+    periodeFact = (starting.strftime("%d-%m-%Y"), str(current_user().expire_date.strftime("%d-%m-%Y")))
     AllTrip = current_user().trips
     billedTrip = []
     total = 32.60

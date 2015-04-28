@@ -7,7 +7,7 @@
 
 <div class="jumbotron">
     <h1>Factures</h1>
-    <h3> Période de facturation {{periodeBilling}}</h3>
+    <h3> Période de facturation {{periodeBilling[0]}} -> {{periodeBilling[1]}} </h3>
 </div>
 
 <div class="villo">
@@ -26,11 +26,9 @@
                     <h4>
                         Carte 1 an
                     </h4>
-                    {{user.expire_date}}
-                    ({{user.expire_date}})
+                    {{periodeBilling[0]}}
                         <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                        {{user.expire_date}}
-                        ({{user.expire_date}}).
+                        {{periodeBilling[1]}}.
                         <span class="badge alert-info">
                             32.60 euros
                         </span>
