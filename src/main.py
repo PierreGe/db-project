@@ -56,6 +56,10 @@ def session_status():
         return 'Logged in as %s' % escape(current_user().id)
     return 'You are not logged in'
 
+@app.route('/sqltest')
+def sqltest():
+    connect_user(get_db().User.get(0))
+    return current_user().newUniqueRFID()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -87,7 +91,7 @@ def subscription():
             lastname=F['userLastName'],
             phone_number=F['userPhone'],
             address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
-            rfid='GENERATED !')
+            rfid= get_db().User.newUniqueRFID())
         connect_user(new_user)
         current_user().renew() # nouvel abonnement
         return render_template("welcome.html", user=new_user)
@@ -173,7 +177,7 @@ def billing():
                 if trip.price():
                     billedTrip.append(trip)
                     total += trip.price()
-    return render_template("billing.html",periodeBilling = periodeFact, totalBilled=str(total)+" euros", trip_list=billedTrip)
+    return render_template("billing.html",periodeBilling = periodeFact, totalBilled=str(total), trip_list=billedTrip)
 
 
 @app.route('/logout')
