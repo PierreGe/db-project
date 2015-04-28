@@ -45,16 +45,9 @@ def close_connection(exception):
         db.close()
 
 
-@app.route("/sqltest")
-def sqltest():
-    res = "\n".join(
-        "Bike [%d] %s" % (bike.id, bike.model) for bike in get_db().Bike.all())
-    return "RAW BIKE LIST : " + res
-
-
 @app.route("/")
 def index():
-    return render_template("home.html")
+    return render_template("dashboard.html" if current_user else "home.html")
 
 
 @app.route('/session_status')
