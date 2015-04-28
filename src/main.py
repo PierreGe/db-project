@@ -4,6 +4,7 @@ from flask import Flask,render_template, g, session, redirect, url_for, escape, 
 import os
 from user import current_user, connect_user, disconnect_user
 from models import Database
+from datetime import timedelta
 import config
 from apputils import get_db
 import datetime
@@ -79,17 +80,21 @@ def login():
         return render_template("login.html", next=next_page)
 
 
-@app.route('/inscription', methods=['POST'])
-def inscription():
-    new_user = get_db().User.create(
-        password=request.form['userPassword'],
-        card=request.form['userBankData'])
-    connect_user(new_user)
-    return render_template("welcome.html", user=new_user)
+@app.route('/subscription', methods=['POST'])
+def subscription():
+    if current_user():
+        current_user().renew()
+        return redirect(url_for('index'))
+    else:
+        new_user = get_db().User.create(
+            password=request.form['userPassword'],
+            card=request.form['userBankData'])
+        connect_user(new_user)
+        return render_template("welcome.html", user=new_user)
 
-@app.route('/inscription', methods=['GET'])
-def inscription_form():
-    return render_template("inscription.html")
+@app.route('/subscription', methods=['GET'])
+def subscription_form():
+    return render_template("subscription.html")
 
 
 @app.route("/station")

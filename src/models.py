@@ -19,7 +19,7 @@ A minimalistic DAO for our database. Example:
 
 import config
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from dbutils import hash_password
 from math import ceil
 
@@ -207,6 +207,14 @@ def get_User(db=None, superclass=None):
 
         def auth(self, password):
             return hash_password(password) == self.password
+
+        def renew(self):
+            newEndDate = datetime.now() + timedelta(days=(365))
+            newEndDate = newEndDate.replace(second=0, microsecond=0)
+            with db:
+                db.execute(
+                    "UPDATE user SET expire_date=? WHERE id=?",
+                    (datestr(newEndDate), self.id))
 
         @property
         def expired(self, when=None):
