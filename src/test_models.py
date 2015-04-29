@@ -204,3 +204,26 @@ def test_trip_price():
     t.arrival_date = parse_date("2015-07-12T11:50:10")
     assert t.duration().total_seconds() == 6000
     assert t.price() == 3.5
+
+
+def test_user_current_trip():
+    u = User.create(password="Hello")
+    assert u.current_trip is None
+    assert Trip.count() == 0
+
+    b = Bike.create(model="mytest")
+    s1 = Station.create(
+        latitude=50.3245, longitude=4.0325, 
+        name="Station 1", capacity=42, payment=True)
+    from_date = "2015-07-12T10:10:10"
+    t = Trip.create(
+        departure_station_id=s1.id,
+        departure_date=from_date,
+        user_id=u.id, bike_id=b.id
+    )
+
+    assert Trip.count() == 1
+    assert u.current_trip is not None
+    assert u.current_trip.bike_id == b.id
+    assert u.current_trip.departure_station_id == s1.id
+    assert u.current_trip.arrival_station_id is None
