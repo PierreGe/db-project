@@ -10,6 +10,8 @@ ve/
 # pycharm data
 .idea/
 
+#rapport part2
+rapport/part2/.texpadtmp/
 
 # C extensions
 *.so
