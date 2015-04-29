@@ -20,6 +20,7 @@
           &nbsp; Infos utilisateur
         </h2>
       </div>
+      
       <ul class="list-group panel-body">
         {% if user.is_subscriber() %}
         <li class="list-group-item">
@@ -72,6 +73,7 @@
       {% endif %}
     </div>
   </div>
+
   <div class="col-md-8">
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -81,6 +83,7 @@
         </h2>
         15 derniers voyages
       </div>
+  
       <ul class="list-group panel-body">
         {% for trip in user.trips[:15] %}
           <li class="list-group-item {% if not trip.finished %}active{% endif %}">
