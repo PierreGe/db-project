@@ -132,6 +132,8 @@ def drop_bike(station_id):
         return redirect("/")
     if not trip:
         flash("Vous n'avez pas de location en cours", "danger")
+    elif station.free_slots == 0:
+        flash(u"Il n'y a pas de point d'attache libre à %s" % station.name, "danger")
     else:
         trip.arrival_station_id = station_id
         trip.arrival_date = datetime.datetime.now()
@@ -165,10 +167,17 @@ def rent_bike(station_id, bike_id):
     except KeyError:
         flash("Villo %d inconnu", "warning")
         return redirect("/rent/%d" % (station_id))
-    newTrip = get_db().Trip.create(
-        user_id=user.id, bike_id=bike.id, 
-        departure_station_id=station.id, departure_date=datetime.datetime.now())
-    flash("Vous avez pris le villo %d" % (bike.id), 'success')
+
+    if user.current_trip and not user.is_admin():
+        flash(u"Vous avez déjà une location en cours", "danger")
+    elif not bike.usable and not user.is_admin():
+        flash(u"Ce villo n'est pas utilisable", "danger")
+        return redirect("/rent/%d" % (station_id))
+    else:
+        newTrip = get_db().Trip.create(
+            user_id=user.id, bike_id=bike.id, 
+            departure_station_id=station.id, departure_date=datetime.datetime.now())
+        flash("Vous avez pris le villo %d" % (bike.id), 'success')
     return redirect("/")
 
 @app.route("/history", methods=['POST'])
