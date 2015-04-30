@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask,render_template, g, session, redirect, url_for, escape, request, make_response
+from flask import (
+    Flask, render_template, g, session, redirect, url_for, escape, request, 
+    make_response, flash
+)
 import os
 from user import current_user, connect_user, disconnect_user
 from models import Database
@@ -118,6 +121,55 @@ def station_popup(station_id):
 def trip():
     return render_template("trip.html")
 
+@app.route("/drop/<int:station_id>")
+@require_login
+def drop_bike(station_id):
+    trip = current_user().current_trip
+    try:
+        station = get_db().Station.get(station_id)
+    except KeyError:
+        flash("Station %d inconnue", "warning")
+        return redirect("/")
+    if not trip:
+        flash("Vous n'avez pas de location en cours", "danger")
+    else:
+        trip.arrival_station_id = station_id
+        trip.arrival_date = datetime.datetime.now()
+        trip.update()
+        flash(u"Vous avez déposé votre vélo à la station %s" % station.name, "success")
+    return redirect("/")
+
+@app.route("/rent/<int:station_id>")
+@require_login
+def station_detail(station_id):
+    user = current_user()
+    try:
+        station = get_db().Station.get(station_id)
+    except KeyError:
+        flash("Station %d inconnue", "warning")
+        return redirect("/station")
+    return render_template("rent.html", station=station)
+
+
+@app.route("/rent/<int:station_id>/bike/<int:bike_id>")
+@require_login
+def rent_bike(station_id, bike_id):
+    user = current_user()
+    try:
+        station = get_db().Station.get(station_id)
+    except KeyError:
+        flash("Station %d inconnue", "warning")
+        return redirect("/station")
+    try:
+        bike = get_db().Bike.get(bike_id)
+    except KeyError:
+        flash("Villo %d inconnu", "warning")
+        return redirect("/rent/%d" % (station_id))
+    newTrip = get_db().Trip.create(
+        user_id=user.id, bike_id=bike.id, 
+        departure_station_id=station.id, departure_date=datetime.datetime.now())
+    flash("Vous avez pris le villo %d" % (bike.id), 'success')
+    return redirect("/")
 
 @app.route("/history", methods=['POST'])
 @require_login

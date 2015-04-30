@@ -334,6 +334,7 @@ def get_Trip(db=None, superclass=None):
             return User.get(self.user_id)
 
         @property
+        @memoize
         def bike(self):
             Bike = get_Bike(db, superclass)
             return Bike.get(self.bike_id)
@@ -405,6 +406,12 @@ def get_Trip(db=None, superclass=None):
         @property
         def id(self):
             return (self.user_id, self.bike_id, self.departure_date)
+
+        def update(self):
+            with db:
+                db.execute(
+                    "UPDATE trip SET arrival_station_id=?, arrival_date=? WHERE user_id=? AND bike_id=? AND departure_date=?",
+                    (self.arrival_station_id, self.encode(self.arrival_date), self.user_id, self.bike_id, self.encode(self.departure_date)))
 
     return Trip
 

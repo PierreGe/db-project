@@ -54,11 +54,11 @@
             <div class="col-md-2">
                 {% if user %}
                     {% if user.current_trip %}
-                    <a class="btn btn-success" title="Déposer mon Villo! ici">
+                    <a href="/drop/{{station.id}}" class="btn btn-success" title="Déposer mon Villo! ici">
                         <span style="color: white;" class="glyphicon glyphicon-arrow-down"></span>
                     </a>
                     {% elif not user.expired %}
-                    <a class="btn btn-primary" title="Louer un Villo! ici">
+                    <a href="/rent/{{station.id}}" class="btn btn-primary" title="Louer un Villo! ici">
                         <span style="color: white;" class="glyphicon glyphicon-road"></span>
                     </a>
                     {% else %}
