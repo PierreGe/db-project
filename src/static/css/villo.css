@@ -49,3 +49,7 @@ body {
 #map {
   height: 800px;
 }
+
+#map-unique {
+  height: 400px;
+}

@@ -246,6 +246,20 @@ def get_User(db=None, superclass=None):
                     "UPDATE user SET expire_date=? WHERE id=?",
                     (datestr(newEndDate), self.id))
 
+        @property
+        def current_trip(self):
+            """
+            Return the user's current trip (a trip with no arrival_station),
+            or None if the user has no current trip
+            """
+            Trip = get_Trip(db, superclass)
+            try:
+                return fetch_one(Trip, db.execute(
+                    'SELECT %s FROM trip WHERE user_id=? AND arrival_station_id IS NULL' % Trip.cols(),
+                    (self.id,)))
+            except StopIteration:
+                return None
+
         @staticmethod
         def newUniqueRFID():
             digitNumber = 20
@@ -320,6 +334,7 @@ def get_Trip(db=None, superclass=None):
             return User.get(self.user_id)
 
         @property
+        @memoize
         def bike(self):
             Bike = get_Bike(db, superclass)
             return Bike.get(self.bike_id)
@@ -391,6 +406,12 @@ def get_Trip(db=None, superclass=None):
         @property
         def id(self):
             return (self.user_id, self.bike_id, self.departure_date)
+
+        def update(self):
+            with db:
+                db.execute(
+                    "UPDATE trip SET arrival_station_id=?, arrival_date=? WHERE user_id=? AND bike_id=? AND departure_date=?",
+                    (self.arrival_station_id, self.encode(self.arrival_date), self.user_id, self.bike_id, self.encode(self.departure_date)))
 
     return Trip
 

@@ -20,6 +20,7 @@
           &nbsp; Infos utilisateur
         </h2>
       </div>
+      
       <ul class="list-group panel-body">
         {% if user.is_subscriber() %}
         <li class="list-group-item">
@@ -72,6 +73,7 @@
       {% endif %}
     </div>
   </div>
+
   <div class="col-md-8">
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -81,6 +83,7 @@
         </h2>
         15 derniers voyages
       </div>
+  
       <ul class="list-group panel-body">
         {% for trip in user.trips[:15] %}
           <li class="list-group-item {% if not trip.finished %}active{% endif %}">
@@ -108,14 +111,22 @@
               </div>
               <div class="col-md-2">
                 <h4>Villo {{trip.bike.id}}</h4>
+                {% if trip.bike.usable %}
                 <form action="problem" method="POST">
                   <input type="hidden" name="villo" value="{{trip.bike.id}}">
-                  <button class="btn {% if trip.bike.usable %}btn-warning{% else %}btn-danger disabled{% endif %}" 
+                  <button class="btn btn-warning" 
                           type="submit" data-toggle="tooltip" data-placement="bottom" 
                           title="Signaler un problème avec ce villo">
-                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
                   </button>
                 </form>
+                {% else %}
+                <button class="btn btn-danger disabled" 
+                        type="submit" data-toggle="tooltip" data-placement="bottom" 
+                        title="Ce villo est signalé comme inutilisable">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                </button>
+                {% endif %}
               </div>
             </div>
           </li>

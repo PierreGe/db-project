@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Louer un vélo à {{station.name}}{% endblock %}
+
+{% block head %}
+<link type="text/css" href="/static/3rdparty/leaflet/leaflet.css" rel="stylesheet">
+<script type="text/javascript" src="/static/3rdparty/leaflet/leaflet.js"></script>
+{% endblock %}
+
+{% block content %}
+<div style="display: none;" id="station-popup">
+  {% include "map_station_popup.html" %}
+</div>
+
+<div class="jumbotron">
+  <h1>{{station.name}}</h1>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div id="map-unique"></div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+          &nbsp; Villos
+        </h2>
+      </div>
+      
+      <ul class="list-group panel-body">
+        {% for bike in station.bikes %}
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-md-4">
+              <b>Villo {{ bike.id }}</b>
+              <em>{{ bike.model }}</em>
+            </div>
+            <div class="col-md-4">
+              {% if bike.usable %}
+              <a href="/rent/{{station.id}}/bike/{{bike.id}}" class="btn btn-primary">Louer</a>
+              <form action="/problem" method="POST" style="display: inline;">
+                <input type="hidden" name="villo" value="{{bike.id}}">
+                <button class="btn btn-warning" 
+                        type="submit" data-toggle="tooltip" data-placement="bottom" 
+                        title="Signaler un problème avec ce villo">
+                  <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                </button>
+              </form>
+              {% else %}
+              <span class="label label-warning">Inutilisable</span>
+              {% endif %}
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    var map = L.map('map-unique').setView([{{station.latitude}}, {{station.longitude}}], 15);
+
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker([{{station.latitude}}, {{station.longitude}}]).bindPopup($('#station-popup').html()).addTo(map);
+});
+</script>
+{% endblock %}
