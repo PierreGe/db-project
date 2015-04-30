@@ -128,10 +128,10 @@ def drop_bike(station_id):
     try:
         station = get_db().Station.get(station_id)
     except KeyError:
-        flash("Station %d inconnue", "warning")
+        flash(u"Station %d inconnue", "warning")
         return redirect("/")
     if not trip:
-        flash("Vous n'avez pas de location en cours", "danger")
+        flash(u"Vous n'avez pas de location en cours", "danger")
     elif station.free_slots == 0:
         flash(u"Il n'y a pas de point d'attache libre à %s" % station.name, "danger")
     else:
@@ -148,7 +148,7 @@ def station_detail(station_id):
     try:
         station = get_db().Station.get(station_id)
     except KeyError:
-        flash("Station %d inconnue", "warning")
+        flash(u"Station %d inconnue", "warning")
         return redirect("/station")
     return render_template("rent.html", station=station)
 
@@ -160,12 +160,12 @@ def rent_bike(station_id, bike_id):
     try:
         station = get_db().Station.get(station_id)
     except KeyError:
-        flash("Station %d inconnue", "warning")
+        flash(u"Station %d inconnue", "warning")
         return redirect("/station")
     try:
         bike = get_db().Bike.get(bike_id)
     except KeyError:
-        flash("Villo %d inconnu", "warning")
+        flash(u"Villo %d inconnu", "warning")
         return redirect("/rent/%d" % (station_id))
 
     if user.current_trip and not user.is_admin():
@@ -177,8 +177,9 @@ def rent_bike(station_id, bike_id):
         newTrip = get_db().Trip.create(
             user_id=user.id, bike_id=bike.id, 
             departure_station_id=station.id, departure_date=datetime.datetime.now())
-        flash("Vous avez pris le villo %d" % (bike.id), 'success')
+        flash(u"Vous avez pris le villo %d à %s" % (bike.id, station.name), 'success')
     return redirect("/")
+
 
 @app.route("/history", methods=['POST'])
 @require_login
