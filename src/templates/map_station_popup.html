@@ -34,7 +34,7 @@
                 </abbr>
                 {% endif %}
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 {% if station.available_bikes > 0 %}
                 <span class="label label-success">
                     {{station.available_bikes}} vélo{{station.available_bikes|plur}} utilisable{{station.available_bikes|plur}}
@@ -51,15 +51,19 @@
                 </span>
                 {% endif %}
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 {% if user %}
-                    {% if user.current_trip %}
+                    {% if user.is_admin() %}
+                    <a href="/rent/{{station.id}}" class="btn btn-primary" title="Prendre ou déposer un villo! ici">
+                        <span style="color: white;" class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                    {% elif user.current_trip %}
                     <a href="/drop/{{station.id}}" class="btn btn-success" title="Déposer mon Villo! ici">
                         <span style="color: white;" class="glyphicon glyphicon-arrow-down"></span>
                     </a>
-                    {% elif not user.expired %}
+                    {% elif not user.expired and station.available_bikes > 0 %}
                     <a href="/rent/{{station.id}}" class="btn btn-primary" title="Louer un Villo! ici">
-                        <span style="color: white;" class="glyphicon glyphicon-road"></span>
+                        <span style="color: white;" class="glyphicon glyphicon-arrow-up"></span>
                     </a>
                     {% else %}
                     <a href="subscription" class="btn btn-warning" title="Renouvelez votre abonnement pour louer un Villo! ici">

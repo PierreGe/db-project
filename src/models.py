@@ -196,6 +196,7 @@ def get_User(db=None, superclass=None):
 
     class User(superclass):
         columns = ['id', 'password', 'card', 'expire_date']
+
         def __init__(self, id=None, password_hash="", card="", expire_date=None, rfid=None, firstname=None, lastname=None, address=None, phone_number=None, password=None):
             self.id = int(id) if id is not None else None
             self.password = password_hash if password_hash else hash_password(password)
@@ -245,6 +246,17 @@ def get_User(db=None, superclass=None):
                 db.execute(
                     "UPDATE user SET expire_date=? WHERE id=?",
                     (datestr(newEndDate), self.id))
+
+        @property
+        def active_trips(self):
+            assert self.is_admin()
+            Trip = get_Trip(db, superclass)
+            try:
+                return fetch_all(Trip, db.execute(
+                    'SELECT %s FROM trip WHERE user_id=? AND arrival_station_id IS NULL' % Trip.cols(),
+                    (self.id,)))
+            except StopIteration:
+                return None
 
         @property
         def current_trip(self):
