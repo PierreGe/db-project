@@ -121,17 +121,30 @@ def station_popup(station_id):
 def trip():
     return render_template("trip.html")
 
-@app.route("/drop/<int:station_id>")
+@app.route("/drop/<int:station_id>/bike/<int:bike_id>")
 @require_login
-def drop_bike(station_id):
-    trip = current_user().current_trip
+def drop_bike(station_id, bike_id):
+    user = current_user()
+    if user.is_admin():
+        active_trip = filter(lambda t: t.bike_id == bike_id, user.active_trips)
+        if len(active_trip) != 1:
+            flash(u"Vous n'utilisez actuellement pas le villo %d" % bike_id, "danger")
+            return redirect("/")
+        else:
+            trip = active_trip.pop()
+    else:
+        trip = current_user().current_trip
+
     try:
         station = get_db().Station.get(station_id)
     except KeyError:
-        flash(u"Station %d inconnue", "warning")
+        flash(u"Station %d inconnue", "danger")
         return redirect("/")
+    
     if not trip:
         flash(u"Vous n'avez pas de location en cours", "danger")
+    elif trip.bike_id != bike_id:
+        flash(u"Vous n'utilisez' actuellement pas le villo %d" % bike_id, "danger")
     elif station.free_slots == 0:
         flash(u"Il n'y a pas de point d'attache libre à %s" % station.name, "danger")
     else:
@@ -168,7 +181,9 @@ def rent_bike(station_id, bike_id):
         flash(u"Villo %d inconnu", "warning")
         return redirect("/rent/%d" % (station_id))
 
-    if user.current_trip and not user.is_admin():
+    if bike.location.id != station_id:
+        flash(u"Le vélo %d ne se trouve pas à la station %s" % (bike_id, station.name), "danger")
+    elif user.current_trip and not user.is_admin():
         flash(u"Vous avez déjà une location en cours", "danger")
     elif not bike.usable and not user.is_admin():
         flash(u"Ce villo n'est pas utilisable", "danger")

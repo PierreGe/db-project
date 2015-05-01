@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Louer un vélo à {{station.name}}{% endblock %}
+{% block title %}Station {{station.name}}{% endblock %}
 
 {% block head %}
 <link type="text/css" href="/static/3rdparty/leaflet/leaflet.css" rel="stylesheet">
@@ -37,7 +37,7 @@
               <em>{{ bike.model }}</em>
             </div>
             <div class="col-md-4">
-              {% if bike.usable %}
+              {% if (bike.usable and not user.current_trip) or user.is_admin() %}
               <a href="/rent/{{station.id}}/bike/{{bike.id}}" class="btn btn-primary">Louer</a>
               <form action="/problem" method="POST" style="display: inline;">
                 <input type="hidden" name="villo" value="{{bike.id}}">
@@ -56,6 +56,37 @@
         {% endfor %}
       </ul>
     </div>
+
+    {% if user.is_admin() %}
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+          &nbsp; Déposez un Villo
+        </h2>
+      </div>
+      <ul class="list-group panel-body">
+        {% for trip in user.active_trips %}
+        {% with bike = trip.bike %}
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-md-4">
+              <b>Villo {{ bike.id }}</b>
+              <em>{{ bike.model }}</em>
+            </div>
+            <div class="col-md-4">
+              <a class="btn btn-primary" href="/drop/{{station.id}}/bike/{{bike.id}}">
+                <span class="sr-only">Déposer le villo {{bike.id}} ici</span>
+                <span class="glyphicon glyphicon-arrow-down" style="color:white;"></span>
+              </a>
+            </div>
+          </div>
+        </li>
+        {% endwith %}
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
   </div>
 </div>
 

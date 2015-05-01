@@ -58,7 +58,7 @@
                         <span style="color: white;" class="glyphicon glyphicon-eye-open"></span>
                     </a>
                     {% elif user.current_trip %}
-                    <a href="/drop/{{station.id}}" class="btn btn-success" title="Déposer mon Villo! ici">
+                    <a href="/drop/{{station.id}}/bike/{{user.current_trip.bike_id}}" class="btn btn-success" title="Déposer mon Villo! ici">
                         <span style="color: white;" class="glyphicon glyphicon-arrow-down"></span>
                     </a>
                     {% elif not user.expired and station.available_bikes > 0 %}
