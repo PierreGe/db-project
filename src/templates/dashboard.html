@@ -113,14 +113,9 @@
                 {% with bike = trip.bike %}
                 <h4>Villo {{bike.id}}</h4>
                 {% if bike.usable %}
-                <form action="problem" method="POST">
-                  <input type="hidden" name="villo" value="{{bike.id}}">
-                  <button class="btn btn-warning" 
-                          type="submit" data-toggle="tooltip" data-placement="bottom" 
-                          title="Signaler un problème avec ce villo">
-                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                  </button>
-                </form>
+                <a href="/problem/{{bike.id}}" class="btn btn-warning" title="Signaler un problème avec ce villo">
+                  <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                </a>
                 {% elif user.is_admin() %}
                 <a href="/repair/{{bike.id}}" class="btn btn-success" title="Marquer comme réparé">
                   <span class="glyphicon glyphicon-wrench" style="color:white;"></span>

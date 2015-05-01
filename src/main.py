@@ -230,18 +230,16 @@ def history():
     return render_template("history.html",minimum_km=minkm, trips_by_month=trips_by_month)
 
 
-@app.route("/problem", methods=['GET', 'POST'])
+@app.route("/problem/<int:bike_id>")
 @require_login
-def problem():
-    # ctx must be created after db update
-    if request.method == 'POST':
-        villoId = int(request.form['villo'])
-        bike = get_db().Bike.get(villoId)
+def problem(bike_id):
+    try:
+        bike = get_db().Bike.get(bike_id)
         bike.updateUsable(False)
         flash(u"Le problème sur le vélo %d a été signalé" % bike.id, "success")
-        return redirect("/")
-    ctx = {'bike_list': get_db().Bike.allUsable()}
-    return render_template("problem.html", **ctx)
+    except KeyError:
+        flash(u"Le vélo %d n'existe pas" % bike_id, "danger")
+    return redirect("/")
 
 
 @app.route("/repair/<int:bike_id>")

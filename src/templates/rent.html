@@ -39,14 +39,9 @@
             <div class="col-md-4">
               {% if (bike.usable and not user.current_trip) or user.is_admin() %}
               <a href="/rent/{{station.id}}/bike/{{bike.id}}" class="btn btn-primary">Louer</a>
-              <form action="/problem" method="POST" style="display: inline;">
-                <input type="hidden" name="villo" value="{{bike.id}}">
-                <button class="btn btn-warning" 
-                        type="submit" data-toggle="tooltip" data-placement="bottom" 
-                        title="Signaler un problème avec ce villo">
-                  <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                </button>
-              </form>
+              <a href="/problem/{{bike.id}}" class="btn btn-warning" title="Signaler un problème avec ce villo">
+                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+              </a>
               {% else %}
               <span class="label label-warning">Inutilisable</span>
               {% endif %}
