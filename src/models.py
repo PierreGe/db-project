@@ -178,6 +178,12 @@ def get_Bike(db=None, superclass=None):
 
 
         @classmethod
+        def allBroken(klass):
+            return fetch_all(klass, db.execute(
+                "SELECT %s FROM %s WHERE usable=0" % (klass.cols(), klass.tablename())))
+
+
+        @classmethod
         def get(klass, id):
             try:
                 return fetch_one(klass, db.execute(

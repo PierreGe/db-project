@@ -72,6 +72,45 @@
         </form>
       {% endif %}
     </div>
+
+    {% if user.is_admin() %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+          &nbsp; Vélos à réparer
+        </h2>
+      </div>
+      <ul class="list-group panel-body">
+        {% for bike in broken_bikes %}
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-md-8">
+              <b>Villo {{ bike.id }}</b>
+              <em>{{ bike.model }}</em>
+            </div>
+            <div class="col-md-4">
+              <a href="/repair/{{bike.id}}" class="btn btn-success" title="Réparer">
+              <span class="glyphicon glyphicon-wrench" style="color:white;"></span>
+              </a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <span class="badge">
+                {% if bike.location %}
+                {{bike.location.name}}
+                {% else %}
+                En déplacement
+                {% endif %}
+              </span>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
   </div>
 
   <div class="col-md-8">

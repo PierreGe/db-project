@@ -50,7 +50,13 @@ def close_connection(exception):
 
 @app.route("/")
 def index():
-    return render_template("dashboard.html" if current_user() else "home.html")
+    user = current_user()
+    if user:
+        ctx = {}
+        if user.is_admin():
+            ctx['broken_bikes'] = get_db().Bike.allBroken()
+        return render_template("dashboard.html", **ctx)
+    return render_template("home.html")
 
 
 @app.route('/session_status')
