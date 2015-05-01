@@ -238,11 +238,29 @@ def problem():
         villoId = int(request.form['villo'])
         bike = get_db().Bike.get(villoId)
         bike.updateUsable(False)
-        ctx = {'bike_list': get_db().Bike.allUsable()}
-        ctx['signaled'] = True
-    else:
-        ctx = {'bike_list': get_db().Bike.allUsable()}
+        flash(u"Le problème sur le vélo %d a été signalé" % bike.id, "success")
+        return redirect("/")
+    ctx = {'bike_list': get_db().Bike.allUsable()}
     return render_template("problem.html", **ctx)
+
+
+@app.route("/repair/<int:bike_id>")
+@require_login
+def repair_bike(bike_id):
+    user = current_user()
+    if not user.is_admin():
+        flash(u"Seul un administrateur peut réparer le vélo", "danger")
+    else:
+        try:
+            bike = get_db().Bike.get(bike_id)
+            if bike.usable:
+                flash(u"Le vélo %d est déjà utilisable" % bike_id, "warning")
+            else:
+                bike.updateUsable(True)
+                flash(u"Le vélo a été réparé", "success")
+        except KeyError:
+            flash(u"Vélo %d introuvable" % bike_id, "danger")
+    return redirect("/")
 
 @app.route("/billing", methods=['POST'])
 @require_login
