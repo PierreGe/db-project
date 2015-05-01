@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS station (
     capacity INTEGER NOT NULL,
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
-    name VARCHAR(32) NOT NULL
+    name VARCHAR(32) NOT NULL,
+    UNIQUE(latitude, longitude)
 );
 
 CREATE TABLE IF NOT EXISTS bike (
@@ -27,7 +28,7 @@ CREATE TABLE IF NOT EXISTS subscriber (
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
     address TEXT NOT NULL,
-    phone_number VARCHAR(20),
+    phone_number VARCHAR(20) NOT NULL,
 
     FOREIGN KEY(user_id) REFERENCES user(id)
 );
@@ -37,7 +38,7 @@ CREATE TABLE IF NOT EXISTS trip (
     departure_date VARCHAR(20) NOT NULL,
 
     arrival_station_id INTEGER,
-    arrival_date VARCHAR(20),
+    arrival_date VARCHAR(20), -- CHECK(datetime(arrival_date) > datetime(departure_date)) ?
 
     user_id INTEGER NOT NULL,
     bike_id INTEGER NOT NULL,
