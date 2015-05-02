@@ -118,6 +118,9 @@ def test_insert_trip():
         user_id=u.id, bike_id=b.id
     )
 
+    # Refresh for location memoizing
+    b = db.Bike.get(b.id)
+
     assert t.user.auth("Hello")
     assert t.bike.model == "mytest"
     assert b.location.name == "db.Station 2"
@@ -221,3 +224,4 @@ def test_user_current_trip():
     assert u.current_trip.bike_id == b.id
     assert u.current_trip.departure_station_id == s1.id
     assert u.current_trip.arrival_station_id is None
+    assert u.has_bike(b.id)

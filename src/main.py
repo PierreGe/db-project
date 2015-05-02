@@ -160,7 +160,7 @@ def drop_bike(station_id, bike_id):
         flash(u"Vous avez déposé votre vélo à la station %s" % station.name, "success")
     return redirect("/")
 
-@app.route("/rent/<int:station_id>")
+@app.route("/station/<int:station_id>")
 @require_login
 def station_detail(station_id):
     user = current_user()

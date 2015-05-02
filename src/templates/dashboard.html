@@ -90,8 +90,13 @@
               <em>{{ bike.model }}</em>
             </div>
             <div class="col-md-4">
+              {# A bike could not be repared if not accessible by admin #}
+              {% if bike.location or user.has_bike(bike.id) %}
               <a href="/repair/{{bike.id}}" class="btn btn-success" title="Réparer">
-              <span class="glyphicon glyphicon-wrench" style="color:white;"></span>
+              {% else %}
+              <a href="/repair/{{bike.id}}" class="btn btn-danger disabled" title="Ce villo est inacessible à la réparation">
+              {% endif %}
+                <span class="glyphicon glyphicon-wrench" style="color:white;"></span>
               </a>
             </div>
           </div>
@@ -99,7 +104,9 @@
             <div class="col-md-12">
               <span class="badge">
                 {% if bike.location %}
+                <a href="/station/{{bike.location.id}}" style="color:white;">
                 {{bike.location.name}}
+                </a>
                 {% else %}
                 En déplacement
                 {% endif %}
@@ -132,11 +139,15 @@
                   {{trip.departure_date.date().strftime("%d/%m/%Y")}}
                   {% if not trip.finished %} (en cours) {% endif %}
                 </h4>
-                {{trip.departure_station.name}}
+                <a href="/station/{{trip.departure_station_id}}">
+                  {{trip.departure_station.name}}
+                </a>
                 ({{trip.departure_date.time().strftime("%Hh%M")}})
                 {% if trip.finished %}
                   <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                  {{trip.arrival_station.name}}
+                  <a href="/station/{{trip.arrival_station_id}}">
+                    {{trip.arrival_station.name}}
+                  </a>
                   ({{trip.arrival_date.time().strftime("%Hh%M")}}).
                   <span class="badge alert-info">
                     {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes

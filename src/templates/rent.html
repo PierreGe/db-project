@@ -37,11 +37,22 @@
               <em>{{ bike.model }}</em>
             </div>
             <div class="col-md-4">
-              {% if (bike.usable and not user.current_trip) or user.is_admin() %}
+              {% if user.is_admin() %}
               <a href="/rent/{{station.id}}/bike/{{bike.id}}" class="btn btn-primary">Louer</a>
-              <a href="/problem/{{bike.id}}" class="btn btn-warning" title="Signaler un problème avec ce villo">
-                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-              </a>
+                {% if bike.usable %}
+                  <a href="/problem/{{bike.id}}" class="btn btn-warning" title="Signaler un problème avec ce villo">
+                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                  </a>
+                {% else %}
+                  <a href="/repair/{{bike.id}}" class="btn btn-success" title="Réparer ce villo">
+                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                  </a>
+                {% endif %}
+              {% elif (bike.usable and not user.current_trip) %}
+                <a href="/rent/{{station.id}}/bike/{{bike.id}}" class="btn btn-primary">Louer</a>
+                <a href="/problem/{{bike.id}}" class="btn btn-warning" title="Signaler un problème avec ce villo">
+                  <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                </a>
               {% else %}
               <span class="label label-warning">Inutilisable</span>
               {% endif %}
