@@ -253,6 +253,7 @@ def get_User(db=None, superclass=None):
                 db.execute(
                     "UPDATE user SET expire_date=? WHERE id=?",
                     (datestr(newEndDate), self.id))
+            self.expire_date = newEndDate
 
         @property
         def active_trips(self):

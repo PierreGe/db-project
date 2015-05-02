@@ -132,8 +132,8 @@ def subscription():
             phone_number=F['userPhone'],
             address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
             rfid= get_db().User.newUniqueRFID())
+        new_user.renew() # nouvel abonnement
         connect_user(new_user)
-        current_user().renew() # nouvel abonnement
         return render_template("welcome.html", user=new_user)
 
 
