@@ -1,4 +1,4 @@
--- Les utilisateurs ayant utilisé Villo au moins 2 fois
+-- Les utilisateurs ayant utilise Villo au moins 2 fois
 
 SELECT id from user,trip 
     WHERE user.id = trip.user_id 

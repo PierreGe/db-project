@@ -1,4 +1,4 @@
--- Les utilisateurs habitant Ixelles ayant utilisé un Villo de la station Flagey
+-- Les utilisateurs habitant Ixelles ayant utilise un Villo de la station Flagey
 
 SELECT subscriber.user_id,firstname,lastname FROM subscriber,trip
     INNER JOIN station ON trip.departure_station_id = station.id

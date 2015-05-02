@@ -1,5 +1,5 @@
--- Les vélos ayant deux trajets consécutifs disjoints (station de retour du
--- premier trajet différente de la station de départ du suivant)}
+-- Les velos ayant deux trajets consecutifs disjoints (station de retour du
+-- premier trajet differente de la station de depart du suivant)
 
 SELECT * FROM trip trip1
     WHERE EXISTS (SELECT * FROM trip trip2
