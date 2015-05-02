@@ -73,6 +73,34 @@
       {% endif %}
     </div>
 
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
+          &nbsp; {{month_name}}
+        </h2>
+      </div>
+
+      <ul class="list-group panel-body">
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-stats"></span>&nbsp;
+          <b>Nombre de voyage</b>
+          <span class="badge alert-info">{{month_trip_nbr}}</span>
+        </li>
+          <li class="list-group-item">
+          <span class="glyphicon glyphicon-road"></span>&nbsp;
+          <b>Kilomètres parcourus</b>
+          <span class="badge alert-info">{{month_kilometer}}</span>
+        </li>
+          <li class="list-group-item">
+          <span class="glyphicon glyphicon-euro"></span>&nbsp;
+          <b>Somme dépensée</b>
+          <span class="badge alert-info">{{month_price}}</span>
+        </li>
+
+      </ul>
+    </div>
+
     {% if user.is_admin() %}
     <div class="panel panel-default">
       <div class="panel-heading">
