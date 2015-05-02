@@ -210,6 +210,11 @@
             </div>
           </li>
         {% endfor %}
+          {% if user.trips == [] %}
+          <li class="list-group-item">
+              <h4>Vous n'avez encore effectué aucun trajet</h4>
+          </li>
+          {% endif %}
       </ul>
     </div>
   </div>
