@@ -30,13 +30,16 @@ def teardown_function(*args):
     conn = None
 
 def test_expected_data():
+    """Test fixtures content"""
     db = Database(conn)
     assert db.User.count() == 8
     assert db.Bike.count() == 11
     assert db.Station.count() == 4
-    assert db.Trip.count() == 11
+    assert db.Trip.count() == 12
 
 def test_r1():
     Q = load_query(1)
-    res = [row for row in conn.execute(Q)] 
-    assert len(res) == 0
+    res = [row for row in conn.execute(Q)]
+    print Q
+    print res
+    assert res == [(1, "Mercedes", "BOURDON")]
