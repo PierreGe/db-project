@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+  <subscribers>
+    <user>
+      <userID>0</userID>
+      <RFID>15169073583104737236</RFID>
+      <lastname>CROCHEMORE</lastname>
+      <firstname>Abdel</firstname>
+      <password>8308</password>
+      <phone>0482642387</phone>
+      <address>
+        <city>Saint-Gilles</city>
+        <cp>1060</cp>
+        <street>rue Steens</street>
+        <number>96</number>
+      </address>
+      <subscribeDate>2010-01-01T10:00:00</subscribeDate>
+      <expiryDate>2011-01-01T10:00:00</expiryDate>
+      <card>4506690518145656</card>
+    </user>
+    <user>
+      <userID>1</userID>
+      <RFID>34737183480186433285</RFID>
+      <lastname>BOURDON</lastname>
+      <firstname>Mercedes</firstname>
+      <password>1863</password>
+      <phone>0493061022</phone>
+      <address>
+        <city>Ixelles</city>
+        <cp>1050</cp>
+        <street>rue de la Brasserie</street>
+        <number>10</number>
+      </address>
+      <subscribeDate>2010-01-02T02:44:33</subscribeDate>
+      <expiryDate>2011-01-02T02:44:33</expiryDate>
+      <card>4506968733328530</card>
+    </user>
+    <user>
+      <userID>2</userID>
+      <RFID>34789183480186433285</RFID>
+      <lastname>BOURDON</lastname>
+      <firstname>Mercedes</firstname>
+      <password>8932</password>
+      <phone>0493123123</phone>
+      <address>
+        <city>Ixelles</city>
+        <cp>1050</cp>
+        <street>Avenue de l'université</street>
+        <number>17</number>
+      </address>
+      <subscribeDate>2010-01-03T02:44:33</subscribeDate>
+      <expiryDate>2011-01-03T02:44:33</expiryDate>
+      <card>4506968456328530</card>
+    </user>
+  </subscribers>
+  
+  <temporaryUsers>
+    <user>
+      <userID>1000000</userID>
+      <password>8713</password>
+      <expiryDate>2010-01-02T10:00:00</expiryDate>
+      <card>4506080391674589</card>
+    </user>
+    <user>
+      <userID>1000001</userID>
+      <password>9744</password>
+      <expiryDate>2010-01-03T04:56:44</expiryDate>
+      <card>4506609821021280</card>
+    </user>
+    <user>
+      <userID>1000002</userID>
+      <password>1914</password>
+      <expiryDate>2010-01-04T03:17:19</expiryDate>
+      <card>4506496046243240</card>
+    </user>
+    <user>
+      <userID>1000003</userID>
+      <password>2504</password>
+      <expiryDate>2010-01-10T20:38:33</expiryDate>
+      <card>4506594028421754</card>
+    </user>
+  </temporaryUsers>
+</users>

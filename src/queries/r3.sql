@@ -1,0 +1,1 @@
+-- Les paires d'utilisateurs ayant fait un trajet identique

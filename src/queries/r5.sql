@@ -1,0 +1,3 @@
+-- Les utilisateurs, la date d'inscription, le nombre total de trajet effectués,
+-- la distance totale parcourue et la distance moyenne parcourue par trajet,
+-- classés en fonction de la distance totale parcourue

@@ -1,0 +1,4 @@
+-- Les stations avec le nombre total de vélos déposés dans cette station
+-- (un même vélo peut-être comptabilisé plusieurs fois) et le nombre
+-- d'utilisateurs différents ayant utilisé la station et ce pour toutes les
+-- stations ayant été utilisées au moins 10 fois.
