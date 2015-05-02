@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS subscriber (
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
     address TEXT NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
+    phone_number VARCHAR(20),
 
     FOREIGN KEY(user_id) REFERENCES user(id)
 );

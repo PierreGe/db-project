@@ -152,6 +152,7 @@ def get_Bike(db=None, superclass=None):
             self.usable = newValue
 
         @property
+        @memoize
         def location(self):
             cursor = db.execute(
                 "SELECT arrival_station_id FROM trip WHERE bike_id=? ORDER BY departure_date DESC LIMIT 1",
@@ -175,6 +176,12 @@ def get_Bike(db=None, superclass=None):
         def allUsable(klass):
             return fetch_all(klass, db.execute(
                 "SELECT %s FROM %s WHERE usable=1" % (klass.cols(), klass.tablename())))
+
+
+        @classmethod
+        def allBroken(klass):
+            return fetch_all(klass, db.execute(
+                "SELECT %s FROM %s WHERE usable=0" % (klass.cols(), klass.tablename())))
 
 
         @classmethod
@@ -271,6 +278,12 @@ def get_User(db=None, superclass=None):
                     (self.id,)))
             except StopIteration:
                 return None
+
+        def has_bike(self, bike_id):
+            """Return true if the User is using designated bike at the moment"""
+            return fetch_first(db.execute(
+                "SELECT COUNT(bike_id) FROM trip WHERE user_id=? AND bike_id=? AND arrival_station_id IS NULL",
+                (self.id, bike_id))) == 1
 
         @staticmethod
         def newUniqueRFID():

@@ -92,9 +92,14 @@ def insert_users(db, input_file="data/users.xml"):
             subscribers)
 
 def insert_trips(db, input_file="data/trips.csv"):
-    assert db.execute('INSERT INTO user (password,card,expire_date) VALUES ("%s","","")' % (hash_password('admin'))).rowcount == 1
-    res = db.execute('SELECT id FROM user WHERE password="%s" AND expire_date=""' % (hash_password('admin')))
-    admin_id = res.next()[0]
+    with db:
+        assert db.execute('INSERT INTO user (password,card,expire_date) VALUES ("%s","","")' % (hash_password('admin'))).rowcount == 1
+        res = db.execute('SELECT id FROM user WHERE password="%s" AND expire_date=""' % (hash_password('admin')))
+        admin_id = res.next()[0]
+        assert db.execute('INSERT INTO subscriber (user_id,firstname,lastname,rfid,address) VALUES (?,?,?,?,?)',
+            (admin_id, "Administrateur", "De Villos", "", "Villo! HQ")).rowcount == 1
+
+    print "Admin user has id=%d and password=admin" % admin_id
 
     def extract_trip(trip):
         if trip['depart'] == 'None':

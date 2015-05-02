@@ -72,6 +72,52 @@
         </form>
       {% endif %}
     </div>
+
+    {% if user.is_admin() %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+          &nbsp; Vélos à réparer
+        </h2>
+      </div>
+      <ul class="list-group panel-body">
+        {% for bike in broken_bikes %}
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-md-8">
+              <b>Villo {{ bike.id }}</b>
+              <em>{{ bike.model }}</em>
+            </div>
+            <div class="col-md-4">
+              {# A bike could not be repared if not accessible by admin #}
+              {% if bike.location or user.has_bike(bike.id) %}
+              <a href="/repair/{{bike.id}}" class="btn btn-success" title="Réparer">
+              {% else %}
+              <a href="/repair/{{bike.id}}" class="btn btn-danger disabled" title="Ce villo est inacessible à la réparation">
+              {% endif %}
+                <span class="glyphicon glyphicon-wrench" style="color:white;"></span>
+              </a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <span class="badge">
+                {% if bike.location %}
+                <a href="/station/{{bike.location.id}}" style="color:white;">
+                {{bike.location.name}}
+                </a>
+                {% else %}
+                En déplacement
+                {% endif %}
+              </span>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
   </div>
 
   <div class="col-md-8">
@@ -93,11 +139,15 @@
                   {{trip.departure_date.date().strftime("%d/%m/%Y")}}
                   {% if not trip.finished %} (en cours) {% endif %}
                 </h4>
-                {{trip.departure_station.name}}
+                <a href="/station/{{trip.departure_station_id}}">
+                  {{trip.departure_station.name}}
+                </a>
                 ({{trip.departure_date.time().strftime("%Hh%M")}})
                 {% if trip.finished %}
                   <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                  {{trip.arrival_station.name}}
+                  <a href="/station/{{trip.arrival_station_id}}">
+                    {{trip.arrival_station.name}}
+                  </a>
                   ({{trip.arrival_date.time().strftime("%Hh%M")}}).
                   <span class="badge alert-info">
                     {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
@@ -110,16 +160,16 @@
                 {% endif %}
               </div>
               <div class="col-md-2">
-                <h4>Villo {{trip.bike.id}}</h4>
-                {% if trip.bike.usable %}
-                <form action="problem" method="POST">
-                  <input type="hidden" name="villo" value="{{trip.bike.id}}">
-                  <button class="btn btn-warning" 
-                          type="submit" data-toggle="tooltip" data-placement="bottom" 
-                          title="Signaler un problème avec ce villo">
-                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                  </button>
-                </form>
+                {% with bike = trip.bike %}
+                <h4>Villo {{bike.id}}</h4>
+                {% if bike.usable %}
+                <a href="/problem/{{bike.id}}" class="btn btn-warning" title="Signaler un problème avec ce villo">
+                  <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                </a>
+                {% elif user.is_admin() %}
+                <a href="/repair/{{bike.id}}" class="btn btn-success" title="Marquer comme réparé">
+                  <span class="glyphicon glyphicon-wrench" style="color:white;"></span>
+                </a>
                 {% else %}
                 <button class="btn btn-danger disabled" 
                         type="submit" data-toggle="tooltip" data-placement="bottom" 
@@ -127,6 +177,7 @@
                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 </button>
                 {% endif %}
+                {% endwith %}
               </div>
             </div>
           </li>

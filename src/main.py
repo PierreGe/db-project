@@ -50,7 +50,13 @@ def close_connection(exception):
 
 @app.route("/")
 def index():
-    return render_template("dashboard.html" if current_user() else "home.html")
+    user = current_user()
+    if user:
+        ctx = {}
+        if user.is_admin():
+            ctx['broken_bikes'] = get_db().Bike.allBroken()
+        return render_template("dashboard.html", **ctx)
+    return render_template("home.html")
 
 
 @app.route('/session_status')
@@ -121,17 +127,30 @@ def station_popup(station_id):
 def trip():
     return render_template("trip.html")
 
-@app.route("/drop/<int:station_id>")
+@app.route("/drop/<int:station_id>/bike/<int:bike_id>")
 @require_login
-def drop_bike(station_id):
-    trip = current_user().current_trip
+def drop_bike(station_id, bike_id):
+    user = current_user()
+    if user.is_admin():
+        active_trip = filter(lambda t: t.bike_id == bike_id, user.active_trips)
+        if len(active_trip) != 1:
+            flash(u"Vous n'utilisez actuellement pas le villo %d" % bike_id, "danger")
+            return redirect("/")
+        else:
+            trip = active_trip.pop()
+    else:
+        trip = current_user().current_trip
+
     try:
         station = get_db().Station.get(station_id)
     except KeyError:
-        flash(u"Station %d inconnue", "warning")
+        flash(u"Station %d inconnue", "danger")
         return redirect("/")
+    
     if not trip:
         flash(u"Vous n'avez pas de location en cours", "danger")
+    elif trip.bike_id != bike_id:
+        flash(u"Vous n'utilisez' actuellement pas le villo %d" % bike_id, "danger")
     elif station.free_slots == 0:
         flash(u"Il n'y a pas de point d'attache libre à %s" % station.name, "danger")
     else:
@@ -141,7 +160,7 @@ def drop_bike(station_id):
         flash(u"Vous avez déposé votre vélo à la station %s" % station.name, "success")
     return redirect("/")
 
-@app.route("/rent/<int:station_id>")
+@app.route("/station/<int:station_id>")
 @require_login
 def station_detail(station_id):
     user = current_user()
@@ -168,7 +187,9 @@ def rent_bike(station_id, bike_id):
         flash(u"Villo %d inconnu", "warning")
         return redirect("/rent/%d" % (station_id))
 
-    if user.current_trip and not user.is_admin():
+    if bike.location.id != station_id:
+        flash(u"Le vélo %d ne se trouve pas à la station %s" % (bike_id, station.name), "danger")
+    elif user.current_trip and not user.is_admin():
         flash(u"Vous avez déjà une location en cours", "danger")
     elif not bike.usable and not user.is_admin():
         flash(u"Ce villo n'est pas utilisable", "danger")
@@ -215,19 +236,35 @@ def history():
     return render_template("history.html",minimum_km=minkm, trips_by_month=trips_by_month)
 
 
-@app.route("/problem", methods=['GET', 'POST'])
+@app.route("/problem/<int:bike_id>")
 @require_login
-def problem():
-    # ctx must be created after db update
-    if request.method == 'POST':
-        villoId = int(request.form['villo'])
-        bike = get_db().Bike.get(villoId)
+def problem(bike_id):
+    try:
+        bike = get_db().Bike.get(bike_id)
         bike.updateUsable(False)
-        ctx = {'bike_list': get_db().Bike.allUsable()}
-        ctx['signaled'] = True
+        flash(u"Le problème sur le vélo %d a été signalé" % bike.id, "success")
+    except KeyError:
+        flash(u"Le vélo %d n'existe pas" % bike_id, "danger")
+    return redirect("/")
+
+
+@app.route("/repair/<int:bike_id>")
+@require_login
+def repair_bike(bike_id):
+    user = current_user()
+    if not user.is_admin():
+        flash(u"Seul un administrateur peut réparer le vélo", "danger")
     else:
-        ctx = {'bike_list': get_db().Bike.allUsable()}
-    return render_template("problem.html", **ctx)
+        try:
+            bike = get_db().Bike.get(bike_id)
+            if bike.usable:
+                flash(u"Le vélo %d est déjà utilisable" % bike_id, "warning")
+            else:
+                bike.updateUsable(True)
+                flash(u"Le vélo a été réparé", "success")
+        except KeyError:
+            flash(u"Vélo %d introuvable" % bike_id, "danger")
+    return redirect("/")
 
 @app.route("/billing", methods=['POST'])
 @require_login
