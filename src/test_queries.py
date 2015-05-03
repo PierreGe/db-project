@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from populate_db import (
     create_tables, 
     insert_bikes, 
@@ -77,8 +79,8 @@ def insert_fixtures(conn):
     # B: ULB -> Arsenal, villo1
     db.Trip.create(
         user_id=B.id, bike_id=Bikes[0].id,
-        departure_station_id=Flagey.id, departure_date=t(days=2),
-        arrival_station_id=ULB.id, arrival_date=t(days=2, seconds=1200))
+        departure_station_id=ULB.id, departure_date=t(days=2),
+        arrival_station_id=Arsenal.id, arrival_date=t(days=2, seconds=1200))
 
     # A: Flagey -> ULB, villo2
     db.Trip.create(
@@ -91,6 +93,12 @@ def insert_fixtures(conn):
         user_id=A.id, bike_id=Bikes[2].id,
         departure_station_id=Flagey.id, departure_date=t(days=12, seconds=54000),
         arrival_station_id=ULB.id, arrival_date=t(days=12, seconds=58000))
+
+    # D: ULB -> Arsenal, villo2
+    db.Trip.create(
+        user_id=D.id, bike_id=Bikes[1].id,
+        departure_station_id=ULB.id, departure_date=t(days=3),
+        arrival_station_id=Arsenal.id, arrival_date=t(days=3, seconds=1200))
 
 conn = None
 def setup_function(*args):
@@ -109,12 +117,20 @@ def test_expected_data():
     assert db.User.count() == 6
     assert db.Bike.count() == 5
     assert db.Station.count() == 3
-    assert db.Trip.count() == 4 + 5
+    assert db.Trip.count() == 10
 
 def test_r1():
+    # B a loué un vélo à Flagey et habite Ixelles
     res = exec_query(load_query(1))
     assert res == [(2, "B", "B")]
 
 def test_r2():
+    # A et B ont 2 trajets chacun
     res = exec_query(load_query(2))
     assert res == [(1,), (2,)]
+
+def test_r3():
+    res = exec_query(load_query(3))
+    # A et B font tous les 2 le trajet Flagey -> ULB,
+    # B et D font tous les 2 le trajet ULB -> Arsenal
+    assert res == [(1, 2), (2, 4)]
