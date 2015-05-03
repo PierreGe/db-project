@@ -2,15 +2,16 @@ CREATE TABLE IF NOT EXISTS station (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     payment BOOLEAN NOT NULL,
     capacity INTEGER NOT NULL,
-    latitude REAL NOT NULL,
-    longitude REAL NOT NULL,
+    latitude REAL NOT NULL CHECK(-90<=latitude AND latitude<=90),
+    longitude REAL NOT NULL CHECK(-180<=longitude AND longitude<=180),
     name VARCHAR(32) NOT NULL,
+
     UNIQUE(latitude, longitude)
 );
 
 CREATE TABLE IF NOT EXISTS bike (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    entry_date VARCHAR(20) NOT NULL CHECK (entry_date IS strftime(entry_date)), -- SQLite has no DATETIME type, check que le format est bon
+    entry_date VARCHAR(20) NOT NULL CHECK (entry_date IS strftime(entry_date)),
     model VARCHAR(32) NOT NULL,
     usable BOOLEAN NOT NULL
 );
@@ -23,8 +24,8 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 CREATE TABLE IF NOT EXISTS subscriber (
-    user_id INTEGER NOT NULL,
-    rfid TEXT NOT NULL,
+    user_id INTEGER PRIMARY KEY,
+    rfid TEXT UNIQUE NOT NULL,
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
     address TEXT NOT NULL,
@@ -42,6 +43,8 @@ CREATE TABLE IF NOT EXISTS trip (
   
     user_id INTEGER NOT NULL,
     bike_id INTEGER NOT NULL,
+
+    UNIQUE(user_id, bike_id, departure_date),
 
     FOREIGN KEY(departure_station_id) REFERENCES station(id),
     FOREIGN KEY(arrival_station_id) REFERENCES station(id),
