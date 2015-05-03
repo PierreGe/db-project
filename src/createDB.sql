@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS trip (
     departure_date VARCHAR(20) NOT NULL CHECK (departure_date IS strftime(departure_date)),
 
     arrival_station_id INTEGER,
-    arrival_date VARCHAR(20) CHECK (arrival_date IS strftime(arrival_date)) CHECK(arrival_date > departure_date OR arrival_date = departure_date),
+    arrival_date VARCHAR(20) CHECK (arrival_date IS strftime(arrival_date)) CHECK(arrival_date >= departure_date),
   
     user_id INTEGER NOT NULL,
     bike_id INTEGER NOT NULL,
