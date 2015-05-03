@@ -53,6 +53,37 @@ def index():
     user = current_user()
     if user:
         ctx = {}
+        def month_displayname(date):
+            months = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Spetembre", "Octobre", "Novembre", "Decembre"]
+            return "%s %d" % (months[date.month-1], date.year)
+
+        trip_list = current_user().trips
+        if trip_list:
+            trips_by_month = []
+            if len(trip_list) > 0:
+                trips_by_month = [
+                    (month_displayname(trip_list[0].departure_date), [trip_list[0]])
+                ]
+                for trip in trip_list[1:]:
+                    name = month_displayname(trip.departure_date)
+                    if name == trips_by_month[-1][0]:
+                        trips_by_month[-1][1].append(trip)
+                    else:
+                        trips_by_month.append((name, [trip]))
+            ctx["month_name"] = trips_by_month[0][0]
+            ctx["month_trip_nbr"] = len(trips_by_month[0][1])
+            price = 0
+            kilometer = 0
+            for t in trips_by_month[0][1]:
+                price+= t.price()
+                kilometer = t.distance()
+            ctx["month_price"] = price
+            ctx["month_kilometer"] = kilometer
+        else:
+            ctx["month_name"] = "Total"
+            ctx["month_trip_nbr"] = 0
+            ctx["month_price"] = 0
+            ctx["month_kilometer"] = 0
         if user.is_admin():
             ctx['broken_bikes'] = get_db().Bike.allBroken()
         return render_template("dashboard.html", **ctx)
@@ -101,8 +132,8 @@ def subscription():
             phone_number=F['userPhone'],
             address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
             rfid= get_db().User.newUniqueRFID())
+        new_user.renew() # nouvel abonnement
         connect_user(new_user)
-        current_user().renew() # nouvel abonnement
         return render_template("welcome.html", user=new_user)
 
 

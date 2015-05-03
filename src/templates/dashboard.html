@@ -3,16 +3,9 @@
 {% block title %}Accueil{% endblock %}
 
 {% block content %}
-<div class="jumbotron">
-  <div class="row">
-    <div class="col-md-7">
-      <h1>Villo!</h1>
-    </div>
-  </div>
-</div>
-
 <div class="row">
   <div class="col-md-4">
+    {# Personal infos panel #}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h2>
@@ -74,6 +67,7 @@
     </div>
 
     {% if user.is_admin() %}
+    {# Repair panel #}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h2>
@@ -85,11 +79,11 @@
         {% for bike in broken_bikes %}
         <li class="list-group-item">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-xs-10">
               <b>Villo {{ bike.id }}</b>
               <em>{{ bike.model }}</em>
             </div>
-            <div class="col-md-4">
+            <div class="col-xs-2">
               {# A bike could not be repared if not accessible by admin #}
               {% if bike.location or user.has_bike(bike.id) %}
               <a href="/repair/{{bike.id}}" class="btn btn-success" title="Réparer">
@@ -101,7 +95,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-xs-12">
               <span class="badge">
                 {% if bike.location %}
                 <a href="/station/{{bike.location.id}}" style="color:white;">
@@ -117,10 +111,40 @@
         {% endfor %}
       </ul>
     </div>
+    {% else %}
+    {# Month panel #}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
+          &nbsp; {{month_name}}
+        </h2>
+      </div>
+
+      <ul class="list-group panel-body">
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-stats"></span>&nbsp;
+          <b>Nombre de trajets</b>
+          <span class="badge alert-info">{{month_trip_nbr}}</span>
+        </li>
+          <li class="list-group-item">
+          <span class="glyphicon glyphicon-road"></span>&nbsp;
+          <b>Distance parcourue</b>
+          <span class="badge alert-info">{{month_kilometer}}km</span>
+        </li>
+          <li class="list-group-item">
+          <span class="glyphicon glyphicon-piggy-bank"></span>&nbsp;
+          <b>Coût hors forfait</b>
+          <span class="badge alert-info">{{month_price}}&euro;</span>
+        </li>
+
+      </ul>
+    </div>
     {% endif %}
   </div>
 
   <div class="col-md-8">
+    {# Recent trips panel #}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h2>
@@ -134,7 +158,7 @@
         {% for trip in user.trips[:15] %}
           <li class="list-group-item {% if not trip.finished %}active{% endif %}">
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-xs-10">
                 <h4>
                   {{trip.departure_date.date().strftime("%d/%m/%Y")}}
                   {% if not trip.finished %} (en cours) {% endif %}
@@ -159,7 +183,7 @@
                   </span>
                 {% endif %}
               </div>
-              <div class="col-md-2">
+              <div class="col-xs-2">
                 {% with bike = trip.bike %}
                 <h4>Villo {{bike.id}}</h4>
                 {% if bike.usable %}
@@ -182,6 +206,11 @@
             </div>
           </li>
         {% endfor %}
+          {% if user.trips == [] %}
+          <li class="list-group-item">
+              <h4>Vous n'avez encore effectué aucun trajet</h4>
+          </li>
+          {% endif %}
       </ul>
     </div>
   </div>

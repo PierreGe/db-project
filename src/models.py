@@ -253,6 +253,7 @@ def get_User(db=None, superclass=None):
                 db.execute(
                     "UPDATE user SET expire_date=? WHERE id=?",
                     (datestr(newEndDate), self.id))
+            self.expire_date = newEndDate
 
         @property
         def active_trips(self):
@@ -403,7 +404,10 @@ def get_Trip(db=None, superclass=None):
             st1 = Station.get(self.departure_station_id)
             lat1 = st1.latitude
             long1 = st1.longitude
-            st2 = Station.get(self.arrival_station_id)
+            try:
+                st2 = Station.get(self.arrival_station_id)
+            except:
+                return 0
             lat2 = st2.latitude
             long2 = st2.longitude
             degreesToRadians = math.pi/180.0
