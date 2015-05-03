@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 def load_query(i):
     """Load SQL without comments from queries/r<i>.sql"""
-    return ' '.join(filter(
+    return ''.join(filter(
         lambda line: not line.strip().startswith("--"),
         open("queries/r%d.sql" % i)))
 
@@ -102,7 +102,7 @@ def insert_fixtures(conn):
 
     # E: ULB -> Arsenal, villo5 [DISCONTINUOUS TRIP !]
     db.Trip.create(
-        user_id=D.id, bike_id=Bikes[4].id,
+        user_id=E.id, bike_id=Bikes[4].id,
         departure_station_id=ULB.id, departure_date=t(days=1),
         arrival_station_id=Arsenal.id, arrival_date=t(days=1, seconds=1200))
 
@@ -123,7 +123,7 @@ def test_expected_data():
     assert db.User.count() == 6
     assert db.Bike.count() == 5
     assert db.Station.count() == 3
-    assert db.Trip.count() == 10
+    assert db.Trip.count() == 11
 
 def test_r1():
     # B a loué un vélo à Flagey et habite Ixelles
@@ -138,8 +138,10 @@ def test_r2():
 def test_r3():
     # A et B font tous les 2 le trajet Flagey -> ULB,
     # B et D font tous les 2 le trajet ULB -> Arsenal
+    # B et E font tous les 2 le trajet ULB -> Arsenal
+    # D et E font tous les 2 le trajet ULB -> Arsenal
     res = exec_query(load_query(3))
-    assert res == [(1, 2), (2, 4)]
+    assert res == [(1, 2), (2, 4), (2, 5), (4, 5)]
 
 def test_r4():
     # Le villo 5 a un trajet discontinu
