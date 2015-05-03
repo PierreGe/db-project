@@ -1,10 +1,33 @@
 \documentclass[a4paper,10pt]{article}
+
 \usepackage[french]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[left=2.5cm,top=2cm,right=2.5cm,nohead,nofoot]{geometry}
 \usepackage{url}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+
+\lstset{
+  language=SQL,
+  basicstyle=\ttfamily\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  commentstyle=\color{cyan},    % comment style
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{blue}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=5,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{red},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+}
+
 
 \linespread{1.1}
 
@@ -134,20 +157,25 @@ Pour obtenir une clé primaire à l'entité Location, nous avons rendu obligatoi
 
 Pour la généralisation nous avons choisis, une solution permettant d'avoir une relation a une seule table depuis la location et une solution permettant de mettre une contrainte d'existence sur tous les champs excepté la DateExpiration. 
 
-\section{Requètes}
+\section{Requêtes}
 
 \subsection{Les utilisateurs habitant Ixelles ayant utilisé un Villo de la station Flagey}
+\lstinputlisting{../../src/queries/r1.sql}
 
 \subsection{Les utilisateurs ayant utilisé Villo au moins 2 fois}
+\lstinputlisting{../../src/queries/r2.sql}
 
 \subsection{Les paires d'utilisateurs ayant fait un trajet identique}
+\lstinputlisting{../../src/queries/r3.sql}
 
 \subsection{Les vélos ayant deux trajets consécutifs disjoints (station de retour du premier trajet différente de la station de départ du suivant)}
+\lstinputlisting{../../src/queries/r4.sql}
 
 \subsection{Les utilisateurs, la date d'inscription, le nombre total de trajet effectués, la distance totale parcourue et la distance moyenne parcourue par trajet, classés en fonction de la distance totale parcourue}
+\lstinputlisting{../../src/queries/r5.sql}
 
 \subsection{Les stations avec le nombre total de vélos déposés dans cette station (un même vélo peut-être comptabilisé plusieurs fois) et le nombre d'utilisateurs différents ayant utilisé la station et ce pour toutes les stations ayant été utilisées au moins 10 fois.}
-
+\lstinputlisting{../../src/queries/r6.sql}
 
 
 \end{document}
