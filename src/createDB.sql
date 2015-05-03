@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS trip (
     user_id INTEGER NOT NULL,
     bike_id INTEGER NOT NULL,
 
-    UNIQUE(user_id, bike_id, departure_date),
+    PRIMARY KEY(user_id, bike_id, departure_date),
 
     FOREIGN KEY(departure_station_id) REFERENCES station(id),
     FOREIGN KEY(arrival_station_id) REFERENCES station(id),
