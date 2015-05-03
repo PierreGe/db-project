@@ -100,6 +100,12 @@ def insert_fixtures(conn):
         departure_station_id=ULB.id, departure_date=t(days=3),
         arrival_station_id=Arsenal.id, arrival_date=t(days=3, seconds=1200))
 
+    # E: ULB -> Arsenal, villo5 [DISCONTINUOUS TRIP !]
+    db.Trip.create(
+        user_id=D.id, bike_id=Bikes[4].id,
+        departure_station_id=ULB.id, departure_date=t(days=1),
+        arrival_station_id=Arsenal.id, arrival_date=t(days=1, seconds=1200))
+
 conn = None
 def setup_function(*args):
     global conn
@@ -130,7 +136,12 @@ def test_r2():
     assert res == [(1,), (2,)]
 
 def test_r3():
-    res = exec_query(load_query(3))
     # A et B font tous les 2 le trajet Flagey -> ULB,
     # B et D font tous les 2 le trajet ULB -> Arsenal
+    res = exec_query(load_query(3))
     assert res == [(1, 2), (2, 4)]
+
+def test_r4():
+    # Le villo 5 a un trajet discontinu
+    res = exec_query(load_query(4))
+    assert res == [(5,)]
