@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE IF NOT EXISTS station (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     payment BOOLEAN NOT NULL,
