@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS station (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     payment BOOLEAN NOT NULL,
-    capacity INTEGER NOT NULL,
+    capacity INTEGER NOT NULL CHECK(capacity >= 0),
     latitude REAL NOT NULL CHECK(-90<=latitude AND latitude<=90),
     longitude REAL NOT NULL CHECK(-180<=longitude AND longitude<=180),
     name VARCHAR(32) NOT NULL,
