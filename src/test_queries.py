@@ -62,6 +62,9 @@ def insert_fixtures(conn):
     Arsenal = db.Station.create(name="ARSENAL",
         latitude=50.8265178652, longitude=4.39705753109,
         payment=True, capacity=25)
+    Eloy = db.Station.create(name="ELOY",
+        latitude=50.8362457584, longitude=4.32609149836,
+        payment=True, capacity=25)
 
     # All bikes initially in Flagey by admin
     for bike in Bikes:
@@ -76,23 +79,35 @@ def insert_fixtures(conn):
         departure_station_id=Flagey.id, departure_date=t(seconds=1),
         arrival_station_id=ULB.id, arrival_date=t(seconds=1200))
 
-    # B: ULB -> Arsenal, villo1
-    db.Trip.create(
-        user_id=B.id, bike_id=Bikes[0].id,
-        departure_station_id=ULB.id, departure_date=t(days=2),
-        arrival_station_id=Arsenal.id, arrival_date=t(days=2, seconds=1200))
-
     # A: Flagey -> ULB, villo2
     db.Trip.create(
         user_id=A.id, bike_id=Bikes[1].id,
         departure_station_id=Flagey.id, departure_date=t(seconds=54000),
         arrival_station_id=ULB.id, arrival_date=t(seconds=58000))
 
-    # A: Flagey -> ULB, villo3
+    # E: ULB -> Arsenal, villo5 [DISCONTINUOUS TRIP !]
     db.Trip.create(
-        user_id=A.id, bike_id=Bikes[2].id,
-        departure_station_id=Flagey.id, departure_date=t(days=12, seconds=54000),
-        arrival_station_id=ULB.id, arrival_date=t(days=12, seconds=58000))
+        user_id=E.id, bike_id=Bikes[4].id,
+        departure_station_id=ULB.id, departure_date=t(days=1),
+        arrival_station_id=Arsenal.id, arrival_date=t(days=1, seconds=1200))
+
+    # E: Arsenal -> Eloy, villo5
+    db.Trip.create(
+        user_id=E.id, bike_id=Bikes[4].id,
+        departure_station_id=Arsenal.id, departure_date=t(days=1, seconds=20000),
+        arrival_station_id=Eloy.id, arrival_date=t(days=1, seconds=24000))
+
+    # B: ULB -> Arsenal, villo1
+    db.Trip.create(
+        user_id=B.id, bike_id=Bikes[0].id,
+        departure_station_id=ULB.id, departure_date=t(days=2),
+        arrival_station_id=Arsenal.id, arrival_date=t(days=2, seconds=1200))
+
+    # B: Flagey -> Eloy, villo 4
+    db.Trip.create(
+        user_id=B.id, bike_id=Bikes[3].id,
+        departure_station_id=Flagey.id, departure_date=t(days=2, seconds=40000),
+        arrival_station_id=Eloy.id, arrival_date=t(days=2, seconds=43800))
 
     # D: ULB -> Arsenal, villo2
     db.Trip.create(
@@ -100,11 +115,22 @@ def insert_fixtures(conn):
         departure_station_id=ULB.id, departure_date=t(days=3),
         arrival_station_id=Arsenal.id, arrival_date=t(days=3, seconds=1200))
 
-    # E: ULB -> Arsenal, villo5 [DISCONTINUOUS TRIP !]
+    # C: Eloy -> ... en cours, villo 4
+    db.Trip.create(
+        user_id=C.id, bike_id=Bikes[3].id,
+        departure_station_id=Eloy.id, departure_date=t(days=3))
+
+    # E: Eloy -> ... en cours, villo 5
     db.Trip.create(
         user_id=E.id, bike_id=Bikes[4].id,
-        departure_station_id=ULB.id, departure_date=t(days=1),
-        arrival_station_id=Arsenal.id, arrival_date=t(days=1, seconds=1200))
+        departure_station_id=Arsenal.id, departure_date=t(days=3, seconds=1200))
+
+    # A: Flagey -> ULB, villo3
+    db.Trip.create(
+        user_id=A.id, bike_id=Bikes[2].id,
+        departure_station_id=Flagey.id, departure_date=t(days=12, seconds=54000),
+        arrival_station_id=ULB.id, arrival_date=t(days=12, seconds=58000))
+
 
 conn = None
 def setup_function(*args):
@@ -122,8 +148,8 @@ def test_expected_data():
     db = Database(conn)
     assert db.User.count() == 6
     assert db.Bike.count() == 5
-    assert db.Station.count() == 3
-    assert db.Trip.count() == 11
+    assert db.Station.count() == 4
+    assert db.Trip.count() == 15
 
 def test_r1():
     # B a loué un vélo à Flagey et habite Ixelles
@@ -131,9 +157,9 @@ def test_r1():
     assert res == [(2, "B", "B")]
 
 def test_r2():
-    # A et B ont 2 trajets chacun
+    # A, B et E ont 2 trajets chacun
     res = exec_query(load_query(2))
-    assert res == [(1,), (2,)]
+    assert res == [(1,), (2,), (5,)]
 
 def test_r3():
     # A et B font tous les 2 le trajet Flagey -> ULB,
