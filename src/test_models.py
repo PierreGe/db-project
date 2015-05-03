@@ -225,3 +225,13 @@ def test_user_current_trip():
     assert u.current_trip.departure_station_id == s1.id
     assert u.current_trip.arrival_station_id is None
     assert u.has_bike(b.id)
+
+# Run tests if no py.test
+if __name__ == "__main__":
+    env = dict(globals())
+    for name,val in env.iteritems():
+        if callable(val) and name.startswith('test_'):
+            setup_function()
+            val()
+            teardown_function()
+

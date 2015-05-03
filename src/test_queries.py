@@ -173,3 +173,21 @@ def test_r4():
     # Le villo 5 a un trajet discontinu
     res = exec_query(load_query(4))
     assert res == [(5,)]
+
+def test_r5():
+    res = exec_query(load_query(5))
+    assert res == []
+
+def test_r6():
+    res = exec_query(load_query(6))
+    assert res == []
+
+
+# Run tests if no py.test
+if __name__ == "__main__":
+    env = dict(globals())
+    for name,val in env.iteritems():
+        if callable(val) and name.startswith('test_'):
+            setup_function()
+            val()
+            teardown_function()
