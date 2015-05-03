@@ -1,4 +1,5 @@
 from models import Database
+from datetime import datetime, timedelta
 import sqlite3
 import pytest
 
@@ -46,3 +47,20 @@ def test_station_incorrect_coordinates():
 def test_station_negative_capacity():
     with pytest.raises(sqlite3.IntegrityError):
         db.Station.create(id=1, latitude=1, longitude=2, name="A", payment=True, capacity=-1)
+
+
+def test_trip_inexistant_foreignkey():
+    with pytest.raises(sqlite3.IntegrityError):
+        db.Trip.create(user_id=11, bike_id=22, departure_station_id=33)
+
+
+def test_trip_arrival_before_departure():
+    t = datetime(2012, 12, 21, 11, 11, 11)
+    u = db.User.create(password="qsd")
+    s = db.Station.create(id=1, latitude=1, longitude=2, name="A", payment=True, capacity=10)
+    b = db.Bike.create()
+    with pytest.raises(sqlite3.IntegrityError):
+        db.Trip.create(
+            user_id=u.id, bike_id=b.id, 
+            departure_station_id=s.id, departure_date=t,
+            arrival_station_id=s.id, arrival_date=t-timedelta(seconds=42))
