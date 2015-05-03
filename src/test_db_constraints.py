@@ -64,3 +64,19 @@ def test_trip_arrival_before_departure():
             user_id=u.id, bike_id=b.id, 
             departure_station_id=s.id, departure_date=t,
             arrival_station_id=s.id, arrival_date=t-timedelta(seconds=42))
+
+
+def test_trip_primary_key():
+    t = datetime(2012, 12, 21, 11, 11, 11)
+    u = db.User.create(password="qsd")
+    s = db.Station.create(id=1, latitude=1, longitude=2, name="A", payment=True, capacity=10)
+    b = db.Bike.create()
+    db.Trip.create(
+        user_id=u.id, bike_id=b.id, 
+        departure_station_id=s.id, departure_date=t,
+        arrival_station_id=s.id, arrival_date=t+timedelta(seconds=42))
+    with pytest.raises(sqlite3.IntegrityError):
+        db.Trip.create(
+            user_id=u.id, bike_id=b.id, 
+            departure_station_id=s.id, departure_date=t,
+            arrival_station_id=s.id, arrival_date=t+timedelta(seconds=42))
