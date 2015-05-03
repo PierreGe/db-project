@@ -80,3 +80,9 @@ def test_trip_primary_key():
             user_id=u.id, bike_id=b.id, 
             departure_station_id=s.id, departure_date=t,
             arrival_station_id=s.id, arrival_date=t+timedelta(seconds=42))
+
+
+def test_subscriber_unique_rfid():
+    db.User.create(password="123", rfid="123", firstname="a", lastname="a", address="123")
+    with pytest.raises(sqlite3.IntegrityError):
+        db.User.create(password="123", rfid="123", firstname="a", lastname="a", address="123")
