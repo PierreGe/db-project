@@ -83,14 +83,17 @@ def test_trip_primary_key():
 
 
 def test_subscriber_unique_rfid():
-    db.User.create(password="123", rfid="123", firstname="a", lastname="a", address_street="rue des Heliotropes",
-            address_streenumber= 124,
-            address_zipcode=6700,
-            address_city= "Bxl",
-            address_country="Luxembourg",)
+    args = {
+        "firstname":"Alain",
+        "lastname":"Terieur",
+        "address_street":"rue des Heliotropes",
+        "address_streenumber": "124",
+        "address_zipcode":"6700",
+        "address_city": "Bxl",
+        "address_country":"Luxembourg",
+        "entry_date": "2010-01-01T10:00:00",
+        "phone_number":"0491234567"
+    }
+    db.User.create(password="123", rfid="123", **args)
     with pytest.raises(sqlite3.IntegrityError):
-        db.User.create(password="123", rfid="123", firstname="a", lastname="a", address_street="rue des Heliotropes",
-            address_streenumber= 124,
-            address_zipcode=6700,
-            address_city= "Bxl",
-            address_country="Luxembourg",)
+        db.User.create(password="123", rfid="123", **args)
