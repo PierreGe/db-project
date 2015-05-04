@@ -5,7 +5,7 @@
 
 
 
-SELECT station.name, COUNT(trip.arrival_station_id ),COUNT(DISTINCT trip.user_id) FROM station,trip WHERE trip.arrival_station_id = station.id GROUP BY station.name HAVING COUNT(trip.arrival_station_id )>10;
+SELECT station.name, COUNT(trip.arrival_station_id ),COUNT(DISTINCT trip.user_id) FROM station,trip WHERE trip.arrival_station_id = station.id GROUP BY station.name HAVING COUNT(trip.arrival_station_id )>9;
 
 
 
