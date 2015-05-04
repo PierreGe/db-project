@@ -216,8 +216,8 @@ def get_User(db=None, superclass=None):
             self.expire_date = parse_date(expire_date) if expire_date else None
             self.rfid = rfid
             self.address_street = address_street
-            self.address_streenumber = address_streenumber
-            self.address_zipcode = address_zipcode
+            self.address_streenumber = None if address_streenumber is None else int(address_streenumber)
+            self.address_zipcode = None if address_zipcode is None else int(address_zipcode)
             self.address_city = address_city
             self.address_country = address_country
             self.firstname, self.lastname = firstname, lastname
@@ -230,7 +230,7 @@ def get_User(db=None, superclass=None):
                 with db:
                     db.execute(
                         "INSERT INTO subscriber (user_id,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                        (self.id, self.rfid, self.firstname, self.lastname, self.address_street,self.address_streenumber,self.address_zipcode, self.address_city, self.address_country  , self.entry_date, self.phone_number))
+                        map(self.encode, (self.id, self.rfid, self.firstname, self.lastname, self.address_street,self.address_streenumber,self.address_zipcode, self.address_city, self.address_country, self.entry_date, self.phone_number)))
 
         def is_subscriber(self):
             return (
@@ -331,12 +331,12 @@ def get_User(db=None, superclass=None):
             except StopIteration:
                 raise KeyError(id)
 
-
         @classmethod
         def get_with_subscriber(klass, id):
             try:
                 return fetch_one(klass, db.execute(
-                    "SELECT id,password,card,expire_date,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1",(id,)))
+                    #       id,password,card,expire_date,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number
+                    "SELECT id,password,card,expire_date,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1",(id,)))
             except StopIteration:
                 raise KeyError(id)
 
