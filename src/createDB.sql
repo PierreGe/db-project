@@ -35,7 +35,13 @@ CREATE TABLE IF NOT EXISTS subscriber (
     rfid TEXT UNIQUE NOT NULL,
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
-    address TEXT NOT NULL,
+    address_street TEXT NOT NULL,
+    address_streenumber INTEGER NOT NULL,
+    address_zipcode INTEGER NOT NULL,
+    address_city TEXT NOT NULL,
+    address_country TEXT NOT NULL,
+    entry_date VARCHAR(20) NOT NULL
+        CHECK(entry_date IS strftime(entry_date)),
     phone_number VARCHAR(20),
 
     FOREIGN KEY(user_id) REFERENCES user(id)
