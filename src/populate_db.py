@@ -56,9 +56,6 @@ def insert_users(db, input_file="data/users.xml"):
     for subscriber in users_dom.find('subscribers'):
         userdata = {f.tag: f.text for f in subscriber if f.tag != "address"}
         addr = subscriber.find('address')
-        addrstr = ' '.join(map(
-            lambda x: addr.find(x).text, 
-            ('street', 'number', 'cp', 'city')))
         users.append((
             int(userdata['userID']),
             hash_password(userdata['password']),
@@ -70,7 +67,12 @@ def insert_users(db, input_file="data/users.xml"):
             userdata['RFID'],
             userdata['firstname'],
             userdata['lastname'],
-            addrstr,
+            addr.find('street').text,
+            addr.find('number').text,
+            addr.find('cp').text,
+            addr.find('city').text,
+            "Belgique",
+            userdata['subscribeDate'],
             userdata['phone']
         ))
     
@@ -88,7 +90,7 @@ def insert_users(db, input_file="data/users.xml"):
             'INSERT INTO user (id,password,card,expire_date) VALUES (?,?,?,?)',
             users)
         db.executemany(
-            'INSERT INTO subscriber (user_id,rfid,firstname,lastname,address,phone_number) VALUES (?,?,?,?,?,?)',
+            'INSERT INTO subscriber (user_id,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
             subscribers)
 
 def insert_trips(db, input_file="data/trips.csv"):
@@ -96,8 +98,8 @@ def insert_trips(db, input_file="data/trips.csv"):
         assert db.execute('INSERT INTO user (password,card,expire_date) VALUES ("%s","","")' % (hash_password('admin'))).rowcount == 1
         res = db.execute('SELECT id FROM user WHERE password="%s" AND expire_date=""' % (hash_password('admin')))
         admin_id = res.next()[0]
-        assert db.execute('INSERT INTO subscriber (user_id,firstname,lastname,rfid,address) VALUES (?,?,?,?,?)',
-            (admin_id, "Administrateur", "De Villos", "", "Villo! HQ")).rowcount == 1
+        assert db.execute('INSERT INTO subscriber (user_id,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date) VALUES (?,?,?,?,?,?,?,?,?,?)',
+            (admin_id, "Administrateur", "De Villos", "", "Street","1","1","Bruxelles","Belgique","2010-01-01T00:00:01")).rowcount == 1
 
     print "Admin user has id=%d and password=admin" % admin_id
 
