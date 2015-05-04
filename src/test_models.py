@@ -46,11 +46,10 @@ def test_subscriber():
             firstname="Alain",
             lastname="Terieur",
             address_street="rue des Heliotropes",
-            address_streenumber= "124",
-            address_zipcode="6700",
+            address_streenumber= 124,
+            address_zipcode=6700,
             address_city= "Bxl",
             address_country="Luxembourg",
-            entry_date= "2010-01-01T10:00:00",
             phone_number="0491234567",
             rfid= "123"
         )
@@ -59,8 +58,8 @@ def test_subscriber():
     assert u.firstname == "Alain"
     assert u.lastname == "Terieur"
     assert u.address_street == "rue des Heliotropes"
-    assert u.address_streenumber == "124"
-    assert u.address_zipcode == "6700"
+    assert u.address_streenumber == 124
+    assert u.address_zipcode == 6700
     assert u.address_city == "Bxl"
     assert u.address_country == "Luxembourg"
     assert u.phone_number == "0491234567"
@@ -71,8 +70,8 @@ def test_subscriber():
     assert u.firstname == "Alain"
     assert u.lastname == "Terieur"
     assert u.address_street == "rue des Heliotropes"
-    assert u.address_streenumber == "124"
-    assert u.address_zipcode == "6700"
+    assert u.address_streenumber == 124
+    assert u.address_zipcode == 6700
     assert u.address_city == "Bxl"
     assert u.address_country == "Luxembourg"
     assert u.phone_number == "0491234567"

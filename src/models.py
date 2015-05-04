@@ -55,9 +55,6 @@ def fetch_is_empty(cursor):
 def fetch_one(as_class, cursor):
     """Return the first row of cursor cast to as_class"""
     values = cursor.next()
-    print("----")
-    print(values)
-    print("----")
     return as_class(*values)
 
 def fetch_all(as_class, cursor):
@@ -212,7 +209,6 @@ def get_User(db=None, superclass=None):
             self.id = int(id) if id is not None else None
             self.password = password_hash if password_hash else hash_password(password)
             self.card = card
-            print(expire_date)
             self.expire_date = parse_date(expire_date) if expire_date else None
             self.rfid = rfid
             self.address_street = address_street
@@ -336,7 +332,7 @@ def get_User(db=None, superclass=None):
         def get_with_subscriber(klass, id):
             try:
                 return fetch_one(klass, db.execute(
-                    "SELECT id,password,card,expire_date,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1",(id,)))
+                    "SELECT id,password,card,expire_date,rfid, firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1",(id,)))
             except StopIteration:
                 raise KeyError(id)
 
