@@ -7,10 +7,9 @@ from flask import (
 import os
 from user import current_user, connect_user, disconnect_user
 from models import Database
-from datetime import timedelta
+from datetime import datetime, timedelta
 import config
 from apputils import get_db
-import datetime
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -186,7 +185,7 @@ def drop_bike(station_id, bike_id):
         flash(u"Il n'y a pas de point d'attache libre à %s" % station.name, "danger")
     else:
         trip.arrival_station_id = station_id
-        trip.arrival_date = datetime.datetime.now()
+        trip.arrival_date = datetime.now()
         trip.update()
         flash(u"Vous avez déposé votre vélo à la station %s" % station.name, "success")
     return redirect("/")
@@ -228,10 +227,47 @@ def rent_bike(station_id, bike_id):
     else:
         newTrip = get_db().Trip.create(
             user_id=user.id, bike_id=bike.id, 
-            departure_station_id=station.id, departure_date=datetime.datetime.now())
+            departure_station_id=station.id, departure_date=datetime.now())
         flash(u"Vous avez pris le villo %d à %s" % (bike.id, station.name), 'success')
     return redirect("/")
 
+
+@app.route("/newbikes/<int:station_id>", methods=["POST"])
+@require_login
+def newbikes(station_id):
+    db = get_db()
+    try:
+        station = db.Station.get(station_id)
+    except KeyError:
+        flash(u"Station %d inconnue", "danger")
+        return redirect("/")
+
+    nBikes = int(request.form['bike_number'])
+    model = request.form['bike_model'].strip()
+
+    user = current_user()
+    if not user.is_admin():
+        flash("Seul un administrateur peut ajouter des villos", "danger")
+    elif nBikes > station.free_slots:
+        flash(
+            u"Pas assez de place à %s pour créer %d villos" % (station.name, nBikes), 
+            "danger")
+    elif model == "":
+        flash(u"Le modèle de villo ne peut pas être vide", "danger")
+    else:
+        created = []
+        for i in range(nBikes):
+            bike = db.Bike.create(model=model)
+            db.Trip.create(
+                user_id=user.id, bike_id=bike.id,
+                departure_station_id=station_id, departure_date=datetime.now(),
+                arrival_station_id=station_id, arrival_date=datetime.now())
+            created.append(str(bike.id))
+        flash(pluralize(nBikes, u"Le vélo ", u"Les vélos ") +
+              ', '.join(created) +
+              pluralize(nBikes, u" a été ajouté", u" ont été ajoutés"), 
+              "success")
+    return redirect("/station/%d" % station_id)
 
 @app.route("/history", methods=['POST'])
 @require_login

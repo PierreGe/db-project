@@ -13,13 +13,57 @@
 </div>
 
 <div class="jumbotron">
-  <h1>{{station.name}}</h1>
+  <h1>
+    <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>&nbsp;
+    {{station.name}}
+  </h1>
 </div>
 <div class="row">
   <div class="col-md-6">
-    <div id="map-unique"></div>
+      {# Map panel #}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2>
+            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+            &nbsp; Position
+          </h2>
+        </div>
+        <div id="map-unique" class="panel-body"></div>
+      </div>
+      {% if user.is_admin() and station.free_slots > 0 %}
+      {# New villo panel #}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2>
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            &nbsp; Ajoutez de nouveaux Villo!
+          </h2>
+        </div>
+        
+        <div class="panel-body">
+          <form action="/newbikes/{{station.id}}" method="POST">
+            <div class="form-group">
+              <label for="input_bike_model">Modèle</label>
+              <input class="form-control" type="text" name="bike_model" value="JCDECAUX2010" id="input_bike_model">&nbsp;
+            </div>
+            <div class="form-group">
+              <label for="input_bike_number">Nombre</label>
+              <select name="bike_number" id="input_bike_number" class="form-control">
+                {% for i in range(1, station.free_slots+1) %}
+                <option value="{{i}}">{{i}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">
+              Créer
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
   </div>
   <div class="col-md-6">
+    {# Take a bike panel #}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h2>
@@ -64,6 +108,7 @@
     </div>
 
     {% if user.is_admin() %}
+    {# Drop a bike panel #}
     <div class="panel panel-primary">
       <div class="panel-heading">
         <h2>
