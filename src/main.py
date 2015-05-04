@@ -123,15 +123,21 @@ def subscription():
         return redirect(url_for('index'))
     else:
         F = request.form
-        new_user = get_db().User.create(
-            password=F['userPassword'],
-            card=F['userBankData'],
-            firstname=F['userFirstName'],
-            lastname=F['userLastName'],
-            phone_number=F['userPhone'],
-            address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
-            rfid= get_db().User.newUniqueRFID())
-        new_user.renew() # nouvel abonnement
+        if F['subscriber'] == 'true':
+            new_user = get_db().User.create(
+                password=F['userPassword'],
+                card=F['userBankData'],
+                firstname=F['userFirstName'],
+                lastname=F['userLastName'],
+                phone_number=F['userPhone'],
+                address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
+                rfid= get_db().User.newUniqueRFID(),
+                expire_date=datetime.now() + timedelta(days=365))
+        else:
+            dt = timedelta(days=7 if F['tempAmount'] == '7j' else 1)
+            new_user = get_db().User.create(
+                password=F['userPassword'],
+                expire_date=datetime.now()+dt)
         connect_user(new_user)
         return render_template("welcome.html", user=new_user)
 

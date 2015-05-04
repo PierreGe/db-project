@@ -12,54 +12,100 @@
   </div>
   {% endif %}
 
-  <div class="jumbotron">
-    <h2>La carte 1 an</h2>
-    <p>
-      Vous utiliserez Villo! régulièrement pour vous rendre sur votre lieu de travail ou pour faire une course ?
-      Pour seulement 32,60€ (31,60€ avec la carte MOBIB), vous pouvez louer un vélo autant de fois que vous le souhaitez pendant une période de un an.
-      La première demi-heure de chaque trajet est gratuite. Au-delà des 30 premières minutes vous payez un coût de location.
-    </p>
-  </div>
+  
 
 {% if not user %}
-  <form class="form-signin" action="subscription" method="POST">
-    <h2 class="form-signin-heading">Inscription</h2>
-    
-    <label for="userPassword" class="sr-only">Password</label>
-    <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Mot de passe" required>
+  <div role="tabpanel">
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#temp" data-toggle="tab">
+          <strong>Utilisation temporaire</strong>
+        </a>
+      </li>
+      <li role="presentation">
+        <a href="#abo" data-toggle="tab">
+          <strong>Abonnement</strong>
+        </a>
+      </li>
+    </ul>
 
-    <label for="userBankData" class="sr-only">Numéro de carte banquaire</label>
-    <input type="text" id="userBankData" name="userBankData" class="form-control" placeholder="Numéro de carte banquaire" required autofocus>
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="temp">
+        <div class="jumbotron">
+          <h2>La carte temporaire</h2>
+          <p>
+            Vous utiliserez Villo! quelques fois dans les prochaines heures ou les prochains jours ?
+            Pour seulement 1,50&euro; (24 heures) ou 7&euro; (7 jours), vous pouvez louer un vélo autant de fois que vous le souhaitez.
+            La première demi-heure de chaque trajet est gratuite. Au-delà des 30 premières minutes vous payez un coût de location.
+          </p>
+        </div>
+        <form class="form-signin" action="/subscription" method="POST">
+          <input type="hidden" name="subsriber" value="false">
 
-    <label for="userLastName" class="sr-only">Nom</label>
-    <input type="text" id="userLastName" name="userLastName" class="form-control" placeholder="Nom" required autofocus>
+          <label for="userPassword" class="sr-only">Password</label>
+          <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Mot de passe" required>
 
-    <label for="userFirstName" class="sr-only">Prénom</label>
-    <input type="text" id="userFirstName" name="userFirstName" class="form-control" placeholder="Prénom" required autofocus>
+          <label for="userBankData" class="sr-only">Numéro de carte banquaire</label>
+          <input type="text" id="userBankData" name="userBankData" class="form-control" placeholder="Numéro de carte banquaire" required autofocus>
 
-    <label for="userStreet" class="sr-only">Rue</label>
-    <input type="text" id="userStreet" name="userStreet" class="form-control" placeholder="Rue" required autofocus>
+          <select name="tempAmount" class="form-control">
+            <option value="1j">1 jour (24h) - 1,50&euro;</option>
+            <option value="7j">7 jours - 7,00&euro;</option>
+          </select>
 
-    <label for="userNumber" class="sr-only">Numéro</label>
-    <input type="number" id="userNumber" name="userNumber" class="form-control" placeholder="Numéro" required autofocus>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Villo!</button>
+        </form>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="abo">
+        <div class="jumbotron">
+          <h2>La carte 1 an</h2>
+          <p>
+            Vous utiliserez Villo! régulièrement pour vous rendre sur votre lieu de travail ou pour faire une course ?
+            Pour seulement 32,60€ (31,60€ avec la carte MOBIB), vous pouvez louer un vélo autant de fois que vous le souhaitez pendant une période de un an.
+            La première demi-heure de chaque trajet est gratuite. Au-delà des 30 premières minutes vous payez un coût de location.
+          </p>
+        </div>
+        <form class="form-signin" action="/subscription" method="POST">
+          <input type="hidden" name="subscriber" value="true">
 
-    <label for="userBox" class="sr-only">Boite</label>
-    <input type="text" id="userBox" name="userBox" class="form-control" placeholder="Boite"  autofocus>
+          <label for="userPassword" class="sr-only">Password</label>
+          <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Mot de passe" required>
 
-    <label for="userPostalCode" class="sr-only">Code Postal</label>
-    <input type="number" id="userPostalCode" name="userPostalCode" class="form-control" placeholder="Code Postal" required autofocus>
+          <label for="userBankData" class="sr-only">Numéro de carte banquaire</label>
+          <input type="text" id="userBankData" name="userBankData" class="form-control" placeholder="Numéro de carte banquaire" required autofocus>
 
-    <label for="userCity" class="sr-only">Ville</label>
-    <input type="text" id="userCity" name="userCity" class="form-control" placeholder="Ville" required autofocus>
+          <label for="userLastName" class="sr-only">Nom</label>
+          <input type="text" id="userLastName" name="userLastName" class="form-control" placeholder="Nom" required autofocus>
 
-    <label for="userCountry" class="sr-only">Pays</label>
-    <input type="text" id="userCountry" name="userCountry" class="form-control" placeholder="Pays" required autofocus>
+          <label for="userFirstName" class="sr-only">Prénom</label>
+          <input type="text" id="userFirstName" name="userFirstName" class="form-control" placeholder="Prénom" required autofocus>
 
-    <label for="userPhone" class="sr-only">Numéro de téléphone</label>
-    <input type="number" id="userPhone" name="userPhone" class="form-control" placeholder="Numéro de téléphone" required autofocus>
+          <label for="userStreet" class="sr-only">Rue</label>
+          <input type="text" id="userStreet" name="userStreet" class="form-control" placeholder="Rue" required autofocus>
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Villo!</button>
-  </form>
+          <label for="userNumber" class="sr-only">Numéro</label>
+          <input type="number" id="userNumber" name="userNumber" class="form-control" placeholder="Numéro" required autofocus>
+
+          <label for="userBox" class="sr-only">Boite</label>
+          <input type="text" id="userBox" name="userBox" class="form-control" placeholder="Boite"  autofocus>
+
+          <label for="userPostalCode" class="sr-only">Code Postal</label>
+          <input type="number" id="userPostalCode" name="userPostalCode" class="form-control" placeholder="Code Postal" required autofocus>
+
+          <label for="userCity" class="sr-only">Ville</label>
+          <input type="text" id="userCity" name="userCity" class="form-control" placeholder="Ville" required autofocus>
+
+          <label for="userCountry" class="sr-only">Pays</label>
+          <input type="text" id="userCountry" name="userCountry" class="form-control" placeholder="Pays" required autofocus>
+
+          <label for="userPhone" class="sr-only">Numéro de téléphone</label>
+          <input type="number" id="userPhone" name="userPhone" class="form-control" placeholder="Numéro de téléphone" autofocus>
+
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Villo!</button>
+        </form>
+      </div>
+    </div>
+  </div>
 {% else %}
   <form class="form-signin" action="subscription" method="POST">
     <h2 class="form-signin-heading">Renouveller</h2>
