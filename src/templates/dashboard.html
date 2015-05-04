@@ -168,14 +168,19 @@
                 </a>
                 ({{trip.departure_date.time().strftime("%Hh%M")}})
                 {% if trip.finished %}
-                  <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                  <a href="/station/{{trip.arrival_station_id}}">
-                    {{trip.arrival_station.name}}
-                  </a>
-                  ({{trip.arrival_date.time().strftime("%Hh%M")}}).
-                  <span class="badge alert-info">
-                    {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
-                  </span>
+                  {% if user.is_admin() and trip.departure_station_id==trip.arrival_station_id and (trip.arrival_date - trip.departure_date).total_seconds() < 1 %}
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    <span class="badge alert-info">Mise en service</span>
+                  {% else %}
+                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                    <a href="/station/{{trip.arrival_station_id}}">
+                      {{trip.arrival_station.name}}
+                    </a>
+                    ({{trip.arrival_date.time().strftime("%Hh%M")}}).
+                    <span class="badge alert-info">
+                      {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
+                    </span>
+                  {% endif %}
                 {% else %}
                   <span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span>
                   <span class="badge alert-warning">
