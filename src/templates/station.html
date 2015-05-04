@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-{% block container %}<div>{% endblock %}
 {% block footer %}{% endblock %}
 {% block title %}Stations{% endblock %}
 
@@ -9,7 +8,7 @@
 <script type="text/javascript" src="/static/3rdparty/leaflet/leaflet.js"></script>
 {% endblock %}
 
-{% block content %}
+{% block container %}
 <div id="map"></div>
 <div style="display: none;" id="loading-popup-template">
     <div class="progress" style="width: 200px;">

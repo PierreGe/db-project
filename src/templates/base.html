@@ -100,7 +100,6 @@
 
     {% block container %}
     <div class="container">
-    {% endblock %}
       {% for category, msg in get_flashed_messages(with_categories=true) %}
         <div role="alert" class="alert alert-{{ category }}">
           <strong>{{ msg }}</strong>
@@ -114,6 +113,7 @@
         {% endblock %}
       </footer>
     </div><!-- /.container -->
+    {% endblock %}
     <script src="/static/js/bootstrap.min.js"></script>
   </body>
 </html>
