@@ -204,14 +204,20 @@ def get_User(db=None, superclass=None):
     class User(superclass):
         columns = ['id', 'password', 'card', 'expire_date']
 
-        def __init__(self, id=None, password_hash="", card="", expire_date=None, rfid=None, firstname=None, lastname=None, address=None, phone_number=None, password=None):
+        def __init__(self, id=None, password_hash="", card="", expire_date=None, rfid=None, firstname=None, lastname=None, address_street=None,address_streenumber=None, address_zipcode=None, address_city=None,address_country=None, entry_date=None, phone_number=None, password=None,
+                     ):
             self.id = int(id) if id is not None else None
             self.password = password_hash if password_hash else hash_password(password)
             self.card = card
             self.expire_date = parse_date(expire_date) if expire_date else None
             self.rfid = rfid
-            self.address = address
+            self.address_street = address_street
+            self.address_streenumber = address_streenumber
+            self.address_zipcode = address_zipcode
+            self.address_city = address_city
+            self.address_country = address_country
             self.firstname, self.lastname = firstname, lastname
+            self.entry_date = parse_date(entry_date) if entry_date else datestr(datetime.now())
             self.phone_number = phone_number
 
         def insert(self, *args, **kwargs):
@@ -219,12 +225,12 @@ def get_User(db=None, superclass=None):
             if self.is_subscriber():
                 with db:
                     db.execute(
-                        "INSERT INTO subscriber (user_id,rfid,firstname,lastname,address,phone_number) VALUES (?,?,?,?,?,?)",
-                        (self.id, self.rfid, self.firstname, self.lastname, self.address, self.phone_number))
+                        "INSERT INTO subscriber (user_id,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                        (self.id, self.rfid, self.firstname, self.lastname, self.address_street,self.address_streenumber,self.address_zipcode, self.address_city, self.address_country  , self.entry_date, self.phone_number))
 
         def is_subscriber(self):
             return (
-                self.address is not None and
+                self.address_city is not None and
                 self.rfid is not None and
                 self.firstname is not None and
                 self.lastname is not None)
@@ -326,8 +332,7 @@ def get_User(db=None, superclass=None):
         def get_with_subscriber(klass, id):
             try:
                 return fetch_one(klass, db.execute(
-                    "SELECT id,password,card,expire_date,rfid,firstname,lastname,address,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1", 
-                    (id,)))
+                    "SELECT user_id,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1",(id,)))
             except StopIteration:
                 raise KeyError(id)
 

@@ -40,15 +40,19 @@ def test_create_user():
 
 
 def test_subscriber():
-    u = db.User.create(address="123 rue des Heliotropes",
+    u = db.User.create(address_street="rue des Heliotropes",address_streenumber=124, address_zipcode=6700, address_city="Bxl",address_country="Luxembourg",
         password="hello", rfid="123", 
         firstname="Alain", lastname="Terieur", 
-        phone_number="0491234567")
+        phone_number="0491234567" )
     assert u.is_subscriber()
     assert u.rfid == "123"
     assert u.firstname == "Alain"
     assert u.lastname == "Terieur"
-    assert u.address == "123 rue des Heliotropes"
+    assert u.address_street == "rue des Heliotropes"
+    assert u.address_streenumber == 124
+    assert u.address_zipcode == 6700
+    assert u.address_city == "Bxl"
+    assert u.address_country == "Luxembourg"
     assert u.phone_number == "0491234567"
     
     u = db.User.get(u.id)
@@ -56,7 +60,11 @@ def test_subscriber():
     assert u.rfid == "123"
     assert u.firstname == "Alain"
     assert u.lastname == "Terieur"
-    assert u.address == "123 rue des Heliotropes"
+    assert u.address_street == "rue des Heliotropes"
+    assert u.address_streenumber == 124
+    assert u.address_zipcode == 6700
+    assert u.address_city == "Bxl"
+    assert u.address_country == "Luxembourg"
     assert u.phone_number == "0491234567"
 
 
