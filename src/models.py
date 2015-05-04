@@ -400,6 +400,8 @@ def get_Trip(db=None, superclass=None):
             """
             :return: des kilometres
             """
+            if self.departure_station_id == self.arrival_station_id:
+                return "0"
             Station = get_Station(db, superclass)
             st1 = Station.get(self.departure_station_id)
             lat1 = st1.latitude
