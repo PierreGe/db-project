@@ -50,12 +50,14 @@
                 Historique
               </a>
             </li>
+            {% if not user.is_admin() %}
             <li>
               <a href="/billing">
                 <span class="glyphicon glyphicon-euro"></span>&nbsp;
                 Factures
               </a>
             </li>
+            {% endif %}
             {% endif %}
           </ul>
           <ul class="nav navbar-nav navbar-right">

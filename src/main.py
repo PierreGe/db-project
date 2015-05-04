@@ -336,7 +336,7 @@ def repair_bike(bike_id):
 @app.route("/billing", methods=['POST'])
 @require_login
 def billing_post():
-    starting = current_user().expire_date - datetime.timedelta(days=(365))
+    starting = current_user().expire_date - timedelta(days=(365))
     detail = "Type;Prix;Date de debut;Date de fin;Station de depart;Station de fin\n"
     detail += "Abonnement;32.6;"+starting.strftime("%d-%m-%Y")+";" +str(current_user().expire_date.strftime("%d-%m-%Y"))+ ";None;None\n"
     for trip in current_user().trips :
@@ -350,7 +350,9 @@ def billing_post():
 @app.route("/billing", methods=['GET'])
 @require_login
 def billing():
-    starting = current_user().expire_date - datetime.timedelta(days=(365))
+    if current_user().is_admin():
+        return redirect("/")
+    starting = current_user().expire_date - timedelta(days=(365))
     periodeFact = (starting.strftime("%d-%m-%Y"), str(current_user().expire_date.strftime("%d-%m-%Y")))
     AllTrip = current_user().trips
     billedTrip = []
