@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block container %}<div>{% endblock %}
+{% block footer %}{% endblock %}
 {% block title %}Stations{% endblock %}
 
 {% block head %}
@@ -20,7 +22,22 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-    var map = L.map('map').setView([50.8453943, 4.3746165], 13);
+    var adjust_map_height = function(){
+        $('#map').height(
+            $(window).height() - ($('nav').height() + $('footer').height()));
+    }
+    adjust_map_height();
+    $(window).resize(adjust_map_height);
+
+    var map = L.map('map');
+    if ($('#map').width() < 400)
+        map.setView([50.8453943, 4.3546165], 11);
+    else if ($('#map').width() < 800)
+        map.setView([50.8453943, 4.3546165], 12);
+    else if ($('#map').width() < 1600)
+        map.setView([50.8453943, 4.3546165], 13);
+    else
+        map.setView([50.8453943, 4.3546165], 14);
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

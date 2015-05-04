@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -99,16 +98,20 @@
       </div>
     </nav>
 
+    {% block container %}
     <div class="container">
+    {% endblock %}
       {% for category, msg in get_flashed_messages(with_categories=true) %}
         <div role="alert" class="alert alert-{{ category }}">
           <strong>{{ msg }}</strong>
         </div>
       {% endfor %}
       {% block content %} {% endblock %}
-      <hr>
       <footer>
+        {% block footer %}
+        <hr>
         <p>&copy; Villo! 2015</p>
+        {% endblock %}
       </footer>
     </div><!-- /.container -->
     <script src="/static/js/bootstrap.min.js"></script>
