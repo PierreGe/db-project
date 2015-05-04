@@ -129,8 +129,14 @@ def subscription():
             firstname=F['userFirstName'],
             lastname=F['userLastName'],
             phone_number=F['userPhone'],
-            address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
-            rfid= get_db().User.newUniqueRFID())
+            address_street=F['userStreet'],
+            address_streenumber= F['userNumber'] ,
+            address_zipcode=F['userPostalCode'],
+            address_city= F['userCity'],
+            address_country=F['userCountry'],
+            entry_date= datetime.now(),
+            rfid= get_db().User.newUniqueRFID()
+        )
         new_user.renew() # nouvel abonnement
         connect_user(new_user)
         return render_template("welcome.html", user=new_user)
