@@ -35,15 +35,18 @@ def insert_fixtures(conn):
     A = db.User.create(id=1, expire_date=t(days=365),
         password="a", rfid="123456789",
         firstname="A", lastname="A",
-        address="123 rue du Soleil, 1190 Forest")
+        address_street="Rue du soleil", address_streenumber=12,
+        address_zipcode=1070, address_city="Forest", address_country="Belgique")
     B = db.User.create(id=2, expire_date=t(days=237),
         password="b", rfid="456789123",
         firstname="B", lastname="B",
-        address="123 chausee de Boondael, 1050 Ixelles")
+        address_street="Chaussee de Boondael", address_streenumber=87,
+        address_zipcode=1050, address_city="Ixelles", address_country="Belgique")
     C = db.User.create(id=3, expire_date=t(days=344),
         password="c", rfid="789123456",
         firstname="C", lastname="C",
-        address="123 avenue de l'universite, 1050 Ixelles")
+        address_street="Avenue de l'Universite", address_streenumber=537,
+        address_zipcode=1050, address_city="Ixelles", address_country="Belgique")
 
     # D, E: Temporary users
     D = db.User.create(password="d", expire_date=t(days=1))

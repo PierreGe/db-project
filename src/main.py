@@ -130,7 +130,12 @@ def subscription():
                 firstname=F['userFirstName'],
                 lastname=F['userLastName'],
                 phone_number=F['userPhone'],
-                address="%s,%s %s %s %s" % (F['userStreet'], F['userNumber'], F['userPostalCode'], F['userCity'], F['userCountry']),
+                address_street=F['userStreet'],
+                address_streenumber= F['userNumber'] ,
+                address_zipcode=F['userPostalCode'],
+                address_city= F['userCity'],
+                address_country=F['userCountry'],
+                entry_date= datetime.now(),
                 rfid= get_db().User.newUniqueRFID(),
                 expire_date=datetime.now() + timedelta(days=365))
         else:
