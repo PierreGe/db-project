@@ -122,7 +122,8 @@ def subscription():
         current_user().renew()
         return redirect(url_for('index'))
     else:
-        F = request.form
+        F = {k: v[0] for k,v in dict(request.form).iteritems()}
+        print F
         if F['subscriber'] == 'true':
             new_user = get_db().User.create(
                 password=F['userPassword'],
