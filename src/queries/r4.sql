@@ -1,7 +1,7 @@
 -- Les velos ayant deux trajets consecutifs disjoints (station de retour du
 -- premier trajet differente de la station de depart du suivant)
 
--- Optimisation possible : Pour chaque velo, trier par date de départ et regarder 2 par 2, bon après comme faire en sql ?
+-- Optimisation possible : Pour chaque velo, trier par date de depart et regarder 2 par 2, bon apres comme faire en sql ?
 
 SELECT t1.bike_id AS bike_id
     FROM trip t1, trip t2

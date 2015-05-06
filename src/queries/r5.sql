@@ -3,6 +3,24 @@
 -- classes en fonction de la distance totale parcourue
 
 
--- WARNING :  distance manquante
+-- WARNING : math sur latitude, longitude
 
-SELECT subscriber.firstname,subscriber.lastname, subscriber.entry_date, COUNT(trip.arrival_station_id) FROM subscriber,trip WHERE trip.arrival_station_id = subscriber.user_id GROUP BY subscriber.firstname,subscriber.lastname ORDER BY COUNT(trip.arrival_station_id);
+SELECT   subscriber.firstname,
+         subscriber.lastname,
+         subscriber.entry_date,
+         Count(trip.arrival_station_id),
+         departurestation.latitude,
+         departurestation.longitude,
+         arrivalstation.latitude,
+         arrivalstation.longitude
+FROM     subscriber,
+         trip,
+         station AS departurestation,
+         station AS arrivalstation
+WHERE    trip.arrival_station_id NOT null
+AND      departurestation.id = trip.departure_station_id
+AND      arrivalstation.id = trip.arrival_station_id
+AND      trip.user_id = subscriber.user_id
+GROUP BY subscriber.firstname,
+         subscriber.lastname
+ORDER BY count(trip.arrival_station_id);

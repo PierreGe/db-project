@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{listings}
+\usepackage{amsmath}
 \usepackage{color}
 
 \lstset{
@@ -163,21 +164,28 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r1.sql}
 \subsubsection{Algèbre relationnelle}
+\begin{displaymath}
+\Pi_{subscriber.user_id, firstname, lastname}(\sigma_{station.name="FLAGEY" AND subscriber.address_zipcode=1050}(subscriber \bowtie_{subscriber.user_id = trip.user_id} (trip \bowtie_{trip.departure_station_id = station.id} station))
+\end{displaymath}
+\subsubsection{Calcul relationnel}
 
 \subsection{Les utilisateurs ayant utilisé Villo au moins 2 fois}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r2.sql}
 \subsubsection{Algèbre relationnelle}
+\subsubsection{Calcul relationnel}
 
 \subsection{Les paires d'utilisateurs ayant fait un trajet identique}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r3.sql}
 \subsubsection{Algèbre relationnelle}
+\subsubsection{Calcul relationnel}
 
 \subsection{Les vélos ayant deux trajets consécutifs disjoints (station de retour du premier trajet différente de la station de départ du suivant)}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r4.sql}
 \subsubsection{Algèbre relationnelle}
+\subsubsection{Calcul relationnel}
 
 \subsection{Les utilisateurs, la date d'inscription, le nombre total de trajet effectués, la distance totale parcourue et la distance moyenne parcourue par trajet, classés en fonction de la distance totale parcourue}
 \lstinputlisting{../../src/queries/r5.sql}
