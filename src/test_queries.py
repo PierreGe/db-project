@@ -56,16 +56,16 @@ def insert_fixtures(conn):
     Bikes = [db.Bike.create() for i in range(5)]
 
     # 3 stations, including Flagey
-    Flagey = db.Station.create(name="FLAGEY",
+    Flagey = db.Station.create(id=1, name="FLAGEY",
         latitude=50.8279234774, longitude=4.37191500367,
         payment=True, capacity=25)
-    ULB = db.Station.create(name="ULB",
+    ULB = db.Station.create(id=2, name="ULB",
         latitude=50.8125663191, longitude=4.37914601751,
         payment=True, capacity=27)
-    Arsenal = db.Station.create(name="ARSENAL",
+    Arsenal = db.Station.create(id=3, name="ARSENAL",
         latitude=50.8265178652, longitude=4.39705753109,
         payment=True, capacity=25)
-    Eloy = db.Station.create(name="ELOY",
+    Eloy = db.Station.create(id=4, name="ELOY",
         latitude=50.8362457584, longitude=4.32609149836,
         payment=True, capacity=25)
 
@@ -169,6 +169,18 @@ def test_r3():
     # B et D font tous les 2 le trajet ULB -> Arsenal
     # B et E font tous les 2 le trajet ULB -> Arsenal
     # D et E font tous les 2 le trajet ULB -> Arsenal
+    res = exec_query(load_query(3))
+    assert res == [(1, 2), (2, 4), (2, 5), (4, 5)]
+
+    # A et B refont le meme trajet, la paire ne doit pas apparaitre 2x
+    db = Database(conn)
+    flagey, ulb = db.Station.get(1), db.Station.get(2)
+    db.Trip.create(bike_id=db.Bike.create().id, user_id=1,
+        departure_station_id=flagey.id, departure_date="2016-11-11T13:12:11",
+        arrival_station_id=ulb.id, arrival_date="2016-11-11T13:45:11")
+    db.Trip.create(bike_id=db.Bike.create().id, user_id=2,
+        departure_station_id=flagey.id, departure_date="2016-11-11T13:17:11",
+        arrival_station_id=ulb.id, arrival_date="2016-11-11T13:48:11")
     res = exec_query(load_query(3))
     assert res == [(1, 2), (2, 4), (2, 5), (4, 5)]
 
