@@ -172,14 +172,27 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \subsection{Les utilisateurs ayant utilisé Villo au moins 2 fois}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r2.sql}
-\subsubsection{Algèbre relationnelle}
-\subsubsection{Calcul relationnel}
 
+\subsubsection{Algèbre relationnelle}
+\begin{displaymath}
+\Pi_{trip1.user\_id}( trip1 \bowtie_{trip1.user\_id = trip.user\_id AND trip1.departure\_date != trip2.departure\_date} trip2)
+\end{displaymath}
+\subsubsection{Calcul relationnel}
+\begin{displaymath}
+	\{ t1.user_id | trip(t2) \wedge trip(t1) \wedge trip1.user\_id = trip2.user\_id\wedge trip1.departure\_date != trip2.departure\_date \}
+\end{displaymath}
 \subsection{Les paires d'utilisateurs ayant fait un trajet identique}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r3.sql}
 \subsubsection{Algèbre relationnelle}
+\begin{displaymath}
+\Pi_{t1.user\_id, t2.user\_id}(t1 \bowtie_{t1.departure\_station_id = t2.departure\_station_idAND t1.arrival\_station_id = t2.arrival\_station_id AND t1.user\_id < t2.user\_id;} t2)
+\end{displaymath}
 \subsubsection{Calcul relationnel}
+\begin{displaymath}
+	\{ t1.user\_id, t2.user\_id | trip(t2) \wedge trip(t1) \wedge t1.departure\_station_id = t2.departure\_station_id \wedge t1.arrival\_station_id = t2.arrival\_station_id \wedge t1.user\_id < t2.user\_id \wedge trip1.departure\_date != trip2.departure\_date \}
+\end{displaymath}
+
 
 \subsection{Les vélos ayant deux trajets consécutifs disjoints (station de retour du premier trajet différente de la station de départ du suivant)}
 \subsubsection{SQL}
