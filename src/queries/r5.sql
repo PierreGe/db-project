@@ -12,7 +12,8 @@ SELECT   subscriber.firstname,
          subscriber.lastname,
          subscriber.entry_date,
          COUNT(trip.arrival_station_id) AS trip_count,
-         SUM(12309.070862300314*ABS(from_.latitude-to_.latitude)*ABS(from_.latitude-to_.latitude) + 4940.143444641126*ABS(from_.longitude-to_.longitude)*ABS(from_.longitude-to_.longitude)) AS km_squared
+         SUM(geodistance(from_.latitude, from_.longitude, to_.latitude, to_.longitude)) AS total_km,
+         AVG(geodistance(from_.latitude, from_.longitude, to_.latitude, to_.longitude)) AS avg_km
 FROM     trip
 INNER JOIN station AS from_ ON trip.departure_station_id = from_.id,
            station AS to_ ON trip.arrival_station_id = to_.id,
