@@ -182,8 +182,42 @@ def test_r5():
     assert res == []
 
 def test_r6():
+    t = datetime(2012, 12, 21, 11, 11, 11)
+
+    db = Database(conn)
+    s1 = db.Station.create(
+        name="TEST1", latitude=50.234, longitude=4.567,
+        capacity=25, payment=True)
+    s2 = db.Station.create(
+        name="TEST2", latitude=50.123, longitude=4.321,
+        capacity=25, payment=True)
+    u = db.User.create(password="password")
+
+    for i in range(10):
+        b = db.Bike.create()
+        db.Trip.create(user_id=u.id, bike_id=b.id,
+            departure_station_id=s1.id, departure_date=t+timedelta(days=i),
+            arrival_station_id=s2.id, arrival_date=t+timedelta(days=i, seconds=42))
+
+    u = db.User.create(password="password")
+
+    for i in range(10):
+        b = db.Bike.create()
+        db.Trip.create(user_id=u.id, bike_id=b.id,
+            departure_station_id=s1.id, departure_date=t+timedelta(days=i),
+            arrival_station_id=s2.id, arrival_date=t+timedelta(days=i, seconds=42))
+
     res = exec_query(load_query(6))
-    assert res == []
+    assert res == [('TEST2', 20, 2)]
+
+    for i in range(10):
+        b = db.Bike.create()
+        db.Trip.create(user_id=u.id, bike_id=b.id,
+            departure_station_id=s2.id, departure_date=t+timedelta(days=i),
+            arrival_station_id=s1.id, arrival_date=t+timedelta(days=i, seconds=42))
+
+    res = exec_query(load_query(6))
+    assert res == [('TEST1', 10, 1), ('TEST2', 20, 2)]
 
 
 # Run tests if no py.test
