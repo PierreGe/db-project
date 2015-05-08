@@ -190,8 +190,9 @@ def test_r4():
     assert res == [(5,)]
 
 def test_r5():
+    # A et B sont des subscribers qui ont fait des voyages
     res = exec_query(load_query(5))
-    assert res == []
+    assert len(res) == 2
 
 def test_r6():
     t = datetime(2012, 12, 21, 11, 11, 11)

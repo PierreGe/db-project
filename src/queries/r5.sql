@@ -2,25 +2,22 @@
 -- la distance totale parcourue et la distance moyenne parcourue par trajet,
 -- classes en fonction de la distance totale parcourue
 
-
--- WARNING : math sur latitude, longitude
+--- Barycentre des stations villos: (50.84715777660501, 4.36273021165704)
+--- Périmètre Ouest-Est de la terre à cette latitude: 70.2861540037661 km/°
+--- Périmètre Nord-Sud de la terre: 110.94625213273459 km/° 
+--- Distance entre 2 points (lat1,long1), (lat2,long2) -> 
+---     SQRT((abs(lat2-lat1)*110)^2 + (abs(long2-long1)*70)^2)
 
 SELECT   subscriber.firstname,
          subscriber.lastname,
          subscriber.entry_date,
-         Count(trip.arrival_station_id),
-         departurestation.latitude,
-         departurestation.longitude,
-         arrivalstation.latitude,
-         arrivalstation.longitude
-FROM     subscriber,
-         trip,
-         station AS departurestation,
-         station AS arrivalstation
+         COUNT(trip.arrival_station_id) AS trip_count,
+         SUM(12309.070862300314*ABS(from_.latitude-to_.latitude)*ABS(from_.latitude-to_.latitude) + 4940.143444641126*ABS(from_.longitude-to_.longitude)*ABS(from_.longitude-to_.longitude)) AS km_squared
+FROM     trip
+INNER JOIN station AS from_ ON trip.departure_station_id = from_.id,
+           station AS to_ ON trip.arrival_station_id = to_.id,
+           subscriber ON trip.user_id = subscriber.user_id
 WHERE    trip.arrival_station_id NOT null
-AND      departurestation.id = trip.departure_station_id
-AND      arrivalstation.id = trip.arrival_station_id
-AND      trip.user_id = subscriber.user_id
 GROUP BY subscriber.firstname,
          subscriber.lastname
 ORDER BY count(trip.arrival_station_id);
