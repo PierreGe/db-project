@@ -33,7 +33,9 @@
                             {{trip.departure_date.date().strftime("%d/%m/%Y")}}
                             {% if not trip.finished %} (en cours) {% endif %}
                         </h4>
-                        {{trip.departure_station.name}}
+                        <a href="/station/{{trip.departure_station_id}}">
+                            {{trip.departure_station.name}}
+                        </a>
                         {% if trip.finished %}
                           <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                           <a href="/station/{{trip.arrival_station_id}}">
