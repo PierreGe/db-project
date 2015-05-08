@@ -31,7 +31,7 @@
 
     <div class="tab-content">
       <div role="tabpanel" class="tab-pane active" id="temp">
-        <div class="jumbotron">
+        <div class="lead">
           <h2>La carte temporaire</h2>
           <p>
             Vous utiliserez Villo! quelques fois dans les prochaines heures ou les prochains jours ?
@@ -39,6 +39,7 @@
             La première demi-heure de chaque trajet est gratuite. Au-delà des 30 premières minutes vous payez un coût de location.
           </p>
         </div>
+          <hr />
         <form class="form-signin" action="/subscription" method="POST">
           <input type="hidden" name="subscriber" value="false">
 
@@ -57,7 +58,7 @@
         </form>
       </div>
       <div role="tabpanel" class="tab-pane" id="abo">
-        <div class="jumbotron">
+        <div class="lead">
           <h2>La carte 1 an</h2>
           <p>
             Vous utiliserez Villo! régulièrement pour vous rendre sur votre lieu de travail ou pour faire une course ?
@@ -65,6 +66,7 @@
             La première demi-heure de chaque trajet est gratuite. Au-delà des 30 premières minutes vous payez un coût de location.
           </p>
         </div>
+          <hr />
         <form class="form-signin" action="/subscription" method="POST">
           <input type="hidden" name="subscriber" value="true">
 
