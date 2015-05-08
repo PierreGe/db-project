@@ -1,7 +1,6 @@
 -- Les utilisateurs ayant utilise Villo au moins 2 fois
-
-SELECT id from user,trip 
-    WHERE user.id = trip.user_id  AND
-          user.expire_date IS NOT NULL
-    GROUP BY user.id 
-    HAVING count(trip.user_id)>1;
+SELECT DISTINCT trip1.user_id
+FROM   trip trip1,
+       trip trip2
+WHERE  trip1.user_id = trip2.user_id
+       AND trip1.departure_date != trip2.departure_date;
