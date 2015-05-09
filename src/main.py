@@ -410,6 +410,27 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.route("/newstation")
+@require_admin
+def newstation_map():
+    return render_template("create_station.html")
+
+
+@app.route("/newstation", methods=["POST"])
+@require_admin
+def newstation():
+    F = {k: v[0] for k,v in dict(request.form).iteritems()}
+    print F
+    latitude = float(F['latitude'])
+    longitude = float(F['longitude'])
+    capacity = int(F['capacity'])
+    payment = 'payment' in F
+    name = F['name'].upper()
+    station = get_db().Station.create(
+        capacity=capacity, name=name, payment=payment,
+        latitude=latitude, longitude=longitude)
+    return redirect("/station/%d" % station.id)
+
 if __name__ == "__main__":
     app.run(
         debug=config.DEBUG, 

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block footer %}{% endblock %}
+{% block title %}Stations{% endblock %}
+
+{% block head %}
+<link type="text/css" href="/static/3rdparty/leaflet/leaflet.css" rel="stylesheet">
+<script type="text/javascript" src="/static/3rdparty/leaflet/leaflet.js"></script>
+{% endblock %}
+
+{% block container %}
+<div id="map"></div>
+<div id="create-station-form" style="display: none;">
+    <div class="panel panel-default" style="min-width: 300px;">
+        <div class="panel-heading">
+            <h3>Nouvelle station</h3>
+        </div>
+
+        <div class="panel-body">
+            <form method="POST" class="form-inline">
+                <input type="hidden" name="latitude" value="[[latitude]]">
+                <input type="hidden" name="longitude" value="[[longitude]]">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Nom" name="name">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Capacité" name="capacity">
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" name="payment" id="input_payment">
+                    <label for="input_payment">Borne de payement</label>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary" value="Créer">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    var adjust_map_height = function(){
+        $('#map').height(
+            $(window).height() - ($('nav').height() + $('footer').height()));
+    }
+    adjust_map_height();
+    $(window).resize(adjust_map_height);
+
+    var map = L.map('map');
+    if ($('#map').width() < 400)
+        map.setView([50.8453943, 4.3546165], 11);
+    else if ($('#map').width() < 800)
+        map.setView([50.8453943, 4.3546165], 12);
+    else if ($('#map').width() < 1600)
+        map.setView([50.8453943, 4.3546165], 13);
+    else
+        map.setView([50.8453943, 4.3546165], 14);
+
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    map.on('click', function(ev){
+        var coords = ev.latlng;
+        var R = 1000;
+        console.log("Clicked at " + coords.lat + "," + coords.lng);
+        var content = $('#create-station-form')
+                       .html()
+                       .replace('[[latitude]]', coords.lat)
+                       .replace('[[longitude]]', coords.lng);
+        L.popup().setLatLng(coords).setContent(content).openOn(map);
+    });
+});
+</script>
+{% endblock %}

@@ -49,7 +49,14 @@
                 Historique
               </a>
             </li>
-            {% if not user.is_admin() %}
+            {% if user.is_admin() %}
+            <li>
+              <a href="/newstation">
+                <span class="glyphicon glyphicon-plus-sign"></span>&nbsp;
+                Créer station
+              </a>
+            </li>
+            {% else %}
             <li>
               <a href="/billing">
                 <span class="glyphicon glyphicon-euro"></span>&nbsp;
