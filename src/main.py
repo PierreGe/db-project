@@ -179,7 +179,7 @@ def station():
 @app.route("/map_station_popup/<int:station_id>")
 def station_popup(station_id):
     ctx = {'station': get_db().Station.get(station_id)}
-    return render_template("map_station_popup.html", **ctx)
+    return render_template("partials/map_station_popup.html", **ctx)
 
 
 @app.route("/trip")
