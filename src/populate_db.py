@@ -92,7 +92,7 @@ def insert_trips(db, input_file="data/trips.csv"):
         res = db.execute('SELECT id FROM user WHERE password="%s" AND expire_date=""' % (hash_password('admin')))
         admin_id = res.next()[0]
         assert db.execute('INSERT INTO subscriber (user_id,rfid,firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date) VALUES (?,?,?,?,?,?,?,?,?,?)',
-            (admin_id, "Administrateur", "De Villos", "", "Street","1","1","Bruxelles","Belgique","2010-01-01T00:00:01")).rowcount == 1
+            (admin_id, "0", "Administrateur", "De Villos", "Street","1","1","Bruxelles","Belgique","2010-01-01T00:00:01")).rowcount == 1
 
     print "Admin user has id=%d and password=admin" % admin_id
 
