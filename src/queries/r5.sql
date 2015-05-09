@@ -3,8 +3,8 @@
 -- classes en fonction de la distance totale parcourue
 
 --- Barycentre des stations villos: (50.84715777660501, 4.36273021165704)
---- Périmètre Ouest-Est de la terre à cette latitude: 70.2861540037661 km/°
---- Périmètre Nord-Sud de la terre: 110.94625213273459 km/° 
+--- Perimetre Ouest-Est de la terre a cette latitude: 70.2861540037661 km/[degre]
+--- Perimetre Nord-Sud de la terre: 110.94625213273459 km/[degre]
 --- Distance entre 2 points (lat1,long1), (lat2,long2) -> 
 ---     SQRT((abs(lat2-lat1)*110)^2 + (abs(long2-long1)*70)^2)
 
