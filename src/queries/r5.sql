@@ -2,13 +2,11 @@
 -- la distance totale parcourue et la distance moyenne parcourue par trajet,
 -- classes en fonction de la distance totale parcourue
 
-
-
 -- SQLite ne dispose pas de fonction de la fonction sqrt(), ou de fonctions
--- trigonométriques, nécessaires au calcul de la distance sur terre. Nous avons
--- donc implémenté la formule de Haversine en tant qu'extension SQLite à
--- charger au démarrage, et qui intègre la fonction
--- geodistance(lat1,long1,lat2,long2) -> km à l'environnement SQL.
+-- trigonometriques, necessaires au calcul de la distance sur terre. Nous avons
+-- donc implemente la formule de Haversine en tant qu'extension SQLite a
+-- charger au demarrage, et qui integre la fonction
+-- geodistance(lat1,long1,lat2,long2) -> km a l'environnement SQL.
 
 SELECT   subscriber.firstname,
          subscriber.lastname,
