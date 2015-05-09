@@ -18,7 +18,7 @@ def load_query(i):
     """Load SQL without comments from queries/r<i>.sql"""
     return ''.join(filter(
         lambda line: not line.strip().startswith("--"),
-        open("queries/r%d.sql" % i)))
+        open("queries/r%s.sql" % str(i))))
 
 def exec_query(q):
     print q
@@ -178,6 +178,11 @@ def test_r3():
 def test_r4():
     # Le villo 5 a un trajet discontinu
     res = exec_query(load_query(4))
+    assert res == [(5,)]
+
+def test_r4b():
+    # Le villo 5 a un trajet discontinu
+    res = exec_query(load_query('4b'))
     assert res == [(5,)]
 
 def test_r5():
