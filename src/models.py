@@ -404,7 +404,7 @@ def get_Trip(db=None, superclass=None):
             """
             :return: des kilometres
             """
-            if self.departure_station_id == self.arrival_station_id:
+            if self.departure_station_id == self.arrival_station_id or not self.finished:
                 return 0.
             query = """
             SELECT geodistance(s1.latitude,s1.longitude,s2.latitude,s2.longitude)
