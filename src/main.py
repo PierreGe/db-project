@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from flask import (
-    Flask, render_template, g, session, redirect, url_for, escape, request, 
+    Flask, render_template, g, redirect, url_for, escape, request, 
     make_response, flash
 )
 import os
 from user import current_user, connect_user, disconnect_user
-from models import Database
 from datetime import datetime, timedelta
 import config
 from apputils import get_db
@@ -33,6 +32,25 @@ def pluralize(number, singular='', plural='s'):
         return singular
     else:
         return plural
+
+
+@app.template_filter('dt')
+def format_timedelta(dt):
+    """Format a time interval in french"""
+    if isinstance(dt, timedelta):
+        dt = dt.total_seconds()
+    dt = int(dt)
+
+    days, dt = dt//86400, dt%86400
+    hours, dt = dt//3600, dt%3600
+    minutes, seconds = dt//60, dt%60
+
+    res = []
+    if days: res.append(("%d jour" % days) + pluralize(days))
+    if hours: res.append("%dh" % hours)
+    if minutes: res.append("%dmin" % minutes)
+    if seconds: res.append("%ds" % seconds)
+    return ' '.join(res)
 
 
 @app.context_processor
@@ -161,7 +179,7 @@ def station():
 @app.route("/map_station_popup/<int:station_id>")
 def station_popup(station_id):
     ctx = {'station': get_db().Station.get(station_id)}
-    return render_template("map_station_popup.html", **ctx)
+    return render_template("partials/map_station_popup.html", **ctx)
 
 
 @app.route("/trip")
@@ -205,7 +223,6 @@ def drop_bike(station_id, bike_id):
 @app.route("/station/<int:station_id>")
 @require_login
 def station_detail(station_id):
-    user = current_user()
     try:
         station = get_db().Station.get(station_id)
     except KeyError:
@@ -237,7 +254,7 @@ def rent_bike(station_id, bike_id):
         flash(u"Ce villo n'est pas utilisable", "danger")
         return redirect("/rent/%d" % (station_id))
     else:
-        newTrip = get_db().Trip.create(
+        get_db().Trip.create(
             user_id=user.id, bike_id=bike.id, 
             departure_station_id=station.id, departure_date=datetime.now())
         flash(u"Vous avez pris le villo %d à %s" % (bike.id, station.name), 'success')

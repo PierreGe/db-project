@@ -1,5 +1,4 @@
 from models import sqlite3, Database, parse_date
-from populate_db import create_tables
 from datetime import datetime, timedelta
 
 db = None
@@ -116,6 +115,26 @@ def test_autoassign_id():
     assert u.id == 1
 
 
+def test_trip_is_insertion():
+    u = db.User.create(password="Hello")
+    b = db.Bike.create(model="mytest")
+    s = db.Station.create(
+        latitude=50.3245, longitude=4.0326, 
+        name="Station 1", capacity=42, payment=True)
+    date = "2015-07-12T10:10:10"
+
+    t = db.Trip.create(
+        departure_station_id=s.id, arrival_station_id=s.id,
+        departure_date=date, arrival_date=date,
+        user_id=u.id, bike_id=b.id
+    )
+    assert t.is_insertion()
+
+    u.expire_date = parse_date("2015-09-11T10:00:00")
+    u.update()
+    assert not t.is_insertion()
+
+
 def test_insert_trip():
     u = db.User.create(password="Hello")
     b = db.Bike.create(model="mytest")
@@ -157,7 +176,7 @@ def test_station_available_bikes():
     assert s2.available_bikes == 0
     assert s1.available_bikes == 0
 
-    t = db.Trip.create(
+    db.Trip.create(
         departure_station_id=s1.id, arrival_station_id=s2.id,
         departure_date=from_date, arrival_date=to_date,
         user_id=u.id, bike_id=b.id
@@ -172,7 +191,7 @@ def test_station_available_bikes():
     assert s1.bikes == []
 
     from_date, to_date = "2015-07-12T20:10:10", "2015-07-12T21:10:10"
-    t = db.Trip.create(
+    db.Trip.create(
         departure_station_id=s2.id, arrival_station_id=s1.id,
         departure_date=from_date, arrival_date=to_date,
         user_id=u.id, bike_id=b.id
@@ -230,7 +249,7 @@ def test_user_current_trip():
         latitude=50.3245, longitude=4.0325, 
         name="db.Station 1", capacity=42, payment=True)
     from_date = "2015-07-12T10:10:10"
-    t = db.Trip.create(
+    db.Trip.create(
         departure_station_id=s1.id,
         departure_date=from_date,
         user_id=u.id, bike_id=b.id

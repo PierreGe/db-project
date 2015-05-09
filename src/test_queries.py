@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from populate_db import (
-    create_tables, 
-    insert_bikes, 
-    insert_users,
-    insert_stations, 
-    insert_trips,
-    Connection
-)
+from sqlite3 import Connection
 from models import Database, fetch_all
 from datetime import datetime, timedelta
+
+conn = None
+def setup_function(*args):
+    global conn
+    conn = Connection(':memory:')
+    insert_fixtures(conn)
+
+def teardown_function(*args):
+    global conn
+    conn = None
 
 def load_query(i):
     """Load SQL without comments from queries/r<i>.sql"""
@@ -126,25 +129,13 @@ def insert_fixtures(conn):
     # E: Eloy -> ... en cours, villo 5
     db.Trip.create(
         user_id=E.id, bike_id=Bikes[4].id,
-        departure_station_id=Arsenal.id, departure_date=t(days=3, seconds=1200))
+        departure_station_id=Eloy.id, departure_date=t(days=3, seconds=1200))
 
     # A: Flagey -> ULB, villo3
     db.Trip.create(
         user_id=A.id, bike_id=Bikes[2].id,
         departure_station_id=Flagey.id, departure_date=t(days=12, seconds=54000),
         arrival_station_id=ULB.id, arrival_date=t(days=12, seconds=58000))
-
-
-conn = None
-def setup_function(*args):
-    global conn
-    conn = Connection(':memory:')
-    create_tables(conn)
-    insert_fixtures(conn)
-
-def teardown_function(*args):
-    global conn
-    conn = None
 
 def test_expected_data():
     """Test fixtures content"""

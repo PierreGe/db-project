@@ -53,3 +53,7 @@ body {
 #map-unique {
   height: 400px;
 }
+
+li.list-group-item.active a {
+  color: white;
+}

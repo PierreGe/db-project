@@ -45,20 +45,8 @@
             </div>
             <ul class="list-group panel-body">
                 {% for trip in trip_list[:15] %}
-                    <li class="list-group-item {% if not trip.finished %}active{% endif %}">
-                        <h4>
-                            {{trip.departure_date.date().strftime("%d/%m/%Y")}}
-                            {% if not trip.finished %} (en cours) {% endif %}
-                        </h4>
-                        {{trip.departure_station.name}}
-                        ({{trip.departure_date.time().strftime("%Hh%M")}})
-                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                            {{trip.arrival_station.name}}
-                            ({{trip.arrival_date.time().strftime("%Hh%M")}}).
-                        <span class="badge alert-info">
-                                {{ (trip.price()) }} &euro;
-                        </span>
-
+                    <li class="list-group-item">
+                    {% include "partials/trip.html" %}
                     </li>
                 {% endfor %}
                 {% if trip_list==[]%}

@@ -244,7 +244,7 @@ def get_User(db=None, superclass=None):
             with db:
                 db.execute(
                     "UPDATE user SET password=?, card=?, expire_date=? WHERE id=?",
-                    (self.password, self.card, self.expire_date, self.id))
+                    map(self.encode, (self.password, self.card, self.expire_date, self.id)))
 
         def is_admin(self):
             return self.expire_date is None
@@ -373,6 +373,16 @@ def get_Trip(db=None, superclass=None):
         def finished(self):
             return self.arrival_date != None
 
+        def is_insertion(self):
+            """
+            Return True if the trip is a bike insertion
+            (admin putting a bike in the system)
+            """
+            return (
+                self.departure_date == self.arrival_date and
+                self.departure_station_id == self.arrival_station_id and
+                self.user.expire_date is None)
+
         def duration(self, current_time=None):
             """
             :param current_time:
@@ -404,27 +414,20 @@ def get_Trip(db=None, superclass=None):
             """
             :return: des kilometres
             """
-            if self.departure_station_id == self.arrival_station_id:
-                return "0"
-            Station = get_Station(db, superclass)
-            st1 = Station.get(self.departure_station_id)
-            lat1 = st1.latitude
-            long1 = st1.longitude
-            try:
-                st2 = Station.get(self.arrival_station_id)
-            except:
-                return 0
-            lat2 = st2.latitude
-            long2 = st2.longitude
-            degreesToRadians = math.pi/180.0
-            phi1 = (90.0 - lat1)*degreesToRadians
-            phi2 = (90.0 - lat2)*degreesToRadians
-            theta1 = long1*degreesToRadians
-            theta2 = long2*degreesToRadians
-            cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + math.cos(phi1)*math.cos(phi2))
-            arc = math.acos( cos )
-            radius = 6371
-            return "{0:.2f}".format(round(arc * radius,2))
+            if self.departure_station_id == self.arrival_station_id or not self.finished:
+                return 0.
+            query = """
+            SELECT geodistance(s1.latitude,s1.longitude,s2.latitude,s2.longitude)
+            FROM trip
+            INNER JOIN station AS s1 ON s1.id=trip.departure_station_id,
+                       station AS s2 ON s2.id=trip.arrival_station_id
+            WHERE trip.departure_date=? AND
+                  trip.user_id=? AND
+                  trip.bike_id=?
+            """
+            res = fetch_first(db.execute(query, map(self.encode, 
+                (self.departure_date, self.user_id, self.bike_id))))
+            return round(res, 2)
 
         @property
         def departure_station(self):
@@ -527,6 +530,9 @@ class Database(object):
     def __init__(self, connection=None):
         connection = default_or_db(connection)
         create_tables(connection)
+        connection.enable_load_extension(True)
+        connection.load_extension("./geodistance")
+        connection.enable_load_extension(False)
         base_model = _get_Model(connection)
         self.Trip = get_Trip(connection, base_model)
         self.Bike = get_Bike(connection, base_model)

@@ -5,7 +5,6 @@
 {% block content %}
 <div class="row">
   <div class="col-md-4">
-    {# Personal infos panel #}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h2>
@@ -157,58 +156,7 @@
       <ul class="list-group panel-body">
         {% for trip in user.trips[:15] %}
           <li class="list-group-item {% if not trip.finished %}active{% endif %}">
-            <div class="row">
-              <div class="col-xs-10">
-                <h4>
-                  {{trip.departure_date.date().strftime("%d/%m/%Y")}}
-                  {% if not trip.finished %} (en cours) {% endif %}
-                </h4>
-                <a href="/station/{{trip.departure_station_id}}">
-                  {{trip.departure_station.name}}
-                </a>
-                ({{trip.departure_date.time().strftime("%Hh%M")}})
-                {% if trip.finished %}
-                  {% if user.is_admin() and trip.departure_station_id==trip.arrival_station_id and (trip.arrival_date - trip.departure_date).total_seconds() < 1 %}
-                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                    <span class="badge alert-info">Mise en service</span>
-                  {% else %}
-                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                    <a href="/station/{{trip.arrival_station_id}}">
-                      {{trip.arrival_station.name}}
-                    </a>
-                    ({{trip.arrival_date.time().strftime("%Hh%M")}}).
-                    <span class="badge alert-info">
-                      {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
-                    </span>
-                  {% endif %}
-                {% else %}
-                  <span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span>
-                  <span class="badge alert-warning">
-                    {{ (trip.duration().total_seconds() // 60)|int }} minutes {{ (trip.duration().total_seconds() % 60)|int }} secondes
-                  </span>
-                {% endif %}
-              </div>
-              <div class="col-xs-2">
-                {% with bike = trip.bike %}
-                <h4>Villo {{bike.id}}</h4>
-                {% if bike.usable %}
-                <a href="/problem/{{bike.id}}" class="btn btn-warning" title="Signaler un problème avec ce villo">
-                  <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                </a>
-                {% elif user.is_admin() %}
-                <a href="/repair/{{bike.id}}" class="btn btn-success" title="Marquer comme réparé">
-                  <span class="glyphicon glyphicon-wrench" style="color:white;"></span>
-                </a>
-                {% else %}
-                <button class="btn btn-danger disabled" 
-                        type="submit" data-toggle="tooltip" data-placement="bottom" 
-                        title="Ce villo est signalé comme inutilisable">
-                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                </button>
-                {% endif %}
-                {% endwith %}
-              </div>
-            </div>
+            {% include "partials/trip.html" %}
           </li>
         {% endfor %}
           {% if user.trips == [] %}
