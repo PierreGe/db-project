@@ -244,7 +244,7 @@ def get_User(db=None, superclass=None):
             with db:
                 db.execute(
                     "UPDATE user SET password=?, card=?, expire_date=? WHERE id=?",
-                    (self.password, self.card, self.expire_date, self.id))
+                    map(self.encode, (self.password, self.card, self.expire_date, self.id)))
 
         def is_admin(self):
             return self.expire_date is None
