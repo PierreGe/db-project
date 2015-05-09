@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from populate_db import (
-    create_tables, 
-    insert_bikes, 
-    insert_users,
-    insert_stations, 
-    insert_trips,
-    Connection
-)
+from sqlite3 import Connection
 from models import Database, fetch_all
 from datetime import datetime, timedelta
+
+conn = None
+def setup_function(*args):
+    global conn
+    conn = Connection(':memory:')
+    insert_fixtures(conn)
+
+def teardown_function(*args):
+    global conn
+    conn = None
 
 def load_query(i):
     """Load SQL without comments from queries/r<i>.sql"""
@@ -133,18 +136,6 @@ def insert_fixtures(conn):
         user_id=A.id, bike_id=Bikes[2].id,
         departure_station_id=Flagey.id, departure_date=t(days=12, seconds=54000),
         arrival_station_id=ULB.id, arrival_date=t(days=12, seconds=58000))
-
-
-conn = None
-def setup_function(*args):
-    global conn
-    conn = Connection(':memory:')
-    create_tables(conn)
-    insert_fixtures(conn)
-
-def teardown_function(*args):
-    global conn
-    conn = None
 
 def test_expected_data():
     """Test fixtures content"""

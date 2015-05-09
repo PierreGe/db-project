@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from flask import (
-    Flask, render_template, g, session, redirect, url_for, escape, request, 
+    Flask, render_template, g, redirect, url_for, escape, request, 
     make_response, flash
 )
 import os
 from user import current_user, connect_user, disconnect_user
-from models import Database
 from datetime import datetime, timedelta
 import config
 from apputils import get_db
@@ -205,7 +204,6 @@ def drop_bike(station_id, bike_id):
 @app.route("/station/<int:station_id>")
 @require_login
 def station_detail(station_id):
-    user = current_user()
     try:
         station = get_db().Station.get(station_id)
     except KeyError:
@@ -237,7 +235,7 @@ def rent_bike(station_id, bike_id):
         flash(u"Ce villo n'est pas utilisable", "danger")
         return redirect("/rent/%d" % (station_id))
     else:
-        newTrip = get_db().Trip.create(
+        get_db().Trip.create(
             user_id=user.id, bike_id=bike.id, 
             departure_station_id=station.id, departure_date=datetime.now())
         flash(u"Vous avez pris le villo %d à %s" % (bike.id, station.name), 'success')

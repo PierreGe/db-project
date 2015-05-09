@@ -2,11 +2,10 @@
 
 from csv import DictReader
 from sqlite3 import Connection
-from sys import stdout, argv
-from datetime import datetime
+from sys import argv
 import xml.etree.ElementTree as ET
 
-from dbutils import hash_password, sanitize
+from dbutils import hash_password
 
 def create_tables(db, create_file="createDB.sql"):
     # Create tables using createDB.sql 
@@ -14,12 +13,6 @@ def create_tables(db, create_file="createDB.sql"):
     creator = open(create_file).read().split(';')[:-1]
     for create_table in creator:
         db.execute(create_table)
-
-# Sanitize all arguments
-safe = lambda *args: tuple(map(sanitize, args))
-
-# Parse date in std format
-parse_date = lambda datestr: datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%S")
 
 def insert_bikes(db, input_file="data/villos.csv"):
     q = 'INSERT INTO bike (id,entry_date,model,usable) VALUES (?,?,?,?)'
