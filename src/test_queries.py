@@ -129,7 +129,7 @@ def insert_fixtures(conn):
     # E: Eloy -> ... en cours, villo 5
     db.Trip.create(
         user_id=E.id, bike_id=Bikes[4].id,
-        departure_station_id=Arsenal.id, departure_date=t(days=3, seconds=1200))
+        departure_station_id=Eloy.id, departure_date=t(days=3, seconds=1200))
 
     # A: Flagey -> ULB, villo3
     db.Trip.create(
