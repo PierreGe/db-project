@@ -1,11 +1,21 @@
+/*
+ * geodistance SQLite extension. Compute the distance between two points on
+ * earth identifed by (lat1,long1), (lat2, long2).
+ *
+ * See https://www.sqlite.org/loadext.html for more informations on SQLite
+ * loadable extensions.
+ *
+ * WARNING: loadable extensions are disabled in some versions of Mac OS X
+ */
+
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 #include "sqlite3ext.h"
 SQLITE_EXTENSION_INIT1
 
-static const double equatorial_radius = 6378.137; //km
-static const double polar_radius = 6356.752;      //km
+static const double equatorial_radius = 6378.137; /* km */
+static const double polar_radius = 6356.752;      /* km */
 
 #define deg2rad(x) (M_PI * (x) / 180)
 
@@ -25,7 +35,6 @@ static void haversine(sqlite3_context *context, int argc, sqlite3_value **argv)
     double  dlat = fabs(lat1 - lat2);
     double dlong = fabs(long1 - long2);
     
-    /*  */
     double angle = 2 * asin(
         sqrt(pow(sin(dlat/2), 2) + 
              cos(lat1) * cos(lat2) * pow(sin(dlong/2), 2)));
@@ -33,6 +42,10 @@ static void haversine(sqlite3_context *context, int argc, sqlite3_value **argv)
     double res = angle * (equatorial_radius + polar_radius)/2;
     return sqlite3_result_double(context, res);
 }
+
+#ifdef _WIN32
+__declspec(dllexport)
+#endif
 
 int sqlite3_geodistance_init(
     sqlite3 *db,
