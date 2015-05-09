@@ -410,12 +410,6 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/newstation")
-@require_admin
-def newstation_map():
-    return render_template("create_station.html")
-
-
 @app.route("/newstation", methods=["POST"])
 @require_admin
 def newstation():
