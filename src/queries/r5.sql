@@ -2,11 +2,13 @@
 -- la distance totale parcourue et la distance moyenne parcourue par trajet,
 -- classes en fonction de la distance totale parcourue
 
---- Barycentre des stations villos: (50.84715777660501, 4.36273021165704)
---- Périmètre Ouest-Est de la terre à cette latitude: 70.2861540037661 km/°
---- Périmètre Nord-Sud de la terre: 110.94625213273459 km/° 
---- Distance entre 2 points (lat1,long1), (lat2,long2) -> 
----     SQRT((abs(lat2-lat1)*110)^2 + (abs(long2-long1)*70)^2)
+
+
+-- SQLite ne dispose pas de fonction de la fonction sqrt(), ou de fonctions
+-- trigonométriques, nécessaires au calcul de la distance sur terre. Nous avons
+-- donc implémenté la formule de Haversine en tant qu'extension SQLite à
+-- charger au démarrage, et qui intègre la fonction
+-- geodistance(lat1,long1,lat2,long2) -> km à l'environnement SQL.
 
 SELECT   subscriber.firstname,
          subscriber.lastname,
