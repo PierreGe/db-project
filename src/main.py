@@ -34,6 +34,25 @@ def pluralize(number, singular='', plural='s'):
         return plural
 
 
+@app.template_filter('dt')
+def format_timedelta(dt):
+    """Format a time interval in french"""
+    if isinstance(dt, timedelta):
+        dt = dt.total_seconds()
+    dt = int(dt)
+
+    days, dt = dt//86400, dt%86400
+    hours, dt = dt//3600, dt%3600
+    minutes, seconds = dt//60, dt%60
+
+    res = []
+    if days: res.append(("%d jour" % days) + pluralize(days))
+    if hours: res.append("%dh" % hours)
+    if minutes: res.append("%dmin" % minutes)
+    if seconds: res.append("%ds" % seconds)
+    return ' '.join(res)
+
+
 @app.context_processor
 def user_processor():
     return {'user': current_user()}

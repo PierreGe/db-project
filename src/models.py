@@ -373,6 +373,16 @@ def get_Trip(db=None, superclass=None):
         def finished(self):
             return self.arrival_date != None
 
+        def is_insertion(self):
+            """
+            Return True if the trip is a bike insertion
+            (admin putting a bike in the system)
+            """
+            return (
+                self.departure_date == self.arrival_date and
+                self.departure_station_id == self.arrival_station_id and
+                self.user.expire_date is None)
+
         def duration(self, current_time=None):
             """
             :param current_time:
