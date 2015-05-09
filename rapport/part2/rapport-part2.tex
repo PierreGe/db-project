@@ -164,10 +164,13 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r1.sql}
 \subsubsection{Algèbre relationnelle}
-\begin{displaymath}
-\Pi_{subscriber.user_id, firstname, lastname}(\sigma_{station.name="FLAGEY" AND subscriber.address_zipcode=1050}(subscriber \bowtie_{subscriber.user_id = trip.user_id} (trip \bowtie_{trip.departure_station_id = station.id} station))
-\end{displaymath}
+\begin{align}
+\Pi_{subscriber.user\_id, subscriber.firstname, subscriber.lastname}(\sigma_{station.name="FLAGEY" AND subscriber.address\_zipcode=1050}(\\ subscriber\bowtie_{subscriber.user\_id = trip.user\_id} (trip \bowtie_{trip.departure\_station_id = station.id} station))
+\end{align}
 \subsubsection{Calcul relationnel}
+\begin{align}
+	\{ sb.user_id, sb.firstname, sb.lastname | subscriber(sb) \wedge trip(tp) \wedge station(st) \wedge tp.departure\_station\_id = st.id \\ \wedge sb.user\_id = tp.user\_id \wedge st.NAME = "FLAGEY" \wedge tp.departure\_station_id = st.id \}
+\end{align}
 
 \subsection{Les utilisateurs ayant utilisé Villo au moins 2 fois}
 \subsubsection{SQL}
@@ -181,17 +184,18 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \begin{displaymath}
 	\{ t1.user_id | trip(t2) \wedge trip(t1) \wedge trip1.user\_id = trip2.user\_id\wedge trip1.departure\_date != trip2.departure\_date \}
 \end{displaymath}
+
 \subsection{Les paires d'utilisateurs ayant fait un trajet identique}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r3.sql}
 \subsubsection{Algèbre relationnelle}
-\begin{displaymath}
-\Pi_{t1.user\_id, t2.user\_id}(t1 \bowtie_{t1.departure\_station_id = t2.departure\_station_idAND t1.arrival\_station_id = t2.arrival\_station_id AND t1.user\_id < t2.user\_id;} t2)
-\end{displaymath}
+\begin{align}
+\Pi_{t1.user\_id, t2.user\_id}( \\t1 \bowtie_{t1.departure\_station_id = t2.departure\_station_idAND t1.arrival\_station_id = t2.arrival\_station\_id AND t1.user\_id < t2.user\_id;} t2)
+\end{align}
 \subsubsection{Calcul relationnel}
-\begin{displaymath}
-	\{ t1.user\_id, t2.user\_id | trip(t2) \wedge trip(t1) \wedge t1.departure\_station_id = t2.departure\_station_id \wedge t1.arrival\_station_id = t2.arrival\_station_id \wedge t1.user\_id < t2.user\_id \wedge trip1.departure\_date != trip2.departure\_date \}
-\end{displaymath}
+\begin{align}
+	\{ t1.user\_id, t2.user\_id | trip(t2) \wedge trip(t1) \wedge t1.departure\_station_id = t2.departure\_station_id \\ \wedge t1.arrival\_station_id = t2.arrival\_station_id \wedge t1.user\_id < t2.user\_id \\ \wedge trip1.departure\_date != trip2.departure\_date \}
+\end{align}
 
 
 \subsection{Les vélos ayant deux trajets consécutifs disjoints (station de retour du premier trajet différente de la station de départ du suivant)}
