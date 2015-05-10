@@ -18,6 +18,8 @@
         </div>
     </div>
 </div>
+
+{% if user.is_admin() %}
 <div id="create-station-form" style="display: none;">
     <div class="panel panel-default" style="min-width: 300px;">
         <div class="panel-heading">
@@ -45,6 +47,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 <script type="text/javascript">
 $(document).ready(function(){
