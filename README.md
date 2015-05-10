@@ -12,10 +12,11 @@
     $ source ve/bin/activate
     $ pip install -r requirements.txt
     
-### Create sqlite3 geodistance extension
+### Create sqlite3 geodistance extension and initial database
 
     $ cd src/
     $ make
+    $ python populate_db.py
 
 ### Run tests
 
