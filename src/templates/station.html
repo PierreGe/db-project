@@ -19,7 +19,7 @@
     </div>
 </div>
 
-{% if user.is_admin() %}
+{% if user and user.is_admin() %}
 <div id="create-station-form" style="display: none;">
     <div class="panel panel-default" style="min-width: 300px;">
         <div class="panel-heading">
@@ -94,10 +94,9 @@ $(document).ready(function(){
     add_marker({{station.latitude}}, {{station.longitude}}, {{station.id}});    
     {% endfor %}
 
-    {% if user.is_admin() %}
+    {% if user and user.is_admin() %}
     map.on('click', function(ev){
         var coords = ev.latlng;
-        var R = 1000;
         console.log("Clicked at " + coords.lat + "," + coords.lng);
         var content = $('#create-station-form')
                        .html()
