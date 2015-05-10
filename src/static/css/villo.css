@@ -57,3 +57,7 @@ body {
 li.list-group-item.active a {
   color: white;
 }
+
+.btn .glyphicon {
+  color: white;
+}

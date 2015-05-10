@@ -19,6 +19,36 @@
     </div>
 </div>
 
+{% if user and user.is_admin() %}
+<div id="create-station-form" style="display: none;">
+    <div class="panel panel-default" style="min-width: 300px;">
+        <div class="panel-heading">
+            <h3>Nouvelle station</h3>
+        </div>
+
+        <div class="panel-body">
+            <form method="POST" action="/newstation" class="form-inline">
+                <input type="hidden" name="latitude" value="[[latitude]]">
+                <input type="hidden" name="longitude" value="[[longitude]]">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Nom" name="name" required autofocus>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" placeholder="Capacité" name="capacity" required>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" name="payment" id="input_payment">
+                    <label for="input_payment">Borne de payement</label>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary" value="Créer">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <script type="text/javascript">
 $(document).ready(function(){
     var adjust_map_height = function(){
@@ -63,6 +93,18 @@ $(document).ready(function(){
     {% for station in station_list %}
     add_marker({{station.latitude}}, {{station.longitude}}, {{station.id}});    
     {% endfor %}
+
+    {% if user and user.is_admin() %}
+    map.on('click', function(ev){
+        var coords = ev.latlng;
+        console.log("Clicked at " + coords.lat + "," + coords.lng);
+        var content = $('#create-station-form')
+                       .html()
+                       .replace('[[latitude]]', coords.lat)
+                       .replace('[[longitude]]', coords.lng);
+        L.popup().setLatLng(coords).setContent(content).openOn(map);
+    });
+    {% endif %}
 });
 </script>
 {% endblock %}
