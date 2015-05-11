@@ -1,7 +1,6 @@
 -- Les velos ayant deux trajets consecutifs disjoints (station de retour du
 -- premier trajet differente de la station de depart du suivant)
 
---- Requete optimise et rapide mais avec un ORDER que l'on ne trouve pas en algebre relationnel
 SELECT DISTINCT bike_id FROM (
     SELECT t1.bike_id AS bike_id,
            t1.arrival_station_id AS s1,
