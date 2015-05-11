@@ -15,13 +15,29 @@ app.secret_key = os.urandom(24)
 
 def require_login(func):
     """
-    Simple decorator that requires the user to be logged in to display the view
+    Simple decorator that requires the user to be logged in to display the view,
+    otherwise redirect to /login with a flahs message
     """
     def wrapper(*args, **kwargs):
         if not current_user():
+            flash(u"Vous devez être connecté pour voir cette page", "warning")
             return redirect(url_for('login') + '?next=' + request.path)
         return func(*args, **kwargs)
     wrapper.__name__ = "login_required_" + func.__name__
+    return wrapper
+
+
+def require_admin(func):
+    """
+    Simple decorator that requires the user to be an admin to display the view,
+    otherwise redirect to home with a flash message
+    """
+    def wrapper(*args, **kwargs):
+        if not current_user() or not current_user().is_admin():
+            flash(u"Cette page est réservée aux administrateurs seulement", "danger")
+            return redirect("/")
+        return func(*args, **kwargs)
+    wrapper.__name__ = "admin_required_" + func.__name__
     return wrapper
 
 
@@ -262,7 +278,7 @@ def rent_bike(station_id, bike_id):
 
 
 @app.route("/newbikes/<int:station_id>", methods=["POST"])
-@require_login
+@require_admin
 def newbikes(station_id):
     db = get_db()
     try:
@@ -274,10 +290,7 @@ def newbikes(station_id):
     nBikes = int(request.form['bike_number'])
     model = request.form['bike_model'].strip()
 
-    user = current_user()
-    if not user.is_admin():
-        flash("Seul un administrateur peut ajouter des villos", "danger")
-    elif nBikes > station.free_slots:
+    if nBikes > station.free_slots:
         flash(
             u"Pas assez de place à %s pour créer %d villos" % (station.name, nBikes), 
             "danger")
@@ -288,7 +301,7 @@ def newbikes(station_id):
         for i in range(nBikes):
             bike = db.Bike.create(model=model)
             db.Trip.create(
-                user_id=user.id, bike_id=bike.id,
+                user_id=current_user().id, bike_id=bike.id,
                 departure_station_id=station_id, departure_date=datetime.now(),
                 arrival_station_id=station_id, arrival_date=datetime.now())
             created.append(str(bike.id))
@@ -345,21 +358,17 @@ def problem(bike_id):
 
 
 @app.route("/repair/<int:bike_id>")
-@require_login
+@require_admin
 def repair_bike(bike_id):
-    user = current_user()
-    if not user.is_admin():
-        flash(u"Seul un administrateur peut réparer le vélo", "danger")
-    else:
-        try:
-            bike = get_db().Bike.get(bike_id)
-            if bike.usable:
-                flash(u"Le vélo %d est déjà utilisable" % bike_id, "warning")
-            else:
-                bike.updateUsable(True)
-                flash(u"Le vélo a été réparé", "success")
-        except KeyError:
-            flash(u"Vélo %d introuvable" % bike_id, "danger")
+    try:
+        bike = get_db().Bike.get(bike_id)
+        if bike.usable:
+            flash(u"Le vélo %d est déjà utilisable" % bike_id, "warning")
+        else:
+            bike.updateUsable(True)
+            flash(u"Le vélo a été réparé", "success")
+    except KeyError:
+        flash(u"Vélo %d introuvable" % bike_id, "danger")
     return redirect("/")
 
 @app.route("/billing", methods=['POST'])
@@ -400,6 +409,21 @@ def logout():
     disconnect_user()
     return redirect(url_for('index'))
 
+
+@app.route("/newstation", methods=["POST"])
+@require_admin
+def newstation():
+    F = {k: v[0] for k,v in dict(request.form).iteritems()}
+    print F
+    latitude = float(F['latitude'])
+    longitude = float(F['longitude'])
+    capacity = int(F['capacity'])
+    payment = 'payment' in F
+    name = F['name'].upper()
+    station = get_db().Station.create(
+        capacity=capacity, name=name, payment=payment,
+        latitude=latitude, longitude=longitude)
+    return redirect("/station/%d" % station.id)
 
 if __name__ == "__main__":
     app.run(

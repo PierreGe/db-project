@@ -3,14 +3,6 @@
 {% block title %}Historique{% endblock %}
 
 {% block content %}
-
-
-<div class="jumbotron">
-    <h1>Historique</h1>
-</div>
-
-<div class="villo">
-
 <div class="row">
     <div class="col-md-8">
         <div class="panel panel-default">
@@ -23,9 +15,18 @@
             </div>
             <ul class="list-group panel-body">
                {% for month,trip_list in trips_by_month %}
-                    <li class="list-group-item">
-                        <h2>{{month}}</h2>
-                        <em>{{ trip_list|count }} trajets</em>
+                    <li class="list-group-item" id="month_{{ month.replace(' ','_') }}">
+                        <div class="row bg-info">
+                            <div class="col-xs-1">
+                                <h2><span class="glyphicon glyphicon-calendar"></span></h2>
+                            </div>
+                            <div class="col-xs-11">
+                                <h2>{{month}}</h2>
+                                <p>
+                                    <em>{{ trip_list|count }} trajet{{trip_list|count|plur}}</em>
+                                </p>
+                            </div>
+                        </div>
                     </li>
                     {% for trip in trip_list %}
                     <li class="list-group-item {% if not trip.finished %}active{% endif %}">
@@ -41,7 +42,7 @@
             </ul>
         </div>
     </div>
-        <div class="col-md-4">
+    <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2>
@@ -62,37 +63,29 @@
                 </li>
             </ul>
         </div>
-            <form class="downloaddetails" action="history" method="POST">
+        <form class="downloaddetails" action="history" method="POST">
             <button type="submit" class="btn btn-default" aria-label="Left Align" >
-            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                 Télécharger l'ensemble des trajets (*.csv)
             </button>
-            </form>
+        </form>
+        <br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    <span class="glyphicon glyphicon-indent-left" aria-hidden="true"></span>
+                    &nbsp; Accès rapide
+                </h2>
+            </div>
+            <ul class="list-group panel-body">
+                {% for month,trip_list in trips_by_month %}
+                    <li class="list-group-item">
+                        <a href="#month_{{month.replace(' ', '_')}}">{{month}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-
-    <!--<ul>
-        {% for trip in trip_list %}
-        <li>
-            De {{trip.departure_station.name}} ({{trip.departure_date}})
-            à  {{trip.arrival_station.name}} ({{ trip.arrival_date }}) Prix ({{ trip.price() }})
-        </li>
-        {% endfor %}
-
-    </ul>-->
 </div>
-
-
-
-<!-- <div class="villo">
-    <h1>Vos dernières locations</h1>
-    <ul>
-        {% for trip in trip_list %}
-        <li>
-            De {{trip.departure_station.name}} ({{trip.departure_date}})
-            à  {{trip.arrival_station.name}} ({{ trip.arrival_date }})
-        </li>
-        {% endfor %}
-    </ul>
-</div> -->
 
 {% endblock %}

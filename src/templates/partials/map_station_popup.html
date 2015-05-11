@@ -55,24 +55,28 @@
                 {% if user %}
                     {% if user.is_admin() %}
                     <a href="/station/{{station.id}}" class="btn btn-primary" title="Prendre ou déposer un villo! ici">
-                        <span style="color: white;" class="glyphicon glyphicon-eye-open"></span>
+                        <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                     {% elif user.current_trip %}
                     <a href="/drop/{{station.id}}/bike/{{user.current_trip.bike_id}}" class="btn btn-success" title="Déposer mon Villo! ici">
-                        <span style="color: white;" class="glyphicon glyphicon-arrow-down"></span>
+                        <span class="glyphicon glyphicon-arrow-down"></span>
                     </a>
                     {% elif not user.expired and station.available_bikes > 0 %}
                     <a href="/station/{{station.id}}" class="btn btn-primary" title="Louer un Villo! ici">
-                        <span style="color: white;" class="glyphicon glyphicon-arrow-up"></span>
+                        <span class="glyphicon glyphicon-arrow-up"></span>
                     </a>
                     {% else %}
                     <a href="/subscription" class="btn btn-warning" title="Renouvelez votre abonnement pour louer un Villo! ici">
-                        <span style="color: white;" class="glyphicon glyphicon-shopping-cart"></span>
+                        <span class="glyphicon glyphicon-shopping-cart"></span>
                     </a>
                     {% endif %}
-                {% else %}
+                {% elif station.payment %}
                     <a href="/subscription" class="btn btn-warning" title="Inscrivez-vous pour louer un Villo! ici">
-                        <span style="color: white;" class="glyphicon glyphicon-list-alt"></span>
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                    </a>
+                {% else %}
+                    <a class="btn btn-danger" title="Rendez vous dans une station avec un point de payement pour emprunter un villo">
+                        <span class="glyphicon glyphicon-remove"></span>
                     </a>
                 {% endif %}
             </div>
