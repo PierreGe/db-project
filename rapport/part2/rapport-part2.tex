@@ -29,6 +29,14 @@
   tabsize=2,                       % sets default tabsize to 2 spaces
 }
 
+% LEFT OUTTER JOIN
+\def\ojoin{\setbox0=\hbox{$\bowtie$}%
+  \rule[-.02ex]{.25em}{.4pt}\llap{\rule[\ht0]{.25em}{.4pt}}}
+\def\leftouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie}}
+\def\rightouterjoin{\mathbin{\bowtie\mkern-5.8mu\ojoin}}
+\def\fullouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie\mkern-5.8mu\ojoin}}
+
+
 
 \linespread{1.1}
 
@@ -200,11 +208,14 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 
 \subsection{Les vélos ayant deux trajets consécutifs disjoints (station de retour du premier trajet différente de la station de départ du suivant)}
 \subsubsection{SQL}
+Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
 \lstinputlisting{../../src/queries/r4.sql}
 \lstinputlisting{../../src/queries/r4b.sql}
 \subsubsection{Algèbre relationnelle}
 \begin{align}
-\Pi_{t1.bike\_id}( \\t1 \bowtie_{t1.arrival\_station_id != t2.departure\_station_id AND t1.arrival\_date < t2.departure\_date AND} t2)
+\Pi_{t1.bike\_id}(\sigma_{t1.arrival\_station_id != t2.departure\_station_id
+       AND t1.arrival\_date <= t2.departure\_date
+       AND t3.bike_id IS NULL}( \\ (t1 \bowtie_{t1.bike_id = t2.bike_id} t2)\leftouterjoin_{t1.bike\_id = t3.bike\_id AND t1.arrival\_date < t3.arrival\_date AND t3.arrival_date < t2.departure\_date} t3))
 \end{align}
 \subsubsection{Calcul relationnel}
 
