@@ -256,6 +256,11 @@ def rent_bike(station_id, bike_id):
     except KeyError:
         flash(u"Station %d inconnue", "warning")
         return redirect("/station")
+    
+    if user.expired:
+        flash(u"Renouvelez votre abonnement pour louer un villo", "danger")
+        return redirect("/subscription")
+
     try:
         bike = get_db().Bike.get(bike_id)
     except KeyError:
