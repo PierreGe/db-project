@@ -4,4 +4,4 @@ SELECT DISTINCT trip1.user_id
 FROM   trip trip1
        INNER JOIN trip trip2
                ON trip1.user_id = trip2.user_id
-                  AND trip1.departure_date != trip2.departure_date
+                  AND trip1.departure_date != trip2.departure_date;
