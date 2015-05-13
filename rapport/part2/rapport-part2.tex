@@ -152,7 +152,7 @@ Dans le cas ou la société villo achète des nouveaux vélo et les met en circu
 
 Le champs MotDePasse contient un hash cryptographique du mot de passe et non le mot de passe lui-m\^eme.
 
-\section{Justification}
+\section{Justification du modèle}
 
 Afin d'éviter la redondance et de garantir la cohérence du modèle, nous avons choisis de :
 \begin{itemize}
@@ -165,6 +165,10 @@ En effet, ces informations peuvent être déduite de la suite de Location.
 Pour obtenir une clé primaire à l'entité Location, nous avons rendu obligatoire le champs DateDebut et c'est pour cela que la mise en circulation et la mise a la retraite des vélos sont différentes.
 
 Pour la généralisation nous avons choisis, une solution permettant d'avoir une relation a une seule table depuis la location et une solution permettant de mettre une contrainte d'existence sur tous les champs excepté la DateExpiration. 
+
+
+\section{Script DDL de création de la base de données}
+\lstinputlisting{../../src/createDB.sql}
 
 \section{Requêtes}
 
@@ -225,8 +229,6 @@ Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
 \subsection{Les stations avec le nombre total de vélos déposés dans cette station (un même vélo peut-être comptabilisé plusieurs fois) et le nombre d'utilisateurs différents ayant utilisé la station et ce pour toutes les stations ayant été utilisées au moins 10 fois.}
 \lstinputlisting{../../src/queries/r6.sql}
 
-\section{Script DDL de création de la base de données}
-\lstinputlisting{../../src/createDB.sql}
 
 
 \end{document}
