@@ -7,8 +7,8 @@ SELECT DISTINCT bike_id FROM (
            t2.departure_station_id AS s2,
            t1.arrival_date AS arrival,
            t2.departure_date AS departure
-    FROM trip t1
-    INNER JOIN trip t2 ON t1.bike_id=t2.bike_id AND t1.arrival_date<t2.departure_date
+    FROM trip AS t1
+    INNER JOIN trip AS t2 ON t1.bike_id=t2.bike_id AND t1.arrival_date<t2.departure_date
     WHERE t1.arrival_date NOT NULL --AND t1.bike_id=5
     GROUP BY t2.departure_date
     ORDER BY t1.departure_date,t2.departure_date)

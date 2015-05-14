@@ -3,8 +3,8 @@
 
 
 SELECT DISTINCT t1.bike_id
-FROM   trip t1
-       INNER JOIN trip t2
+FROM   trip AS t1
+       INNER JOIN trip AS t2
                ON t1.bike_id = t2.bike_id
                   AND t1.arrival_date <= t2.departure_date
                   AND t1.arrival_station_id != t2.departure_station_id
