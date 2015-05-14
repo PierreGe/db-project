@@ -230,8 +230,13 @@ Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
 \lstinputlisting{../../src/queries/r6.sql}
 
 \section{Implémentation}
-
-% une brève catégorie sur la stack utilisé
+Les technologies utilisés sont les suivantes :
+\begin{itemize}
+	\item Flask (python) comme framework web,
+	\item Jinja2 comme language de template pour flask,
+	\item Bootsrtrap comme framework de frontend,
+	\item \textbf{Sqlite3} comme moteur de base de donnée.
+\end{itemize}
 
 \section{Apports personnels}
 
@@ -244,23 +249,18 @@ Pour faciliter l'utilisation de villo par le client, nous lui offrons la possibi
 
 \subsection{Utilisateur administrateur}
 La gestion d'une flotte de villo n'est pas aisé. C'est pourquoi nous avons implémenté des facilités pour les gestionnaires : un compte administrateur qui peut faire l'ensemble des opérations suivantes : 
-\subsubsection{Ajout de vélos}
-%TODO
-
-\subsubsection{Ajout de stations}
-%TODO
-
-\subsubsection{Déplacer un vélo}
-%TODO
-
-\subsubsection{Réparer un vélo}
-%TODO
+\begin{itemize}
+	\item Ajouter des nouveaux vélos dans le circuit a une station,
+	\item Ajouter des nouvelles stations directement sur la carte,
+	\item Sortir un vélo du circuit,
+	\item Réparer un vélo cassé.
+\end{itemize}
 
 \subsection{Utilisateur temporaire}
-%TODO
+Notre implémentation prend en compte les utilisateurs temporaires. En effet il est possible de s'inscrire pour 1 jour ou une semaine.
 
 \subsection{Calcul de distances}
-%TODO
+Dans l'historique des déplacement, la distance à vol d'oiseau entre la station de départ et d'arrivé s'affiche.
 
 \subsection{Interface mobile-friendly}
 La tendance actuel est à l'utilisation mobile. Nous avons donc créer un site qui fonctionne sur tout type d'appareil, y compris les téléphones intelligents. 
