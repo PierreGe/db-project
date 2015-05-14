@@ -178,11 +178,11 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \lstinputlisting{../../src/queries/r1.sql}
 \subsubsection{Algèbre relationnelle}
 \begin{align}
-\Pi_{subscriber.user\_id, subscriber.firstname, subscriber.lastname}(\sigma_{station.name="FLAGEY" AND subscriber.address\_zipcode=1050}(\\ subscriber\bowtie_{subscriber.user\_id = trip.user\_id} (trip \bowtie_{trip.departure\_station_id = station.id} station))
+\Pi_{subscriber.user\_id, subscriber.firstname, subscriber.lastname}(((\sigma_{subscriber.address\_zipcode=1050}(subscriber)) \\\bowtie_{subscriber.user\_id = trip.user\_id} (trip \bowtie_{trip.departure\_station_id = station.id} (\sigma_{station.name="FLAGEY"}(station))))
 \end{align}
 \subsubsection{Calcul relationnel}
 \begin{align}
-	\{ sb.user_id, sb.firstname, sb.lastname | subscriber(sb) \wedge \exists tp  \exists st ( trip(tp) \wedge station(st) \wedge tp.departure\_station\_id = st.id \\ \wedge sb.user\_id = tp.user\_id \wedge st.NAME = "FLAGEY" \wedge tp.departure\_station_id = st.id ) \}
+	\{ sb.user_id, sb.firstname, sb.lastname | subscriber(sb) \wedge \exists tp  \exists st ( trip(tp) \wedge station(st) \wedge tp.departure\_station\_id = st.id \\ \wedge sb.user\_id = tp.user\_id \wedge st.name = "FLAGEY" \wedge tp.departure\_station_id = st.id ) \}
 \end{align}
 
 \subsection{Les utilisateurs ayant utilisé Villo au moins 2 fois}
@@ -191,6 +191,7 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 
 \subsubsection{Algèbre relationnelle}
 \begin{displaymath}
+% TODO : Renommage trip -> trip1
 \Pi_{trip1.user\_id}( trip1 \bowtie_{trip1.user\_id = trip.user\_id AND trip1.departure\_date != trip2.departure\_date} trip2)
 \end{displaymath}
 \subsubsection{Calcul relationnel}
@@ -203,6 +204,7 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \lstinputlisting{../../src/queries/r3.sql}
 \subsubsection{Algèbre relationnelle}
 \begin{align}
+%TODO : Renommage trip -> trip1
 \Pi_{t1.user\_id, t2.user\_id}( \\t1 \bowtie_{t1.departure\_station_id = t2.departure\_station_idAND t1.arrival\_station_id = t2.arrival\_station\_id AND t1.user\_id < t2.user\_id;} t2)
 \end{align}
 \subsubsection{Calcul relationnel}
