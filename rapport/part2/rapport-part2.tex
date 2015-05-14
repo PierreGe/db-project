@@ -223,9 +223,9 @@ Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
        AND t3.bike_id IS NULL}( \\ (t1 \bowtie_{t1.bike_id = t2.bike_id} t2)\leftouterjoin_{t1.bike\_id = t3.bike\_id AND t1.arrival\_date < t3.arrival\_date AND t3.arrival_date < t2.departure\_date} t3))
 \end{align}
 \subsubsection{Calcul relationnel}
-\begin{displaymath}
-	\{ t1.user\_id | trip(t1) \wedge \exists t2 (trip(t2) \wedge t1.arrival\_station_id != t2.departure\_station_id \wedge \\ t1.arrival\_date <= t2.departure\_date  \wedge \nexists t3 (trip(t3) \wedge t1.bike\_id = t3.bike\_id \wedge t1.arrival\_date < t3.arrival\_date \wedge t3.arrival\_date < t2.departure\_date)) \}
-\end{displaymath}
+\begin{align}
+	\{ t1.user\_id | trip(t1) \wedge \exists t2 (trip(t2) \wedge t1.arrival\_station\_id != t2.departure\_station_id \wedge \\ t1.arrival\_date <= t2.departure\_date  \wedge \nexists t3 (trip(t3) \wedge t1.bike\_id = t3.bike\_id \wedge t1.arrival\_date < t3.arrival\_date \wedge \\ t3.arrival\_date < t2.departure\_date)) \}
+\end{align}
 
 
 \subsection{Les utilisateurs, la date d'inscription, le nombre total de trajet effectués, la distance totale parcourue et la distance moyenne parcourue par trajet, classés en fonction de la distance totale parcourue}
