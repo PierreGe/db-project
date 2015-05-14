@@ -8,6 +8,7 @@
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{color}
 
 \lstset{
@@ -181,7 +182,7 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \end{align}
 \subsubsection{Calcul relationnel}
 \begin{align}
-	\{ sb.user_id, sb.firstname, sb.lastname | subscriber(sb) \wedge trip(tp) \wedge station(st) \wedge tp.departure\_station\_id = st.id \\ \wedge sb.user\_id = tp.user\_id \wedge st.NAME = "FLAGEY" \wedge tp.departure\_station_id = st.id \}
+	\{ sb.user_id, sb.firstname, sb.lastname | subscriber(sb) \wedge \exists tp  \exists st ( trip(tp) \wedge station(st) \wedge tp.departure\_station\_id = st.id \\ \wedge sb.user\_id = tp.user\_id \wedge st.NAME = "FLAGEY" \wedge tp.departure\_station_id = st.id ) \}
 \end{align}
 
 \subsection{Les utilisateurs ayant utilisé Villo au moins 2 fois}
@@ -194,7 +195,7 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \end{displaymath}
 \subsubsection{Calcul relationnel}
 \begin{displaymath}
-	\{ t1.user_id | trip(t2) \wedge trip(t1) \wedge trip1.user\_id = trip2.user\_id\wedge trip1.departure\_date != trip2.departure\_date \}
+	\{ t1.user_id | trip(t1) \wedge \exists t2 (trip(t2) \wedge trip1.user\_id = trip2.user\_id\wedge trip1.departure\_date != trip2.departure\_date )\}
 \end{displaymath}
 
 \subsection{Les paires d'utilisateurs ayant fait un trajet identique}
@@ -222,6 +223,10 @@ Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
        AND t3.bike_id IS NULL}( \\ (t1 \bowtie_{t1.bike_id = t2.bike_id} t2)\leftouterjoin_{t1.bike\_id = t3.bike\_id AND t1.arrival\_date < t3.arrival\_date AND t3.arrival_date < t2.departure\_date} t3))
 \end{align}
 \subsubsection{Calcul relationnel}
+\begin{displaymath}
+	\{ t1.user\_id | trip(t1) \wedge \exists t2 (trip(t2) \wedge t1.arrival\_station_id != t2.departure\_station_id \wedge \\ t1.arrival\_date <= t2.departure\_date  \wedge \nexists t3 (trip(t3) \wedge t1.bike\_id = t3.bike\_id \wedge t1.arrival\_date < t3.arrival\_date \wedge t3.arrival\_date < t2.departure\_date)) \}
+\end{displaymath}
+
 
 \subsection{Les utilisateurs, la date d'inscription, le nombre total de trajet effectués, la distance totale parcourue et la distance moyenne parcourue par trajet, classés en fonction de la distance totale parcourue}
 \lstinputlisting{../../src/queries/r5.sql}
