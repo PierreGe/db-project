@@ -7,6 +7,8 @@
 -- donc implemente la formule de Haversine en tant qu'extension SQLite a
 -- charger au demarrage, et qui integre la fonction
 -- geodistance(lat1,long1,lat2,long2) -> km a l'environnement SQL.
+-- Pour ce faire, compiler l'extension geodistance.c a l'aide du Makefile,
+-- puis charger l'extension dans l'interpreteur SQLite avant d'executer la requete
 
 SELECT   subscriber.firstname,
          subscriber.lastname,

@@ -88,8 +88,8 @@ Les contraintes sont les suivantes :
   \item La DateExpiration d'un Utilisateur doit \^etre postérieure à la DateFin de toutes ses Locations,
   \item Un utilisateur qui a une date d'expiration non nul ne peut pas avoir plus d'une Location ayant une DateFin nul,
   \item Pour une Station, le nombre de vélo dont la dernière Location finit  dans cette station ne doit pas dépasser sa capacité,
-  \item Un Vélo ne peut pas avoir de déplacement disjoints. C'est a dire que la Station de départ du trajet n doit \^etre similaire a la Station d'arrivé du trajet (n-1) pour n>1,
-  \item Un Utilisateur ayant une DateExpiration non nul ne peut pas prendre un Vélo si Usable est faux.
+  \item Un Vélo ne peut pas avoir de déplacement disjoints. C'est a dire que la Station de départ du trajet $n$ doit \^etre la même que la Station d'arrivée du trajet $n-1$ pour $n\ge0$,
+  \item Un Utilisateur ayant une DateExpiration non nulme ne peut pas prendre un Vélo si Usable est faux.
 \end{itemize}
 
 
@@ -136,8 +136,8 @@ Les contraintes sont les suivantes :
   \item La DateExpiration d'un Utilisateur doit \^etre postérieure à la DateDebut de toutes ses Locations,
   \item Un utilisateur qui a une date d'expiration non nul ne peut pas avoir plus d'une Location ayant une DateFin nul,
   \item Pour une Station, le nombre de vélo dont la dernière Location finit  dans cette station ne doit pas dépasser sa capacité,
-  \item Un Vélo ne peut pas avoir de déplacement disjoints. C'est a dire que la Station de départ du trajet n doit \^etre similaire a la Station d'arrivé du trajet (n-1) pour n>1,
-  \item Un Utilisateur ayant une DateExpiration non nul ne peut pas prendre un Vélo si Usable est faux.
+  \item Un Vélo ne peut pas avoir de déplacement disjoints. C'est a dire que la Station de départ du trajet $n$ doit \^etre la même que la Station d'arrivée du trajet $n-1$ pour $n\ge1$,
+  \item Un Utilisateur ayant une DateExpiration non nulle ne peut pas prendre un Vélo si Usable est faux.
 \end{itemize}
 
 \section{Hypothèses sur le modèle}
@@ -156,24 +156,24 @@ Le champs MotDePasse contient un hash cryptographique du mot de passe et non le 
 
 \section{Justification du modèle}
 
-Afin d'éviter la redondance et de garantir la cohérence du modèle, nous avons choisis de :
+Afin d'éviter la redondance et de garantir la cohérence du modèle, nous avons choisi de :
 \begin{itemize}
   \item Ne pas mettre d'attribut PlaceUtilisé dans Station,
   \item Ne pas mettre d'attribut Endroit dans Vélo,
   \item ect \ldots
 \end{itemize}
-En effet, ces informations peuvent être déduite de la suite de Location.
+En effet, ces informations peuvent être déduites à partir des locations.
 
-Pour obtenir une clé primaire à l'entité Location, nous avons rendu obligatoire le champs DateDebut et c'est pour cela que la mise en circulation et la mise a la retraite des vélos sont différentes.
+Pour obtenir une clé primaire à l'entité Location, nous avons rendu obligatoire le champ DateDebut et c'est pour cela que la mise en circulation et la mise à la retraite des vélos sont différentes.
 
-Pour la généralisation nous avons choisis, une solution permettant d'avoir une relation a une seule table depuis la location et une solution permettant de mettre une contrainte d'existence sur tous les champs excepté la DateExpiration. 
+Pour la généralisation nous avons choisi une solution permettant d'avoir une relation à une seule table depuis la location et une solution permettant de mettre une contrainte d'existence sur tous les champs exceptés la DateExpiration. 
 
 
 \section{Script DDL de création de la base de données}
 \lstinputlisting{../../src/createDB.sql}
 
+\pagebreak
 \section{Requêtes}
-
 \subsection{Les utilisateurs habitant Ixelles ayant utilisé un Villo de la station Flagey}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r1.sql}
@@ -186,6 +186,7 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 	\{ sb.user_id, sb.firstname, sb.lastname | subscriber(sb) \wedge \exists tp  \exists st ( trip(tp) \wedge station(st) \wedge tp.departure\_station\_id = st.id \\ \wedge sb.user\_id = tp.user\_id \wedge st.name = "FLAGEY" \wedge tp.departure\_station_id = st.id ) \}
 \end{align}
 
+\pagebreak
 \subsection{Les utilisateurs ayant utilisé Villo au moins 2 fois}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r2.sql}
@@ -201,6 +202,7 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \wedge trip1.departure\_date != trip2.departure\_date )\}
 \end{displaymath}
 
+\pagebreak
 \subsection{Les paires d'utilisateurs ayant fait un trajet identique}
 \subsubsection{SQL}
 \lstinputlisting{../../src/queries/r3.sql}
@@ -217,6 +219,7 @@ AND t1.arrival\_station_id = t2.arrival\_station\_id AND t1.user\_id < t2.user\_
 \end{align}
 
 
+\pagebreak
 \subsection{Les vélos ayant deux trajets consécutifs disjoints (station de retour du premier trajet différente de la station de départ du suivant)}
 \subsubsection{SQL}
 Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
@@ -234,12 +237,15 @@ Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
 \end{align}
 
 
+\pagebreak
 \subsection{Les utilisateurs, la date d'inscription, le nombre total de trajet effectués, la distance totale parcourue et la distance moyenne parcourue par trajet, classés en fonction de la distance totale parcourue}
 \lstinputlisting{../../src/queries/r5.sql}
 
+\pagebreak
 \subsection{Les stations avec le nombre total de vélos déposés dans cette station (un même vélo peut-être comptabilisé plusieurs fois) et le nombre d'utilisateurs différents ayant utilisé la station et ce pour toutes les stations ayant été utilisées au moins 10 fois.}
 \lstinputlisting{../../src/queries/r6.sql}
 
+\pagebreak
 \section{Implémentation}
 Les technologies utilisés sont les suivantes :
 \begin{itemize}
