@@ -196,7 +196,8 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \end{displaymath}
 \subsubsection{Calcul relationnel}
 \begin{displaymath}
-	\{ t1.user_id | trip(t1) \wedge \exists t2 (trip(t2) \wedge trip1.user\_id = trip2.user\_id\wedge trip1.departure\_date != trip2.departure\_date )\}
+	\{ t1.user_id | trip(t1) \wedge \exists t2 (trip(t2) \wedge trip1.user\_id = trip2.user\_id
+\wedge trip1.departure\_date != trip2.departure\_date )\}
 \end{displaymath}
 
 \subsection{Les paires d'utilisateurs ayant fait un trajet identique}
@@ -205,7 +206,9 @@ Pour la généralisation nous avons choisis, une solution permettant d'avoir une
 \subsubsection{Algèbre relationnelle}
 \begin{align}
 %TODO : Renommage trip -> trip1
-\Pi_{t1.user\_id, t2.user\_id}( \\t1 \bowtie_{t1.departure\_station_id = t2.departure\_station_idAND t1.arrival\_station_id = t2.arrival\_station\_id AND t1.user\_id < t2.user\_id;} t2)
+\Pi_{t1.user\_id, t2.user\_id}( \\t1 \bowtie_{t1.departure\_station_id = t2.departure\_station_id
+AND t1.arrival\_station_id = t2.arrival\_station\_id AND t1.user\_id < t2.user\_id;
+} t2)
 \end{align}
 \subsubsection{Calcul relationnel}
 \begin{align}
@@ -239,44 +242,124 @@ Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
 \section{Implémentation}
 Les technologies utilisés sont les suivantes :
 \begin{itemize}
-	\item Flask (python) comme framework web,
+	\item Flask (Python) comme framework web,
 	\item Jinja2 comme language de template pour flask,
-	\item Bootsrtrap comme framework de frontend,
+	\item Bootstrap et JQuery comme frameworks de frontend,
 	\item \textbf{Sqlite3} comme moteur de base de donnée.
 \end{itemize}
 
 \section{Apports personnels}
 
 \subsection{Intégration de OpenStreetMap}
-Pour rendre l'interaction avec notre application plus visuelle nous avons intégré OpenStreetMap.
+Pour rendre l'interaction avec notre application plus visuelle nous avons ajouté
+des vues cartes à notre application (Figure \ref{fig:map}). Celles-ci sont affichées grâce à Leaflet
+\footnote{http://leafletjs.com/}, une bilbliothèque Javascript libre, affichant
+des données d'OpenStreetMap (données cartographiques libres). Des popups
+s'ouvrant sur la map permettent de voir le nombre de vélos et places utilisables
+dans une station en un coup d'oeil.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{map.png}
+  \caption{\label{fig:map} Vue carte}
+\end{figure}
 
 \subsection{Récapitulatifs/Factures téléchargeable en CSV} % téléchargeable est dans le larousse
 
-Pour faciliter l'utilisation de villo par le client, nous lui offrons la possibilité de télécharger une facture et un historique détaillés et complets au format CSV. De cette manière il pourra ouvrir ces derniers dans son tableur (Microsoft Excel, LibreOffice, Google Spreadsheet, ...)
+Pour faciliter l'utilisation de villo par le client, nous lui offrons la possibilité
+de télécharger une facture et un historique détaillés et complets au format CSV (Figure \ref{fig:factures}).
+De cette manière il pourra ouvrir ces derniers dans son tableur (Microsoft Excel,
+LibreOffice, Google Spreadsheet, ...).
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{factures.png}
+  \caption{\label{fig:factures} Vue facturation}
+\end{figure}
 
 \subsection{Utilisateur administrateur}
-La gestion d'une flotte de villo n'est pas aisé. C'est pourquoi nous avons implémenté des facilités pour les gestionnaires : un compte administrateur qui peut faire l'ensemble des opérations suivantes : 
+La gestion d'une flotte de villo n'est pas aisé. C'est pourquoi nous avons implémenté
+des facilités pour les gestionnaires (Figures): un compte administrateur qui peut faire
+l'ensemble des opérations suivantes: 
 \begin{itemize}
 	\item Ajouter des nouveaux vélos dans le circuit a une station,
 	\item Ajouter des nouvelles stations directement sur la carte,
 	\item Sortir un vélo du circuit,
-	\item Réparer un vélo cassé.
+	\item Réparer un vélo cassé (si l'administrateur l'a en location ou que le villo est à une station).
 \end{itemize}
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{admin-station.png}
+  \caption{\label{fig:admin-station} Vues d'administration d'une station: ajout de
+    villos, possibilité d'en marquer comme réparés ou de déposer n'importe lequel
+    de ses vélos en cours d'emprunt}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{create-station.png}
+  \caption{\label{fig:create-station} Création d'une station}
+\end{figure}
+
 \subsection{Utilisateur temporaire}
-Notre implémentation prend en compte les utilisateurs temporaires. En effet il est possible de s'inscrire pour 1 jour ou une semaine.
+Notre implémentation prend en compte les utilisateurs temporaires.
+En effet il est possible de s'inscrire pour 1 jour ou une semaine (Figure \ref{fig:inscr}).
+
+Un utilisateur non-connecté peut louer un villo dans une station disposant d'un point
+de payement en créant un compte d'utilisation temporaire.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{inscription.png}
+  \caption{\label{fig:inscr} Inscription temporaire (l'autre onglet permet de souscrire à un abonnement)}
+\end{figure}
+
 
 \subsection{Calcul de distances}
-Dans l'historique des déplacement, la distance à vol d'oiseau entre la station de départ et d'arrivé s'affiche.
+Dans l'historique des déplacement, la distance à vol d'oiseau entre la station
+de départ et d'arrivée s'affiche, dans les vues tableau de bord (Figure \ref{fig:dashboard}),
+historique (Figure \ref{fig:hist}) et factures (Figure \ref{fig:factures}).
 
 \subsection{Interface mobile-friendly}
-La tendance actuel est à l'utilisation mobile. Nous avons donc créer un site qui fonctionne sur tout type d'appareil, y compris les téléphones intelligents. 
+La tendance actuelle est à l'utilisation mobile. Nous avons donc créé un site qui
+fonctionne sur tout type d'appareil, y compris les téléphones intelligents et tablettes. 
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.4\textwidth]{mobile-historique.png}
+  \hfill
+  \includegraphics[width=.4\textwidth]{mobile-menu.png}
+  \caption{\label{fig:mobile} Vues sur mobile}
+\end{figure}
 
 \subsection{Récapitulatif par mois}
-Pour faciliter la lecture de l'historique et de la facturation, les trajets sont regroupés par mois
+Pour faciliter la lecture de l'historique et de la facturation, les trajets sont
+regroupés par mois
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{historique.png}
+  \caption{\label{fig:hist} Vue historique}
+\end{figure}
 
 \subsection{Tableau de bord}
-L'utilisateur souhaite accéder immédiatement au informations importantes, c'est pourquoi que lorsque il se connecte, il est tout de suite re-dirigé sur un tableau de bord, comprenant, les 10 derniers trajets, ses dépenses du mois, ses informations personnels, ect ..
+L'utilisateur souhaite accéder immédiatement aux informations importantes,
+c'est pourquoi lorsqu'il se connecte, il est tout de suite re-dirigé sur
+un tableau de bord, comprenant, les 10 derniers trajets, ses dépenses du mois,
+ses informations personnelles, etc ..
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{Dashboard.png}
+  \caption{\label{fig:dashboard} Vue tableau de bord d'un abonné}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.9\textwidth]{Dashboard-admin.png}
+  \caption{\label{fig:dashboard} Vue tableau de bord d'un administrateur}
+\end{figure}
 
 \end{document}
 
