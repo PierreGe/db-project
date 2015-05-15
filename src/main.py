@@ -395,17 +395,11 @@ def billing_post():
 def billing():
     if current_user().is_admin():
         return redirect("/")
-    starting = current_user().expire_date - timedelta(days=(365))
-    periodeFact = (starting.strftime("%d-%m-%Y"), str(current_user().expire_date.strftime("%d-%m-%Y")))
-    AllTrip = current_user().trips
-    billedTrip = []
-    total = 32.60
-    for trip in AllTrip:
-        if trip.arrival_station:
-            if trip.departure_date > starting:
-                if trip.price():
-                    billedTrip.append(trip)
-                    total += trip.price()
+    user = current_user()
+    starting = user.expire_date - timedelta(days=(365))
+    periodeFact = (starting.strftime("%d-%m-%Y"), str(user.expire_date.strftime("%d-%m-%Y")))
+    billedTrip = user.billable_trips(to_time=user.expire_date)
+    total = 32.60 + sum(map(lambda x: x.price(), billedTrip))
     return render_template("billing.html",periodeBilling = periodeFact, totalBilled=str(total), trip_list=billedTrip)
 
 

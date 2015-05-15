@@ -314,6 +314,26 @@ def get_User(db=None, superclass=None):
                 "SELECT %s FROM %s WHERE user_id=? ORDER BY departure_date DESC" % (Trip.cols(), Trip.tablename()), 
                 (self.id,)))
 
+        def billable_trips(self, from_time=None, to_time=None):
+            """Return all billable trips for this user for given period"""
+            if to_time is None:
+                to_time = datetime.now()
+            if from_time is None:
+                from_time = to_time - timedelta(days=365)
+
+            from_time, to_time = parse_date(from_time), parse_date(to_time)
+
+            Trip = get_Trip(db, superclass)
+            Q = """
+            SELECT %s FROM %s
+            WHERE ?<=departure_date AND
+                  arrival_date<=? AND
+                  user_id=? AND
+                  strftime('%%s',arrival_date)-strftime('%%s',departure_date) >= 3600
+            """ % (Trip.cols(), Trip.tablename())
+            args = map(self.encode, (from_time, to_time, self.id))
+            return fetch_all(Trip, db.execute(Q, args))
+
         @classmethod
         def get(klass, id):
             try:
