@@ -247,13 +247,71 @@ Voici, deux requêtes qui semblent prendre un temps équivalent à s'exécuter.
 
 \pagebreak
 \section{Implémentation}
-Les technologies utilisés sont les suivantes :
+\subsection{Langages et bibliothèques}
+
+Nous avons écrit l'application Villo! en Python 2, en utilisant
 \begin{itemize}
 	\item Flask (Python) comme framework web,
-	\item Jinja2 comme language de template pour flask,
+	\item Jinja2 comme moteur de template pour flask,
 	\item Bootstrap et JQuery comme frameworks de frontend,
-	\item \textbf{Sqlite3} comme moteur de base de donnée.
+	\item \textbf{Sqlite3}, avec le module \texttt{sqlite3} de la librairie standard Python comme moteur de base de donnée.
 \end{itemize}
+
+
+\subsection{Script d'insertion des données}
+
+\subsection{Modèle}
+Nous avons écrit un ORM minimal (fichier \texttt{models.py}), qui définit les classes
+\textbf{User}, \textbf{Bike}, \textbf{Station} et \textbf{Trip}. Ces classes contiennent
+la logique pour construire des objets depuis, et enregistrer des objets dans la base
+de données, ainsi que des requêtes sur mesure pour récupérer les objets selon leurs
+relations. Toutes les classes concrètes du modèle héritent de la classe \textbf{Model}, qui
+définit les méthodes d'accès basiques.
+
+\subsubsection{Model.create}
+Insère un objet dans la table. Le nom de la table et ses colonnes sont enregistrés
+dans un attribut de classe, et les valeurs \texttt{(?)} sont passées en paramètre.
+
+\begin{lstlisting}
+INSERT INTO <table> (<colonnes>) VALUES (?);
+\end{lstlisting}
+
+\subsubsection{Model.all}
+Récupère tous les objets de la table
+
+\begin{lstlisting}
+SELECT <colonnes> FROM <table>;
+\end{lstlisting}
+
+\subsubsection{Model.count}
+Compte tous les objets de la table
+
+\begin{lstlisting}
+SELECT COUNT(*) FROM <table>;
+\end{lstlisting}
+
+\subsubsection{Model.get}
+Récupère un objet en fonction de son id. N'est pas implémenté pour \texttt{Trip},
+pour lequel la clef primaire est composite, mais qui peut être récupéré par ses
+associations.
+
+\begin{lstlisting}
+SELECT <colonnes> FROM <table> WHERE id=?;
+\end{lstlisting}
+
+\subsection{Relations}
+\subsubsection{Bike.location}
+Renvoie la localisation actuelle d'un vélo (une station ou \texttt{None} si le vélo est en déplacement)
+\begin{lstlisting}
+SELECT DISTINCT <colonnes> FROM station
+INNER JOIN trip ON station.id=trip.arrival_station_id
+WHERE bike_id=?
+ORDER BY departure_date DESC;
+\end{lstlisting}
+
+D'autres requêtes permettent, similairement à \texttt{Model.get} et \texttt{Model.all}
+avec l'adjonction d'une clause \lstinline{WHERE}, de récupérer tous les trajets d'un vélo,
+tous les vélos utilisables, et tous les vélos inutilisables.
 
 \section{Apports personnels}
 
