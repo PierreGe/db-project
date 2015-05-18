@@ -472,8 +472,16 @@ def get_Station(db=None, superclass=None):
     class Station(superclass):
         columns = ['payment', 'capacity', 'latitude', 'longitude', 'name', 'id']
 
-        CountBikesQuery = 'SELECT COUNT(bike_id) FROM (SELECT user_id,bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?'
-        BikesQuery = 'SELECT %s FROM (SELECT bike_id,arrival_station_id,MAX(departure_date) FROM trip GROUP BY bike_id) JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?' % get_Bike(db, superclass).cols()
+        CountBikesQuery = '''SELECT COUNT(bike_id) FROM (
+            SELECT user_id,bike_id,arrival_station_id,MAX(departure_date)
+            FROM trip
+            GROUP BY bike_id) 
+        JOIN bike ON bike.id=bike_id 
+        WHERE arrival_station_id=?'''
+        BikesQuery = '''SELECT %s FROM (
+            SELECT bike_id,arrival_station_id,MAX(departure_date)
+            FROM trip GROUP BY bike_id)
+        JOIN bike ON bike.id=bike_id WHERE arrival_station_id=?''' % get_Bike(db, superclass).cols()
 
         def __init__(self, payment, capacity, latitude, longitude, name, id=None):
             self.latitude, self.longitude = float(latitude), float(longitude)
