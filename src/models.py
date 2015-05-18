@@ -282,7 +282,7 @@ def get_User(db=None, superclass=None):
             Trip = get_Trip(db, superclass)
             try:
                 return fetch_one(Trip, db.execute(
-                    'SELECT %s FROM trip WHERE user_id=? AND arrival_station_id IS NULL' % Trip.cols(),
+                    'SELECT %s FROM trip WHERE user_id=? AND arrival_station_id IS NULL LIMIT 1' % Trip.cols(),
                     (self.id,)))
             except StopIteration:
                 return None
@@ -330,31 +330,20 @@ def get_User(db=None, superclass=None):
             WHERE ?<=departure_date AND
                   arrival_date<=? AND
                   user_id=? AND
-                  strftime('%%s',arrival_date)-strftime('%%s',departure_date) >= 3600
+                  strftime('%%s',arrival_date)-strftime('%%s',departure_date) >= 1800
             """ % (Trip.cols(), Trip.tablename())
             args = map(self.encode, (from_time, to_time, self.id))
             return fetch_all(Trip, db.execute(Q, args))
 
         @classmethod
         def get(klass, id):
-            try:
-                return klass.get_with_subscriber(id)
-            except KeyError:
-                pass
-            try:
-                return fetch_one(klass, db.execute(
-                    "SELECT id,password,card,expire_date FROM user WHERE id=? LIMIT 1",
-                    (id,)))
-            except StopIteration:
-                raise KeyError(id)
-
-        @classmethod
-        def get_with_subscriber(klass, id):
-            try:
-                return fetch_one(klass, db.execute(
-                    "SELECT id,password,card,expire_date,rfid, firstname,lastname,address_street,address_streenumber,address_zipcode,address_city,address_country,entry_date,phone_number FROM user INNER JOIN subscriber ON user.id=subscriber.user_id WHERE id=? LIMIT 1",(id,)))
-            except StopIteration:
-                raise KeyError(id)
+            return fetch_one(klass, db.execute(
+                """SELECT id, password, card, expire_date, rfid,firstname, lastname,
+                          address_street, address_streenumber, address_zipcode, address_city,
+                          address_country, entry_date, phone_number
+                   FROM user
+                   LEFT JOIN subscriber ON user.id=subscriber.user_id
+                   WHERE id=? LIMIT 1""",(id,)))
 
     return User
 
