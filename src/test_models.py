@@ -142,10 +142,10 @@ def test_insert_trip():
 
     s1 = db.Station.create(
         latitude=50.3245, longitude=4.0326, 
-        name="db.Station 1", capacity=42, payment=True)
+        name="Station 1", capacity=42, payment=True)
     s2 = db.Station.create(
         latitude=50.3245, longitude=4.0325,
-        name="db.Station 2", capacity=42, payment=True)
+        name="Station 2", capacity=42, payment=True)
     from_date, to_date = "2015-07-12T10:10:10", "2015-07-12T11:10:10"
 
     t = db.Trip.create(
@@ -159,7 +159,7 @@ def test_insert_trip():
 
     assert t.user.auth("Hello")
     assert t.bike.model == "mytest"
-    assert b.location.name == "db.Station 2"
+    assert b.location.name == "Station 2"
 
 
 def test_station_available_bikes():

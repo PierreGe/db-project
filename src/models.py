@@ -154,16 +154,17 @@ def get_Bike(db=None, superclass=None):
         @property
         @memoize
         def location(self):
+            Station = get_Station(db, superclass)
             cursor = db.execute(
-                "SELECT arrival_station_id FROM trip WHERE bike_id=? ORDER BY departure_date DESC LIMIT 1",
+                """SELECT DISTINCT %s FROM station
+                   INNER JOIN trip ON station.id=trip.arrival_station_id
+                   WHERE bike_id=?
+                   ORDER BY departure_date DESC""" % (Station.cols()),
                 (self.id,))
             try:
-                res = cursor.next()[0]
+                return fetch_one(Station, cursor)
             except StopIteration:
                 return None
-            if res is not None:
-                Station = get_Station(db, superclass)
-                return Station.get(res)
 
         @property
         def trips(self):
