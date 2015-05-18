@@ -259,6 +259,7 @@ Nous avons écrit l'application Villo! en Python 2, en utilisant
 
 
 \subsection{Script d'insertion des données}
+\lstinputlisting[language=Python]{../../src/populate_db.py}
 
 \subsection{Modèle}
 Nous avons écrit un ORM minimal (fichier \texttt{models.py}), qui définit les classes
@@ -312,6 +313,86 @@ ORDER BY departure_date DESC;
 D'autres requêtes permettent, similairement à \texttt{Model.get} et \texttt{Model.all}
 avec l'adjonction d'une clause \lstinline{WHERE}, de récupérer tous les trajets d'un vélo,
 tous les vélos utilisables, et tous les vélos inutilisables.
+
+\subsubsection{User.is\_subscriber}
+Renvoie \texttt{True} si l'utilisateur est un abonné. Cette méthode n'exécute
+pas de requête en elle-même, mais illustre le fonctionnement un peut particulier 
+de la classe \texttt{User}. Puisque nous pouvons avoir des utilisateurs abonnés, et
+des temporaires, et que les informations d'abonnés sont dans une autre table, à
+la construction d'un objet on initialize les attributs d'abonnés à \texttt{None},
+et on vérifie s'il existe dans la table \texttt{subscriber}. Si c'est le cas, ces
+attributs sont initialisé avec le contenu de la table.
+
+\begin{lstlisting}
+SELECT id, password, card, expire_date, rfid,firstname, lastname,
+       address_street, address_streenumber, address_zipcode, address_city,
+       address_country, entry_date, phone_number
+FROM user
+LEFT JOIN subscriber ON user.id=subscriber.user_id
+WHERE id=? LIMIT 1;
+\end{lstlisting}
+
+\subsubsection{User.active\_trips, User.current\_trip}
+Un administrateur peut avoir plusieurs locations en cours, récupérées par la requête
+
+\begin{lstlisting}
+SELECT <colonnes> FROM trip WHERE user_id=? AND arrival_station_id IS NULL;
+\end{lstlisting}
+
+On peut récupérer le voyage actuel d'un utilisateur (un seul en cours) en ajoutant
+une clause \lstinline{LIMIT 1} pour un utilisateur normal.
+
+\subsubsection{User.billable\_trips}
+Renvoie toutes les locations facturables (dépassant 30 minutes) d'un utilisateur,
+pour une période donnée.
+
+\begin{lstlisting}
+SELECT <colonnes> FROM <trip>
+WHERE ?<=departure_date AND
+      arrival_date<=? AND
+      user_id=? AND
+      strftime('%s',arrival_date)-strftime('%s',departure_date) >= 1800;
+\end{lstlisting}
+
+\subsubsection{Trip}
+Pour toutes les clefs étrangères dans la table \texttt{trip}, il exite un
+accesseur analogue à \texttt{Model.get} renvoyant l'objet lié.
+
+\subsubsection{Trip.distance}
+Renvoie la distance à vol d'oiseau entre la station de départ et d'arrivée de
+la location. Cette distance est calculée grâce à une extension C pour sqlite3 que
+nous avons du implémenter, à cause du manque de fonctions mathématiques dans le
+moteur de bases de données.
+
+\begin{lstlisting}
+SELECT geodistance(s1.latitude,s1.longitude,s2.latitude,s2.longitude)
+FROM trip
+INNER JOIN station AS s1 ON s1.id=trip.departure_station_id,
+           station AS s2 ON s2.id=trip.arrival_station_id
+WHERE trip.departure_date=? AND
+      trip.user_id=? AND
+      trip.bike_id=?;
+\end{lstlisting}
+
+
+\subsubsection{Station.bikes}
+Permet de connaître le nombre de vélos à une station. On cherche tous les vélos
+dont le dernier déplacement a cette station pour arrivée. Cette requête peut être
+déclinée en plusieurs version, pour obtenir les objets vélos à cette station (on
+remplace le \lstinline{COUNT(*)} par les colonnes de \texttt{bike}), ou en ajoutant
+une clause \lstinline{WHERE} pour compter seulement les vélos utilisable, cassés, ou
+pour connaître le nombre de places libres (en retranchant le nombre de vélos à
+la capacité de la station).
+
+\begin{lstlisting}
+SELECT COUNT(bike_id) FROM (
+    SELECT user_id,bike_id,arrival_station_id,MAX(departure_date)
+    FROM trip
+    GROUP BY bike_id) 
+JOIN bike ON bike.id=bike_id 
+WHERE arrival_station_id=?
+\end{lstlisting}
+
 
 \section{Apports personnels}
 
